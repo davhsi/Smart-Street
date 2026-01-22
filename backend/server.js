@@ -1,50 +1,25 @@
-const express = require("express");
-const cors = require("cors");
+require("dotenv").config();
+const app = require("./app");
+const db = require("./db");
 
-const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Test database connection before starting server
+const startServer = async () => {
+  console.log("🔌 Testing database connection...");
+  const connected = await db.testConnection();
 
-// Dummy users (for testing)
-const users = [
-  {
-    email: "admin@geopits.com",
-    password: "admin123"
+  if (!connected) {
+    console.error("\n❌ Server startup aborted due to database connection failure");
+    process.exit(1);
   }
-];
-
-// Login API
-app.post("/api/auth/login", (req, res) => {
-  const { email, password } = req.body;
-
-  const user = users.find(
-    u => u.email === email && u.password === password
-  );
-
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid credentials"
-    });
-  }
-
-  res.json({
-    success: true,
-    message: "Login successful",
-    user: {
-      email: user.email
-    }
-  });
-});
-
-// Health check
-app.get("/", (req, res) => {
-  res.send("Backend running ✅");
-});
-
+  
+  console.log("\n🚀 Starting Smart Street backend server...");
 app.listen(PORT, () => {
-  console.log(`🚀 Backend running at http://localhost:${PORT}`);
+    console.log(`✅ Server running on http://localhost:${PORT}`);
+    console.log(`📡 Health check: http://localhost:${PORT}/health`);
+    console.log(`🔐 API endpoints available at http://localhost:${PORT}/api`);
 });
+};
+
+startServer();

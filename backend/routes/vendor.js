@@ -1,29 +1,31 @@
 const router = require("express").Router();
-const db = require("../db");
+const { body } = require("express-validator");
+const vendorController = require("../controllers/vendorController");
+const { authenticate, requireRoles } = require("../middleware/authMiddleware");
+const validateRequest = require("../middleware/validateRequest");
 
-// Register vendor
-router.post("/register", async (req, res) => {
-  const { name, phone, business_type } = req.body;
+router.use(authenticate);
 
-  try {
-    await db.query(
-      "INSERT INTO vendors (name, phone, business_type) VALUES ($1,$2,$3)",
-      [name, phone, business_type]
-    );
-    res.json({ message: "Vendor registered successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.get("/spaces", vendorController.listPublicSpaces);
 
-// Get all vendors
-router.get("/", async (req, res) => {
-  try {
-    const result = await db.query("SELECT * FROM vendors");
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.use(requireRoles("VENDOR"));
+
+router.post(
+  "/requests",
+  [
+    body("spaceId").optional({ nullable: true }).isUUID().withMessage("valid spaceId (UUID) is required"),
+    body("lat").isFloat({ min: -90, max: 90 }).withMessage("lat must be between -90 and 90"),
+    body("lng").isFloat({ min: -180, max: 180 }).withMessage("lng must be between -180 and 180"),
+    body("maxWidth").isFloat({ gt: 0 }).withMessage("maxWidth must be a positive number"),
+    body("maxLength").isFloat({ gt: 0 }).withMessage("maxLength must be a positive number"),
+    body("startTime").isISO8601().withMessage("startTime must be ISO8601 timestamp"),
+    body("endTime").isISO8601().withMessage("endTime must be ISO8601 timestamp")
+  ],
+  validateRequest,
+  vendorController.submitRequest
+);
+
+router.get("/requests", vendorController.listRequests);
+router.get("/permits", vendorController.listPermits);
 
 module.exports = router;
