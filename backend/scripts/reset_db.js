@@ -1,5 +1,5 @@
 require("dotenv").config();
-const db = require("./db");
+const db = require("../config/db");
 
 const reset = async () => {
   console.log("🔥 Resetting database data...");

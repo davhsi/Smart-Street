@@ -1,10 +1,10 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const db = require("../db");
+const db = require("../config/db");
 
 // Initialize Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
 const SCHEMA_CONTEXT = `
 You are a smart assistant for the "Smart Street" platform. 
@@ -53,6 +53,13 @@ const generateSQL = async (userQuery) => {
     return text;
   } catch (error) {
     console.error("Error interacting with Gemini:", error);
+    // Propagate the specific error status if available (e.g. 429, 503) from the library error
+    if (error.status === 429) {
+      throw { status: 429, message: "AI Quota Exceeded. Please try again later." };
+    }
+    if (error.status === 503) {
+      throw { status: 503, message: "AI Service Overloaded. Please try again later." };
+    }
     throw new Error("Failed to generate SQL from AI.");
   }
 };

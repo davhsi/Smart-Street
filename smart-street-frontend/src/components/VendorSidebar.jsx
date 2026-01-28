@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronRightIcon, ChevronLeftIcon, PlusCircleIcon, ClockIcon, DocumentCheckIcon, ArrowRightIcon, QrCodeIcon, ChartBarIcon } from "@heroicons/react/24/outline";
 import AnalyticsChart from "./AnalyticsChart";
 import { useTranslation } from "react-i18next";
+import { STATUS_COLORS } from "../utils/constants";
 
 export default function VendorSidebar({
   intent,
@@ -29,7 +30,7 @@ export default function VendorSidebar({
   return (
     <div
       className={`absolute top-4 left-4 z-[2000] flex flex-col transition-all duration-300 ${
-        collapsed ? "w-12 h-12 bg-white/90 dark:bg-slate-900/90 shadow-md rounded-full overflow-hidden" : "w-80 md:w-96 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-xl rounded-xl border border-slate-200 dark:border-slate-800"
+        collapsed ? "w-12 h-12 bg-white/90 dark:bg-slate-900/90 shadow-md rounded-full overflow-hidden" : "w-[calc(100vw-2rem)] md:w-96 max-h-[80vh] md:max-h-[calc(100vh-2rem)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-xl rounded-xl border border-slate-200 dark:border-slate-800"
       } ${className}`}
     >
       {/* Toggle Button */}

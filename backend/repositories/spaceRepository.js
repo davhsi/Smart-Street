@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../config/db");
 const { pointFromLatLng } = require("../services/spatialService");
 
 const createSpace = async ({

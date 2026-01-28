@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../config/db");
 
 const createNotification = async ({ userId, type, title, message, relatedRequestId, relatedPermitId }) => {
   const result = await db.query(

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { MagnifyingGlassIcon, FunnelIcon, MapPinIcon, ClockIcon, ChatBubbleLeftRightIcon, StarIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
 import ReviewList from "./ReviewList";
+import Skeleton from "./Skeleton";
 
 export default function PublicSidebar({
   vendors,
@@ -37,7 +38,7 @@ export default function PublicSidebar({
   };
 
   return (
-    <div className={`absolute top-4 left-4 z-[2000] flex flex-col max-h-[calc(100vh-2rem)] transition-all duration-300 ${isOpen ? "w-[calc(100vw-2rem)] max-w-md" : "w-12 h-12 overflow-hidden rounded-full"}`}>
+    <div className={`absolute top-4 left-4 z-[2000] flex flex-col max-h-[70vh] md:max-h-[calc(100vh-2rem)] transition-all duration-300 ${isOpen ? "w-[calc(100vw-2rem)] md:w-96 max-w-md" : "w-12 h-12 overflow-hidden rounded-full"}`}>
       
       {/* Search & Filter Header (Glassmorphism) - Hide if viewing detail */}
       {!selectedVendorDetail && (
@@ -110,7 +111,7 @@ export default function PublicSidebar({
 
       {/* Vendor List or Detail View */}
       {isOpen && (
-        <div className="flex-1 overflow-y-auto pr-2 space-y-3 pb-4 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
+        <div className="flex-1 overflow-y-auto pr-2 space-y-3 pb-10 scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-700">
            
            {selectedVendorDetail ? (
              <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden animate-fade-in-up">
@@ -163,7 +164,18 @@ export default function PublicSidebar({
               )}
 
               {loading ? (
-                 <div className="text-center py-8 text-slate-500 text-sm">{t('loading')}</div>
+                 <div className="space-y-4 px-2">
+                   {[1, 2, 3].map((i) => (
+                     <div key={i} className="bg-white/50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                       <div className="flex justify-between">
+                         <Skeleton className="h-6 w-32" />
+                         <Skeleton className="h-5 w-16 rounded-full" />
+                       </div>
+                       <Skeleton className="h-4 w-20" />
+                       <Skeleton className="h-4 w-full" />
+                     </div>
+                   ))}
+                 </div>
               ) : vendors.length === 0 ? (
                  <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 dark:border-slate-800 text-center shadow-lg">
                     <p className="text-slate-500 dark:text-slate-400 text-sm">{t('no_vendors')}</p>

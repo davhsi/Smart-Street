@@ -13,6 +13,7 @@ import { useAuth } from "./context/AuthContext.jsx";
 
 import OfflineBanner from "./components/OfflineBanner.jsx";
 import ChatWidget from "./components/ChatWidget.jsx";
+import PageTransition from "./components/PageTransition.jsx";
 
 // Unused HomeRedirect for now, but keeping if logic is needed later logic
 // const HomeRedirect = ...
@@ -24,7 +25,14 @@ export default function App() {
       <ChatWidget />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/public" element={<PublicMap />} />
+        <Route
+          path="/public"
+          element={
+            <PageTransition>
+              <PublicMap />
+            </PageTransition>
+          }
+        />
         <Route path="/verify" element={<VerifyPermit />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -32,7 +40,9 @@ export default function App() {
           path="/vendor"
           element={
             <ProtectedRoute roles={["VENDOR"]}>
-              <VendorDashboard />
+              <PageTransition>
+                <VendorDashboard />
+              </PageTransition>
             </ProtectedRoute>
           }
         />
@@ -40,7 +50,9 @@ export default function App() {
           path="/owner"
           element={
             <ProtectedRoute roles={["OWNER"]}>
-              <OwnerDashboard />
+              <PageTransition>
+                <OwnerDashboard />
+              </PageTransition>
             </ProtectedRoute>
           }
         />
@@ -48,7 +60,9 @@ export default function App() {
           path="/admin"
           element={
             <ProtectedRoute roles={["ADMIN"]}>
-              <AdminDashboard />
+              <PageTransition>
+                <AdminDashboard />
+              </PageTransition>
             </ProtectedRoute>
           }
         />

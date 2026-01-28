@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { QRCodeCanvas } from "qrcode.react";
-import api from "../api.jsx";
+import api from "../services/api";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useToast } from "../context/ToastContext.jsx";
 import MapContainerFullscreen from "../components/MapContainerFullscreen.jsx";

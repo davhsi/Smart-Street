@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api.jsx";
+import api from "../services/api";
 
 export default function VerifyPermit() {
   const [qrCodeData, setQrCodeData] = useState("");

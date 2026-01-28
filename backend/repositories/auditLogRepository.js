@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../config/db");
 
 const createLog = async ({ adminId, action, entityType, targetId, ipAddress }) => {
   const result = await db.query(

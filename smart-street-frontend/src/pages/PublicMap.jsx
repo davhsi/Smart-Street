@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { Marker, Circle, Popup, useMap } from "react-leaflet";
 import { Link, useLocation } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
-import api from "../api.jsx";
+import api from "../services/api";
 import MapContainerFullscreen from "../components/MapContainerFullscreen.jsx";
 import MapSearchControl from "../components/MapSearchControl.jsx";
 import PublicSidebar from "../components/PublicSidebar.jsx";

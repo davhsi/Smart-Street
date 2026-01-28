@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import VendorSidebar from "../components/VendorSidebar.jsx";
 import VendorActionBar from "../components/VendorActionBar.jsx";
-import api from "../api.jsx";
+import api from "../services/api";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useToast } from "../context/ToastContext.jsx";
 import MapContainerFullscreen from "../components/MapContainerFullscreen.jsx";
@@ -326,13 +326,8 @@ export default function VendorDashboard() {
 
   const fetchAnalytics = async () => {
     try {
-      const { data } = await api.get("/vendor/analytics"); // Assuming you proxy /api/analytics
-      // Wait, standard structure is api.get('/analytics') but we need to ensure correct route.
-      // In app.js: app.use("/api/analytics", analyticsRoutes);
-      // Protected route: router.get('/', ... getVendorStats);
-      // So path is /api/analytics
-      const response = await api.get("/analytics");
-      setAnalyticsData(response.data.stats || []);
+      const { data } = await api.get("/analytics");
+      setAnalyticsData(data.stats || []);
     } catch (err) {
       console.error("Failed to load analytics:", err);
     }

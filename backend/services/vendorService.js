@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../config/db");
 const vendorRepository = require("../repositories/vendorRepository");
 const spaceRepository = require("../repositories/spaceRepository");
 const requestRepository = require("../repositories/requestRepository");

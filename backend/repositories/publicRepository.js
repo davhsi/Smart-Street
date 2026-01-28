@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../config/db");
 
 const listApprovedVendors = async () => {
   const result = await db.query(

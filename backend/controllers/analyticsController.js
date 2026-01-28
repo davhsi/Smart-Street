@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../config/db');
 
 // Helper to increment view count
 exports.recordView = async (vendorId) => {

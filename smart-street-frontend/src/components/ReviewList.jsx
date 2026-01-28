@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import api from '../api';
+import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import StarRating from './StarRating';
+import Skeleton from './Skeleton';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 const ReviewList = ({ vendorId, onReviewAdded }) => {
@@ -100,7 +101,21 @@ const ReviewList = ({ vendorId, onReviewAdded }) => {
       {/* Reviews List */}
       <div className="space-y-4">
         {loading ? (
-          <p className="text-center text-slate-400 text-sm">Loading reviews...</p>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="border-b border-slate-100 dark:border-slate-800 pb-4 last:border-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <Skeleton variant="circular" className="w-8 h-8" />
+                  <div className="space-y-1">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-3 w-16" />
+                  </div>
+                </div>
+                <Skeleton className="h-4 w-full ml-10" />
+                <Skeleton className="h-4 w-3/4 ml-10 mt-1" />
+              </div>
+            ))}
+          </div>
         ) : reviews.length === 0 ? (
           <p className="text-center text-slate-400 text-sm">No reviews yet. Be the first!</p>
         ) : (

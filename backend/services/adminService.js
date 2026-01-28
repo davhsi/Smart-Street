@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const db = require("../db");
+const db = require("../config/db");
 const adminRepository = require("../repositories/adminRepository");
 const auditLogRepository = require("../repositories/auditLogRepository");
 const notificationService = require("../services/notificationService");
