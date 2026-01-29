@@ -45,11 +45,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render Deploy
-        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL != '' }}
+        if: secrets.RENDER_DEPLOY_HOOK_URL != ''
         run: |
           curl -X GET "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
         shell: bash
       
       - name: Deploy skipped warning
-        if: ${{ secrets.RENDER_DEPLOY_HOOK_URL == '' }}
+        if: secrets.RENDER_DEPLOY_HOOK_URL == ''
         run: echo "⚠️ RENDER_DEPLOY_HOOK_URL secret is missing. Skipping deployment trigger."
