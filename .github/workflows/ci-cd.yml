@@ -14,6 +14,21 @@ jobs:
       run:
         working-directory: ./backend
 
+    services:
+      postgres:
+        image: postgis/postgis:15-3.3
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: smartstreet_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     strategy:
       matrix:
         node-version: [18.x]
@@ -34,10 +49,14 @@ jobs:
     - name: Run tests
       run: npm test
       env:
-        # Add any environment variables required for tests here
-        # Using a dummy value for potential env vars if needed during tests, 
-        # or rely on test-specific .env loading
         CI: true
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_USER: user
+        DB_PASSWORD: password
+        DB_NAME: smartstreet_db
+        JWT_SECRET: test_jwt_secret
+        ADMIN_REG_CODE: top_secret
 
   deploy:
     needs: test
