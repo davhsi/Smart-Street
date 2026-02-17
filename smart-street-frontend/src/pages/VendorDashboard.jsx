@@ -24,15 +24,15 @@ const defaultCenter = [11.3410, 77.7172];
 // Simple Haversine distance helper (meters)
 const getDistanceMeters = (lat1, lng1, lat2, lng2) => {
   const R = 6371e3; // metres
-  const φ1 = lat1 * Math.PI/180;
-  const φ2 = lat2 * Math.PI/180;
-  const Δφ = (lat2-lat1) * Math.PI/180;
-  const Δλ = (lng2-lng1) * Math.PI/180;
+  const φ1 = lat1 * Math.PI / 180;
+  const φ2 = lat2 * Math.PI / 180;
+  const Δφ = (lat2 - lat1) * Math.PI / 180;
+  const Δλ = (lng2 - lng1) * Math.PI / 180;
 
-  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-          Math.cos(φ1) * Math.cos(φ2) *
-          Math.sin(Δλ/2) * Math.sin(Δλ/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) *
+    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
 
@@ -59,9 +59,9 @@ const MapZoomToSpace = ({ lat, lng, radius }) => {
         // Convert radius (meters) to approximate degrees for zoom bounds
         const latDegPerMeter = 1 / 111320;
         const zoomedRadius = (radius || 120) * latDegPerMeter * 2; // padding
-        
+
         map.setView([lat, lng], map.getZoom(), { animate: true });
-        
+
         const bounds = [
           [lat - zoomedRadius, lng - zoomedRadius],
           [lat + zoomedRadius, lng + zoomedRadius]
@@ -128,10 +128,10 @@ export default function VendorDashboard() {
   // QR Modal State
   const [showQrModal, setShowQrModal] = useState(false);
   const [selectedPermitForQr, setSelectedPermitForQr] = useState(null);
-  
+
   // Request Detail State
   const [selectedRequest, setSelectedRequest] = useState(null);
-  
+
   // Voice Assistant State
   const [isListening, setIsListening] = useState(false);
   const [voiceStatus, setVoiceStatus] = useState(""); // "Processing...", "Locating...", etc.
@@ -148,25 +148,25 @@ export default function VendorDashboard() {
 
     setVoiceStatus("Processing...");
     const result = parseBookingIntent(transcript, spaces);
-    
+
     // 1. Handle Space Selection or Search
     if (result.spaceId) {
-       setIntent("OWNER_DEFINED");
-       setSelectedSpaceId(result.spaceId);
-       setVoiceStatus("Space identified: " + (result.spaceName || "Unknown"));
-       setTimeout(() => completeVoiceAction(result), 800);
+      setIntent("OWNER_DEFINED");
+      setSelectedSpaceId(result.spaceId);
+      setVoiceStatus("Space identified: " + (result.spaceName || "Unknown"));
+      setTimeout(() => completeVoiceAction(result), 800);
     } else if (result.searchQuery) {
-       // Perform Geocoding Search
-       setVoiceStatus(`Searching "${result.searchQuery}"...`);
-       handleGeocodeSearch(result.searchQuery, result);
+      // Perform Geocoding Search
+      setVoiceStatus(`Searching "${result.searchQuery}"...`);
+      handleGeocodeSearch(result.searchQuery, result);
     } else if (result.missingFields.includes("location") && !selectedSpaceId) {
-       setVoiceStatus("Location details missing.");
-       showError("I heard clearly, but didn't catch a location. Try again?");
-       setTimeout(() => setVoiceStatus(""), 3000);
+      setVoiceStatus("Location details missing.");
+      showError("I heard clearly, but didn't catch a location. Try again?");
+      setTimeout(() => setVoiceStatus(""), 3000);
     } else {
-       // Maybe location is already selected manually
-       setVoiceStatus("Using current selection...");
-       completeVoiceAction(result);
+      // Maybe location is already selected manually
+      setVoiceStatus("Using current selection...");
+      completeVoiceAction(result);
     }
   };
 
@@ -174,19 +174,19 @@ export default function VendorDashboard() {
     try {
       const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
       const data = await resp.json();
-      
+
       if (data && data.length > 0) {
         const lat = parseFloat(data[0].lat);
         const lon = parseFloat(data[0].lon);
-        
+
         // Select logic
         setIntent("REQUEST_NEW");
         handlePinSet([lat, lon]);
-        setRequestedRadius(50); 
-        
+        setRequestedRadius(50);
+
         // Fly to location
         setFlyToCoords([lat, lon]);
-        
+
         setVoiceStatus("Location found.");
         completeVoiceAction(result, `Found "${query}"`);
       } else {
@@ -206,44 +206,44 @@ export default function VendorDashboard() {
   const completeVoiceAction = (result, extraMsg = "") => {
     // 2. Handle Time Selection
     if (result.startTime && result.endTime) {
-       setVoiceStatus(prev => "Updating dates...");
-       
-       const toLocalISO = (iso) => {
-         const d = new Date(iso);
-         const pad = n => n < 10 ? '0'+n : n;
-         return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-       };
+      setVoiceStatus(prev => "Updating dates...");
 
-       setForm(prev => ({
-         ...prev,
-         startTime: toLocalISO(result.startTime),
-         endTime: toLocalISO(result.endTime)
-       }));
-       
-       setTimeout(() => setVoiceStatus("Date & Time updated."), 600);
+      const toLocalISO = (iso) => {
+        const d = new Date(iso);
+        const pad = n => n < 10 ? '0' + n : n;
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      };
+
+      setForm(prev => ({
+        ...prev,
+        startTime: toLocalISO(result.startTime),
+        endTime: toLocalISO(result.endTime)
+      }));
+
+      setTimeout(() => setVoiceStatus("Date & Time updated."), 600);
     } else {
-       setVoiceStatus("Dates not found in speech.");
+      setVoiceStatus("Dates not found in speech.");
     }
 
     // 3. Feedback
     if (result.spaceName && result.startTime) {
-       showSuccess(`Autofilled for ${result.spaceName}`);
+      showSuccess(`Autofilled for ${result.spaceName}`);
     } else if (result.spaceName) {
-       showSuccess(`Selected ${result.spaceName}. When?`);
+      showSuccess(`Selected ${result.spaceName}. When?`);
     } else if (result.startTime) {
       if (extraMsg) {
-         showSuccess(`${extraMsg}. Time set.`);
+        showSuccess(`${extraMsg}. Time set.`);
       } else {
-         showSuccess("Time set. Where?");
+        showSuccess("Time set. Where?");
       }
     } else if (extraMsg) {
-       showSuccess(`${extraMsg}`);
+      showSuccess(`${extraMsg}`);
     } else {
-       if (!result.spaceId && !result.searchQuery) {
-          showError("Could not understand command. Try 'Book near [Space] tomorrow 6pm to 8pm'");
-       }
+      if (!result.spaceId && !result.searchQuery) {
+        showError("Could not understand command. Try 'Book near [Space] tomorrow 6pm to 8pm'");
+      }
     }
-    
+
     // Clear status after delay
     setTimeout(() => setVoiceStatus(""), 5000);
   };
@@ -364,12 +364,12 @@ export default function VendorDashboard() {
     let radius = 0;
 
     if (intent === "OWNER_DEFINED") {
-       if (!selectedSpaceId) {
-          showError("Please select an owner space");
-          return;
-       }
-       // ... existing validation
-       if (!selectedSpace?.lat || !selectedSpace?.lng || !ownerDefinedRadius) {
+      if (!selectedSpaceId) {
+        showError("Please select an owner space");
+        return;
+      }
+      // ... existing validation
+      if (!selectedSpace?.lat || !selectedSpace?.lng || !ownerDefinedRadius) {
         showError("Selected space is missing location data");
         return;
       }
@@ -389,7 +389,7 @@ export default function VendorDashboard() {
       lat = pin[0];
       lng = pin[1];
       radius = newRequestRadius;
-      
+
       // If we auto-detected a space, great. If not, submit as standalone (spaceId=null).
       // selectedSpaceId is already set/unset by handlePinSet
     } else {
@@ -433,15 +433,15 @@ export default function VendorDashboard() {
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       <header className="flex-none bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-        <div className="mx-auto max-w-6xl px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
-          <div className="text-center md:text-left">
+        <div className="relative px-4 md:px-6 py-4 md:py-5 flex flex-col md:flex-row items-center justify-center">
+          <div className="text-center z-0">
             <Link to="/" className="block">
-              <p className="text-[10px] md:text-xs text-blue-700 dark:text-blue-400 font-semibold tracking-[0.2em] hover:opacity-80 transition-opacity">{t('app_name').toUpperCase()}</p>
+              <p className="text-sm md:text-base text-blue-700 dark:text-blue-400 font-semibold tracking-[0.2em] hover:opacity-80 transition-opacity">SMART STREET</p>
             </Link>
-            <h1 className="text-base md:text-lg font-bold text-slate-900 dark:text-white">{t('vendor_workspace')}</h1>
-            <p className="text-[10px] md:text-xs text-slate-600 dark:text-slate-400">Choose intent → select owner space → submit request</p>
+            <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">{t('vendor_workspace')}</h1>
+            <p className="text-sm md:text-base text-slate-600 dark:text-slate-400">Choose intent → select owner space → submit request</p>
           </div>
-          <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-700 dark:text-slate-300 w-full md:w-auto justify-center md:justify-end">
+          <div className="mt-4 md:mt-0 md:absolute md:right-6 flex items-center gap-2 md:gap-3 text-sm md:text-lg text-slate-700 dark:text-slate-300 w-full md:w-auto justify-center md:justify-end z-10">
             <LanguageSwitcher />
             <ThemeToggle />
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
@@ -449,7 +449,7 @@ export default function VendorDashboard() {
             <span className="font-semibold truncate max-w-[100px] md:max-w-none">{user?.name}</span>
             <button
               onClick={logout}
-              className="rounded-lg bg-slate-800 dark:bg-slate-700 px-3 py-1 text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-colors whitespace-nowrap"
+              className="rounded-lg bg-slate-800 dark:bg-slate-700 px-4 py-2 text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-colors whitespace-nowrap"
             >
               {t('logout')}
             </button>
@@ -474,7 +474,7 @@ export default function VendorDashboard() {
           searchQuery={mapSearchQuery}
           isFullscreen={fullscreen}
           onToggleFullscreen={setFullscreen}
-          showFullscreenButton={true} 
+          showFullscreenButton={true}
           overlayContent={
             <>
               <VendorSidebar
@@ -490,16 +490,18 @@ export default function VendorDashboard() {
                 onRequestClick={setSelectedRequest}
                 analyticsData={analyticsData}
               />
-              <VendorActionBar
-                intent={intent}
-                form={form}
-                setForm={setForm}
-                requestedRadius={requestedRadius}
-                setRequestedRadius={setRequestedRadius}
-                ownerDefinedRadius={ownerDefinedRadius}
-                handleSubmit={handleSubmit}
-                saving={saving}
-              />
+              {intent && (
+                <VendorActionBar
+                  intent={intent}
+                  form={form}
+                  setForm={setForm}
+                  requestedRadius={requestedRadius}
+                  setRequestedRadius={setRequestedRadius}
+                  ownerDefinedRadius={ownerDefinedRadius}
+                  handleSubmit={handleSubmit}
+                  saving={saving}
+                />
+              )}
             </>
           }
         >
@@ -588,7 +590,7 @@ export default function VendorDashboard() {
         isOpen={showNotificationModal}
         onClose={() => setShowNotificationModal(false)}
       />
-      
+
       {/* Permit QR/Detail Modal */}
       <PermitQRModal
         isOpen={showQrModal}
@@ -602,12 +604,12 @@ export default function VendorDashboard() {
         onClose={() => setSelectedRequest(null)}
         request={selectedRequest}
       />
-      
+
       {/* Voice Assistant Overlay */}
-      <VoiceAssistant 
-        onCommand={handleVoiceCommand} 
-        isListening={isListening} 
-        setIsListening={setIsListening} 
+      <VoiceAssistant
+        onCommand={handleVoiceCommand}
+        isListening={isListening}
+        setIsListening={setIsListening}
         status={voiceStatus}
       />
     </div>
