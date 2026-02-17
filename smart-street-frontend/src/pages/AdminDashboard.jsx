@@ -179,149 +179,197 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-        <div className="mx-auto max-w-6xl px-4 md:px-6 py-3 md:py-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 mb-4">
-            <div className="text-center md:text-left">
-              <Link to="/" className="block">
-                <p className="text-[10px] md:text-xs text-blue-700 dark:text-blue-400 font-semibold tracking-[0.2em] hover:opacity-80 transition-opacity">SMART STREET</p>
-              </Link>
-              <h1 className="text-base md:text-lg font-bold text-slate-900 dark:text-white">Admin console</h1>
-              <p className="text-[10px] md:text-xs text-slate-600 dark:text-slate-400">Review requests & issue permits</p>
-            </div>
-            <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-700 dark:text-slate-300 w-full md:w-auto justify-center md:justify-end">
-              <ThemeToggle />
-              <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
-              <NotificationBell onClick={() => setShowNotificationModal(true)} />
-              <span className="font-semibold truncate max-w-[100px] md:max-w-none">{user?.name}</span>
-              <button onClick={logout} className="rounded-lg bg-slate-800 dark:bg-slate-700 px-3 py-1 text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-colors whitespace-nowrap">
-                Logout
-              </button>
-            </div>
+      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative">
+        <div className="px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-center min-h-[80px]">
+
+          {/* Left Tabs - Absolute on large desktop, hidden on smaller */}
+          <div className="hidden xl:flex items-center gap-2 absolute left-6 top-1/2 -translate-y-1/2">
+            <button
+              onClick={() => setActiveTab("overview")}
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all ${activeTab === "overview" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <ChartBarSquareIcon className="w-5 h-5" />
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab("map")}
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all ${activeTab === "map" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <MapIcon className="w-5 h-5" />
+              Map & Requests
+            </button>
+            <button
+              onClick={() => setActiveTab("vendors")}
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all ${activeTab === "vendors" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <UserGroupIcon className="w-5 h-5" />
+              Vendors
+            </button>
+            <button
+              onClick={() => setActiveTab("owners")}
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all ${activeTab === "owners" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <UserGroupIcon className="w-5 h-5" />
+              Owners
+            </button>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex gap-2 bg-slate-100 dark:bg-slate-800/50 p-1 rounded-xl w-full md:w-fit mx-auto md:mx-0">
-             <button
-               onClick={() => setActiveTab("overview")}
-               className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
-                 activeTab === "overview" ? "bg-white dark:bg-slate-800 shadow text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-               }`}
-             >
-               <ChartBarSquareIcon className="w-4 h-4" />
-               Overview
-             </button>
-             <button
-               onClick={() => setActiveTab("map")}
-               className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
-                 activeTab === "map" ? "bg-white dark:bg-slate-800 shadow text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-               }`}
-             >
-               <MapIcon className="w-4 h-4" />
-               Map & Requests
-             </button>
-             <button
-               onClick={() => setActiveTab("vendors")}
-               className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
-                 activeTab === "vendors" ? "bg-white dark:bg-slate-800 shadow text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-               }`}
-             >
-               <UserGroupIcon className="w-4 h-4" />
-               Vendors
-             </button>
-             <button
-               onClick={() => setActiveTab("owners")}
-               className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
-                 activeTab === "owners" ? "bg-white dark:bg-slate-800 shadow text-blue-600 dark:text-blue-400" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-               }`}
-             >
-               <UserGroupIcon className="w-4 h-4" />
-               Owners
-             </button>
+          {/* Centered Title */}
+          <div className="text-center z-10 mb-4 md:mb-0">
+            <Link to="/" className="block">
+              <p className="text-xs md:text-sm text-blue-700 dark:text-blue-400 font-bold tracking-[0.25em] hover:opacity-80 transition-opacity mb-1">SMART STREET</p>
+            </Link>
+            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">Admin console</h1>
+            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">Review requests & issue permits</p>
+          </div>
+
+          {/* Right Controls - Absolute on desktop */}
+          <div className="flex items-center gap-3 md:gap-5 md:absolute md:right-8 md:top-1/2 md:-translate-y-1/2">
+            <div className="transform scale-110">
+              <ThemeToggle />
+            </div>
+            <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+            <div className="transform scale-110">
+              <NotificationBell onClick={() => setShowNotificationModal(true)} />
+            </div>
+
+            <span className="font-bold text-base md:text-lg text-slate-700 dark:text-slate-200 truncate max-w-[120px] md:max-w-none">
+              {user?.name}
+            </span>
+
+            <button
+              onClick={logout}
+              className="rounded-xl bg-slate-800 dark:bg-slate-700 px-5 py-2.5 text-sm md:text-base font-bold text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 whitespace-nowrap"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Navigation Tabs - Mobile/Tablet Only (below XL) */}
+        <div className="w-full xl:hidden border-t border-slate-100 dark:border-slate-800/50">
+          <div className="flex gap-2 justify-center px-4 py-2 overflow-x-auto">
+            <button
+              onClick={() => setActiveTab("overview")}
+              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold rounded-lg transition-all ${activeTab === "overview" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <ChartBarSquareIcon className="w-5 h-5" />
+              Overview
+            </button>
+            <button
+              onClick={() => setActiveTab("map")}
+              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold rounded-lg transition-all ${activeTab === "map" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <MapIcon className="w-5 h-5" />
+              Map & Requests
+            </button>
+            <button
+              onClick={() => setActiveTab("vendors")}
+              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold rounded-lg transition-all ${activeTab === "vendors" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <UserGroupIcon className="w-5 h-5" />
+              Vendors
+            </button>
+            <button
+              onClick={() => setActiveTab("owners")}
+              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold rounded-lg transition-all ${activeTab === "owners" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <UserGroupIcon className="w-5 h-5" />
+              Owners
+            </button>
           </div>
         </div>
       </header>
 
       <main className="flex-1 relative h-[calc(100vh-140px)] overflow-hidden">
         {activeTab === "overview" && (
-           <div className="h-full overflow-y-auto p-4 md:p-6 max-w-7xl mx-auto w-full">
-              <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Dashboard Overview</h2>
-              <AdminStatsCards stats={stats} loading={statsLoading} />
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                 {/* Quick Actions or Recent Logs? For now recent logs */}
-                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
-                    <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 uppercase tracking-wide">Recent Audit Logs</h3>
-                    <div className="space-y-3">
-                       {logs.slice(0, 8).map((log, i) => (
-                          <div key={i} className="flex gap-3 text-sm pb-3 border-b border-slate-50 dark:border-slate-800 last:border-0">
-                             <div className="text-xs text-slate-400 whitespace-nowrap font-mono">{new Date(log.created_at).toLocaleTimeString()}</div>
-                             <div>
-                                <p className="text-slate-800 dark:text-slate-200 font-medium">{log.action}</p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">by Admin #{log.admin_id?.slice(0,6)}</p>
-                             </div>
-                          </div>
-                       ))}
-                       {logs.length === 0 && <p className="text-sm text-slate-400 italic">No logs found</p>}
-                    </div>
-                 </div>
+          <div className="h-full overflow-y-auto p-4 md:p-6 max-w-7xl mx-auto w-full">
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Dashboard Overview</h2>
+            <AdminStatsCards stats={stats} loading={statsLoading} />
 
-                 <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm flex flex-col justify-center items-center text-center">
-                    <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-3">
-                       <MapIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Quick Actions or Recent Logs? For now recent logs */}
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 uppercase tracking-wide">Recent Audit Logs</h3>
+                <div className="space-y-3">
+                  {logs.slice(0, 8).map((log, i) => (
+                    <div key={i} className="flex gap-3 text-sm pb-3 border-b border-slate-50 dark:border-slate-800 last:border-0">
+                      <div className="text-xs text-slate-400 whitespace-nowrap font-mono">{new Date(log.created_at).toLocaleTimeString()}</div>
+                      <div>
+                        <p className="text-slate-800 dark:text-slate-200 font-medium">{log.action}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">by Admin #{log.admin_id?.slice(0, 6)}</p>
+                      </div>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Review Pending Requests</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto mt-2 mb-6">
-                       There are {stats?.pending_requests || 0} requests waiting for your approval.
-                    </p>
-                    <button 
-                       onClick={() => setActiveTab("map")}
-                       className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-                    >
-                       Go to Map
-                    </button>
-                 </div>
+                  ))}
+                  {logs.length === 0 && <p className="text-sm text-slate-400 italic">No logs found</p>}
+                </div>
               </div>
-           </div>
+
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm flex flex-col justify-center items-center text-center">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-3">
+                  <MapIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Review Pending Requests</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto mt-2 mb-6">
+                  There are {stats?.pending_requests || 0} requests waiting for your approval.
+                </p>
+                <button
+                  onClick={() => setActiveTab("map")}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                >
+                  Go to Map
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {activeTab === "vendors" && (
-           <div className="h-full overflow-hidden p-4 md:p-6 max-w-7xl mx-auto w-full">
-              <AdminVendorList vendors={vendors} loading={statsLoading} />
-           </div>
+          <div className="h-full overflow-hidden p-4 md:p-6 max-w-7xl mx-auto w-full">
+            <AdminVendorList vendors={vendors} loading={statsLoading} />
+          </div>
         )}
 
         {activeTab === "owners" && (
-           <div className="h-full overflow-hidden p-4 md:p-6 max-w-7xl mx-auto w-full">
-              <AdminOwnerList owners={owners} loading={statsLoading} />
-           </div>
+          <div className="h-full overflow-hidden p-4 md:p-6 max-w-7xl mx-auto w-full">
+            <AdminOwnerList owners={owners} loading={statsLoading} />
+          </div>
         )}
 
         {activeTab === "map" && (
 
-        <MapContainerFullscreen
-          center={selected ? [selected.lat, selected.lng] : defaultCenter}
-          zoom={selected ? 16 : 13}
-          height="100vh"
-          showFullscreenButton={false}
-          overlayContent={
-            <>
-              {/* LEFT SIDEBAR: List */}
-              <AdminSidebar
-                requests={requests}
-                loading={loading}
-                selectedId={selectedId}
-                setSelectedId={setSelectedId}
-                fetchRequests={fetchRequests}
-                statusColors={STATUS_COLORS}
-                viewMode={viewMode}
-                setViewMode={setViewMode}
-              />
+          <MapContainerFullscreen
+            center={selected ? [selected.lat, selected.lng] : defaultCenter}
+            zoom={selected ? 16 : 13}
+            height="100vh"
+            showFullscreenButton={false}
+            overlayContent={
+              <>
+                {/* LEFT SIDEBAR: List */}
+                <AdminSidebar
+                  requests={requests}
+                  loading={loading}
+                  selectedId={selectedId}
+                  setSelectedId={setSelectedId}
+                  fetchRequests={fetchRequests}
+                  statusColors={STATUS_COLORS}
+                  viewMode={viewMode}
+                  setViewMode={setViewMode}
+                />
 
-              {/* RIGHT SIDEBAR: Detail (Conditionally rendered) */}
-              {selected && (
-                <div className="absolute top-4 right-4 z-[2000]">
-                   <AdminRequestDetail
+                {/* RIGHT SIDEBAR: Detail (Conditionally rendered) */}
+                {selected && (
+                  <div className="absolute top-4 right-4 z-[2000]">
+                    <AdminRequestDetail
                       selected={selected}
                       requestRadius={requestRadius}
                       remarks={remarks}
@@ -329,69 +377,69 @@ export default function AdminDashboard() {
                       handleApproveClick={handleApproveClick}
                       handleRejectClick={handleRejectClick}
                       actionLoading={actionLoading}
-                   />
-                </div>
-              )}
+                    />
+                  </div>
+                )}
 
-              {!selected && requests.length > 0 && (
-                <div className="absolute top-4 right-4 z-[2000]">
-                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg p-6 max-w-4xl w-full transition-colors duration-300">
-                    <div className="text-center py-8">
-                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 max-w-md mx-auto">
-                        <p className="text-sm text-blue-800 dark:text-blue-300">
-                          <strong>👆 Select a request from the left panel</strong><br />
-                          Click any pending request to review its details and make a decision. The map will show the requested location and any spatial conflicts.
-                        </p>
+                {!selected && requests.length > 0 && (
+                  <div className="absolute top-4 right-4 z-[2000]">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg p-6 max-w-4xl w-full transition-colors duration-300">
+                      <div className="text-center py-8">
+                        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 max-w-md mx-auto">
+                          <p className="text-sm text-blue-800 dark:text-blue-300">
+                            <strong>👆 Select a request from the left panel</strong><br />
+                            Click any pending request to review its details and make a decision. The map will show the requested location and any spatial conflicts.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </>
-          }
-        >
-          {selected && (
-            <>
-              {/* Space circle - only if space exists */}
-              {selected.space_id && selected.space_lat && selected.space_lng && (
-                <Circle
-                  center={[selected.space_lat, selected.space_lng]}
-                  radius={selected.allowed_radius || 50}
-                  pathOptions={{ color: "#22c55e", weight: 2, fillOpacity: 0.08 }}
-                >
-                  <Popup>Space boundary (radius: {selected.allowed_radius}m)</Popup>
-                </Circle>
-              )}
-              {/* Request pin + circle */}
-              <Marker position={[selected.lat, selected.lng]}>
-                <Popup>Request location</Popup>
-              </Marker>
-              {requestRadius > 0 && (
-                <Circle
-                  center={[selected.lat, selected.lng]}
-                  radius={requestRadius}
-                  pathOptions={{ color: "#2563eb", weight: 3, fillOpacity: 0.18 }}
-                >
-                  <Popup>Request area ({selected.max_width}m × {selected.max_length}m)</Popup>
-                </Circle>
-              )}
-              {/* Conflict circles */}
-              {conflictRadii.map(c =>
-                c.lat && c.lng && c.radius > 0 ? (
+                )}
+              </>
+            }
+          >
+            {selected && (
+              <>
+                {/* Space circle - only if space exists */}
+                {selected.space_id && selected.space_lat && selected.space_lng && (
                   <Circle
-                    key={`conflict-${c.lat}-${c.lng}`}
-                    center={[c.lat, c.lng]}
-                    radius={c.radius}
-                    pathOptions={{ color: "#ef4444", weight: 1, fillOpacity: 0.3 }}
+                    center={[selected.space_lat, selected.space_lng]}
+                    radius={selected.allowed_radius || 50}
+                    pathOptions={{ color: "#22c55e", weight: 2, fillOpacity: 0.08 }}
                   >
-                    <Popup>Conflict Region</Popup>
+                    <Popup>Space boundary (radius: {selected.allowed_radius}m)</Popup>
                   </Circle>
-                ) : null
-              )}
-            </>
-          )}
+                )}
+                {/* Request pin + circle */}
+                <Marker position={[selected.lat, selected.lng]}>
+                  <Popup>Request location</Popup>
+                </Marker>
+                {requestRadius > 0 && (
+                  <Circle
+                    center={[selected.lat, selected.lng]}
+                    radius={requestRadius}
+                    pathOptions={{ color: "#2563eb", weight: 3, fillOpacity: 0.18 }}
+                  >
+                    <Popup>Request area ({selected.max_width}m × {selected.max_length}m)</Popup>
+                  </Circle>
+                )}
+                {/* Conflict circles */}
+                {conflictRadii.map(c =>
+                  c.lat && c.lng && c.radius > 0 ? (
+                    <Circle
+                      key={`conflict-${c.lat}-${c.lng}`}
+                      center={[c.lat, c.lng]}
+                      radius={c.radius}
+                      pathOptions={{ color: "#ef4444", weight: 1, fillOpacity: 0.3 }}
+                    >
+                      <Popup>Conflict Region</Popup>
+                    </Circle>
+                  ) : null
+                )}
+              </>
+            )}
 
-        </MapContainerFullscreen>
+          </MapContainerFullscreen>
         )}
 
         <NotificationModal

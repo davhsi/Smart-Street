@@ -58,7 +58,7 @@ export default function MapContainerFullscreen({
       const isNativeFullscreen = !!document.fullscreenElement;
       if (controlledOnToggleFullscreen) {
         if (controlledIsFullscreen !== isNativeFullscreen) {
-           controlledOnToggleFullscreen(isNativeFullscreen);
+          controlledOnToggleFullscreen(isNativeFullscreen);
         }
       } else {
         setInternalIsFullscreen(isNativeFullscreen);
@@ -71,7 +71,7 @@ export default function MapContainerFullscreen({
   const toggleFullscreen = async () => {
     try {
       if (!isFullscreen) {
-         if (containerRef.current) await containerRef.current.requestFullscreen();
+        if (containerRef.current) await containerRef.current.requestFullscreen();
       } else {
         if (document.fullscreenElement) await document.exitFullscreen();
       }
@@ -82,21 +82,21 @@ export default function MapContainerFullscreen({
 
   useEffect(() => {
     if (controlledIsFullscreen && !document.fullscreenElement && containerRef.current) {
-       containerRef.current.requestFullscreen().catch(err => console.warn("Auto-enter FS failed", err));
+      containerRef.current.requestFullscreen().catch(err => console.warn("Auto-enter FS failed", err));
     } else if (!controlledIsFullscreen && document.fullscreenElement) {
-       document.exitFullscreen().catch(err => console.warn("Auto-exit FS failed", err));
+      document.exitFullscreen().catch(err => console.warn("Auto-exit FS failed", err));
     }
   }, [controlledIsFullscreen]);
 
   const containerStyle = {
-     height: isFullscreen ? "100vh" : height,
-     width: isFullscreen ? "100vw" : "100%",
-     position: isFullscreen ? "fixed" : "relative",
-     top: isFullscreen ? 0 : "auto",
-     left: isFullscreen ? 0 : "auto",
-     margin: 0,
-     zIndex: isFullscreen ? 9999 : "auto",
-     backgroundColor: "white"
+    height: isFullscreen ? "100vh" : height,
+    width: isFullscreen ? "100vw" : "100%",
+    position: isFullscreen ? "fixed" : "relative",
+    top: isFullscreen ? 0 : "auto",
+    left: isFullscreen ? 0 : "auto",
+    margin: 0,
+    zIndex: isFullscreen ? 9999 : "auto",
+    backgroundColor: "white"
   };
 
   return (
@@ -109,8 +109,8 @@ export default function MapContainerFullscreen({
         <button
           type="button"
           onClick={() => {
-              if (controlledOnToggleFullscreen) controlledOnToggleFullscreen(!isFullscreen);
-              else toggleFullscreen();
+            if (controlledOnToggleFullscreen) controlledOnToggleFullscreen(!isFullscreen);
+            else toggleFullscreen();
           }}
           className="absolute top-4 right-4 z-[2000] bg-white rounded-lg p-2 shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors"
           title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
@@ -130,12 +130,12 @@ export default function MapContainerFullscreen({
           zoomControl={false}
         >
           <MapInvalidator isFullscreen={isFullscreen} />
-          
+
           {showSearch && (
-            <MapSearchControl 
-              onSelect={onSearchSelect} 
+            <MapSearchControl
+              onSelect={onSearchSelect}
               externalQuery={searchQuery}
-              className="absolute top-4 z-[25] left-16 right-16 md:left-auto md:right-16 md:w-[300px]"
+              className="absolute top-6 z-[2000] left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-[450px]"
             />
           )}
 

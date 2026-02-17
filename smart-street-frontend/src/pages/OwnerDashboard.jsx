@@ -79,24 +79,36 @@ export default function OwnerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-        <div className="mx-auto max-w-6xl px-4 md:px-6 py-3 md:py-4 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
-          <div className="text-center md:text-left">
+    <div className="flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative">
+        <div className="px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-center min-h-[80px]">
+          {/* Centered Title */}
+          <div className="text-center z-10">
             <Link to="/" className="block">
-              <p className="text-[10px] md:text-xs text-blue-700 dark:text-blue-400 font-semibold tracking-[0.2em] hover:opacity-80 transition-opacity">SMART STREET</p>
+              <p className="text-xs md:text-sm text-blue-700 dark:text-blue-400 font-bold tracking-[0.25em] hover:opacity-80 transition-opacity mb-1">SMART STREET</p>
             </Link>
-            <h1 className="text-base md:text-lg font-bold text-slate-900 dark:text-white">Owner workspace</h1>
-            <p className="text-[10px] md:text-xs text-slate-600 dark:text-slate-400">Create spaces (Pin + Radius)</p>
+            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">Owner Workspace</h1>
+            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">Create spaces (Pin + Radius)</p>
           </div>
-          <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-700 dark:text-slate-300 w-full md:w-auto justify-center md:justify-end">
-            <ThemeToggle />
-            <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
-            <NotificationBell onClick={() => setShowNotificationModal(true)} />
-            <span className="font-semibold truncate max-w-[100px] md:max-w-none">{user?.name}</span>
+
+          {/* Right Controls - Absolute */}
+          <div className="flex items-center gap-3 md:gap-5 absolute right-4 md:right-8 top-4 md:top-1/2 md:-translate-y-1/2">
+            <div className="transform scale-110">
+              <ThemeToggle />
+            </div>
+            <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
+            <div className="transform scale-110">
+              <NotificationBell onClick={() => setShowNotificationModal(true)} />
+            </div>
+
+            <span className="font-bold text-base md:text-lg text-slate-700 dark:text-slate-200 truncate max-w-[120px] md:max-w-none">
+              {user?.name}
+            </span>
+
             <button
               onClick={logout}
-              className="rounded-lg bg-slate-800 dark:bg-slate-700 px-3 py-1 text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-colors whitespace-nowrap"
+              className="rounded-xl bg-slate-800 dark:bg-slate-700 px-5 py-2.5 text-sm md:text-base font-bold text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95"
             >
               Logout
             </button>
@@ -109,20 +121,20 @@ export default function OwnerDashboard() {
         <MapContainerFullscreen
           center={defaultCenter}
           zoom={13}
-          height="100vh"
+          height="100%"
           showFullscreenButton={false}
           onSearchSelect={(lat, lng) => setPin([lat, lng])}
           overlayContent={
             <OwnerSidebar
-               spaces={spaces}
-               loading={loading}
-               fetchSpaces={fetchSpaces}
-               form={form}
-               setForm={setForm}
-               pin={pin}
-               setPin={setPin}
-               handleSubmit={handleSubmit}
-               saving={saving}
+              spaces={spaces}
+              loading={loading}
+              fetchSpaces={fetchSpaces}
+              form={form}
+              setForm={setForm}
+              pin={pin}
+              setPin={setPin}
+              handleSubmit={handleSubmit}
+              saving={saving}
             />
           }
         >
@@ -156,8 +168,8 @@ export default function OwnerDashboard() {
         </MapContainerFullscreen>
       </main>
       <NotificationModal
-          isOpen={showNotificationModal}
-          onClose={() => setShowNotificationModal(false)}
+        isOpen={showNotificationModal}
+        onClose={() => setShowNotificationModal(false)}
       />
     </div>
   );
