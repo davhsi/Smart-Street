@@ -19,7 +19,7 @@ describe('Admin Endpoints', () => {
   beforeAll(async () => {
     // 1. Register Admin
     const regRes = await request(app).post('/api/auth/register').send({
-      name: 'Test Admin', email: adminEmail, password, role: 'ADMIN', phone: '0000000000', adminCode: 'admin123'
+      name: 'Test Admin', email: adminEmail, password, role: 'ADMIN', phone: '0000000000', adminCode: process.env.ADMIN_REG_CODE || 'admin123'
     });
     // Debug if fails
     if (regRes.statusCode !== 201) {
