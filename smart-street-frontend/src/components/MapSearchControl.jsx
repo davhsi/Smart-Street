@@ -15,6 +15,7 @@ export default function MapSearchControl({
   const [error, setError] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const debounceRef = useRef(null);
+  const isSelected = useRef(false);
 
   useEffect(() => {
     if (externalQuery) setQuery(externalQuery);
@@ -23,6 +24,10 @@ export default function MapSearchControl({
   // Fetch suggestions with debounce
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (isSelected.current) {
+      isSelected.current = false;
+      return;
+    }
     if (!query || query.trim().length < 2) {
       setSuggestions([]);
       setError(null);
@@ -60,6 +65,7 @@ export default function MapSearchControl({
     const lonNum = Number(lon);
     map.flyTo([latNum, lonNum], 16, { duration: 0.8 });
     if (onSelect) onSelect(latNum, lonNum);
+    isSelected.current = true;
     setQuery(label || query);
     setSuggestions([]);
   };
@@ -73,22 +79,22 @@ export default function MapSearchControl({
   };
 
   return (
-    <div className={`z-[25] ${className.includes('w-') ? '' : 'w-[260px] md:w-[300px]'} ${className}`}>
+    <div className={`z-[1000] ${className.includes('w-') ? '' : 'w-[280px] md:w-[400px]'} ${className}`}>
       <form
         onSubmit={handleSubmit}
-        className="flex items-center gap-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur rounded-lg shadow border border-slate-200 dark:border-slate-800 px-3 py-2" // Keep inner styling
+        className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3"
       >
         <input
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="w-full text-sm px-2 py-1 rounded border border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full text-base font-medium px-2 py-1 bg-transparent dark:text-white focus:outline-none placeholder:text-slate-400"
         />
         <button
           type="submit"
           disabled={loading || !query}
-          className="px-3 py-1 text-sm font-semibold rounded bg-blue-600 text-white hover:bg-blue-700 disabled:bg-slate-300"
+          className="px-4 py-1.5 text-sm font-bold rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-slate-300 shadow-sm transition-colors"
         >
           {loading ? "…" : "Go"}
         </button>

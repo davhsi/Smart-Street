@@ -36,13 +36,13 @@ export default function AdminOwnerList({ owners, loading }) {
           <p className="text-sm text-slate-500 dark:text-slate-400">Manage property owners and spaces</p>
         </div>
         <div className="text-xs font-mono px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 dark:text-slate-400">
-           Total: {owners.length}
+          Total: {owners.length}
         </div>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-950/50 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider text-xs border-b border-slate-200 dark:border-slate-800">
+          <thead className="bg-slate-50 dark:bg-slate-950/50 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider text-sm border-b border-slate-200 dark:border-slate-800">
             <tr>
               <th className="px-6 py-4">Owner Details</th>
               <th className="px-6 py-4">Contact Info</th>
@@ -52,38 +52,37 @@ export default function AdminOwnerList({ owners, loading }) {
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
             {owners.map((owner) => (
-              <tr 
-                key={owner.owner_id} 
+              <tr
+                key={owner.owner_id}
                 className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
               >
                 <td className="px-6 py-4">
                   <div>
-                    <div className="font-bold text-slate-900 dark:text-white">{owner.owner_name}</div>
+                    <div className="font-bold text-lg text-slate-900 dark:text-white">{owner.owner_name}</div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="space-y-1">
-                     <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                        <span className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded">
-                           {owner.phone_number || "No Phone"}
-                        </span>
-                     </div>
-                     <div className="text-slate-500 dark:text-slate-400 text-xs">
-                        {owner.email}
-                     </div>
+                    <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                      <span className="text-sm bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded font-medium">
+                        {owner.phone_number || "No Phone"}
+                      </span>
+                    </div>
+                    <div className="text-slate-500 dark:text-slate-400 text-sm">
+                      {owner.email}
+                    </div>
                   </div>
                 </td>
                 <td className="px-6 py-4 text-center">
-                  <span className={`inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                     owner.total_spaces > 0 
-                     ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-                     : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
-                  }`}>
+                  <span className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-bold ${owner.total_spaces > 0
+                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+                      : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                    }`}>
                     {owner.total_spaces} Spaces
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right text-slate-500 dark:text-slate-400 whitespace-nowrap">
-                   {new Date(owner.created_at).toLocaleDateString()}
+                <td className="px-6 py-4 text-right text-slate-500 dark:text-slate-400 whitespace-nowrap text-sm font-medium">
+                  {new Date(owner.created_at).toLocaleDateString()}
                 </td>
               </tr>
             ))}

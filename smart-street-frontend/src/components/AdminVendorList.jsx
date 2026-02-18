@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/24/outline
 export default function AdminVendorList({ vendors, loading }) {
   const [search, setSearch] = useState("");
 
-  const filtered = vendors?.filter(v => 
+  const filtered = vendors?.filter(v =>
     v.vendor_name.toLowerCase().includes(search.toLowerCase()) ||
     v.business_name.toLowerCase().includes(search.toLowerCase()) ||
     v.email.toLowerCase().includes(search.toLowerCase())
@@ -16,9 +16,9 @@ export default function AdminVendorList({ vendors, loading }) {
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-slate-100 dark:bg-slate-800 rounded w-1/3"></div>
           <div className="space-y-2">
-             {[...Array(5)].map((_, i) => (
-               <div key={i} className="h-12 bg-slate-50 dark:bg-slate-800/50 rounded"></div>
-             ))}
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-12 bg-slate-50 dark:bg-slate-800/50 rounded"></div>
+            ))}
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@ export default function AdminVendorList({ vendors, loading }) {
       {/* Table */}
       <div className="overflow-x-auto flex-1">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-slate-50 dark:bg-slate-800/50 text-xs uppercase text-slate-500 dark:text-slate-400 font-semibold sticky top-0">
+          <thead className="bg-slate-50 dark:bg-slate-800/50 text-sm uppercase text-slate-500 dark:text-slate-400 font-semibold sticky top-0">
             <tr>
               <th className="px-6 py-4">Vendor</th>
               <th className="px-6 py-4">Contact</th>
@@ -75,38 +75,38 @@ export default function AdminVendorList({ vendors, loading }) {
                         <UserCircleIcon className="w-6 h-6" />
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-900 dark:text-white">{vendor.business_name}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">{vendor.vendor_name}</p>
+                        <p className="font-bold text-lg text-slate-900 dark:text-white">{vendor.business_name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{vendor.vendor_name}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm space-y-0.5">
-                      <p className="text-slate-700 dark:text-slate-300">{vendor.email}</p>
-                      <p className="text-xs text-slate-500">{vendor.phone_number}</p>
+                    <div className="text-base space-y-1">
+                      <p className="text-slate-700 dark:text-slate-300 font-medium">{vendor.email}</p>
+                      <p className="text-sm text-slate-500">{vendor.phone_number}</p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-6">
                       <div className="text-center">
-                        <span className="block font-bold text-slate-800 dark:text-slate-200">{vendor.active_permits}</span>
-                        <span className="text-[10px] text-slate-500 uppercase">Permits</span>
+                        <span className="block text-lg font-bold text-slate-800 dark:text-slate-200">{vendor.active_permits}</span>
+                        <span className="text-xs text-slate-500 uppercase font-bold tracking-wide">Permits</span>
                       </div>
-                      <div className="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
+                      <div className="h-10 w-px bg-slate-200 dark:bg-slate-700"></div>
                       <div className="text-center">
-                        <span className="block font-bold text-slate-800 dark:text-slate-200">{vendor.total_requests}</span>
-                        <span className="text-[10px] text-slate-500 uppercase">Requests</span>
+                        <span className="block text-lg font-bold text-slate-800 dark:text-slate-200">{vendor.total_requests}</span>
+                        <span className="text-xs text-slate-500 uppercase font-bold tracking-wide">Requests</span>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-slate-600 dark:text-slate-400">
+                    <span className="text-base text-slate-600 dark:text-slate-400 font-medium">
                       {new Date(vendor.created_at).toLocaleDateString()}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                       Verified
                     </span>
                   </td>
