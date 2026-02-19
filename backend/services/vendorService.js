@@ -2,6 +2,8 @@ const db = require("../config/db");
 const vendorRepository = require("../repositories/vendorRepository");
 const spaceRepository = require("../repositories/spaceRepository");
 const requestRepository = require("../repositories/requestRepository");
+const notificationService = require("../services/notificationService");
+const adminRepository = require("../repositories/adminRepository");
 const { pointFromLatLng, radiusFromDims } = require("../services/spatialService");
 
 const ensureVendorExists = async userId => {
@@ -123,6 +125,18 @@ const submitRequest = async (userId, payload) => {
     startTime,
     endTime
   });
+
+  // Notify all admin users about the new request
+  try {
+    const adminUserIds = await adminRepository.getAdminUserIds();
+    await Promise.all(
+      adminUserIds.map(adminId =>
+        notificationService.createNewVendorRequestNotification(adminId, request.request_id, vendor.business_name || "Unknown")
+      )
+    );
+  } catch (notifErr) {
+    console.error("Failed to send admin notifications:", notifErr);
+  }
 
   return request;
 };

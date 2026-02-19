@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
   const register = async payload => {
     setLoading(true);
     setError(null);
@@ -60,6 +61,33 @@ export const AuthProvider = ({ children }) => {
       return data.user;
     } catch (err) {
       setError(err.response?.data?.message || "Unable to register");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateUserProfile = async (payload) => {
+    setLoading(true);
+    try {
+      const { data } = await api.put("/auth/me", payload);
+      // Update local user state
+      const newUser = { ...user, ...data.user };
+      setUser(newUser);
+      localStorage.setItem("smartstreet_user", JSON.stringify(newUser));
+      return newUser;
+    } catch (err) {
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const changeUserPassword = async (payload) => {
+    setLoading(true);
+    try {
+      await api.put("/auth/me/password", payload);
+    } catch (err) {
       throw err;
     } finally {
       setLoading(false);
@@ -112,6 +140,8 @@ export const AuthProvider = ({ children }) => {
       error,
       login,
       register,
+      updateUserProfile,
+      changeUserPassword,
       logout,
       notifications,
       unreadCount,

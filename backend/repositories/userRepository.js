@@ -46,10 +46,28 @@ const createOwnerProfile = async ({ userId, ownerName, contactInfo }) => {
   return result.rows[0];
 };
 
+
+const updateUser = async (userId, { name }) => {
+  const result = await db.query(
+    `UPDATE users SET name = $1 WHERE user_id = $2 RETURNING *`,
+    [name, userId]
+  );
+  return result.rows[0];
+};
+
+const updatePassword = async (userId, passwordHash) => {
+  await db.query(
+    `UPDATE users SET password_hash = $1 WHERE user_id = $2`,
+    [passwordHash, userId]
+  );
+};
+
 module.exports = {
   createUser,
   findByEmail,
   findById,
   createVendorProfile,
-  createOwnerProfile
+  createOwnerProfile,
+  updateUser,
+  updatePassword
 };

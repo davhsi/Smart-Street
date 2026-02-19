@@ -106,16 +106,18 @@ export default function MapContainerFullscreen({
       style={containerStyle}
     >
       {showFullscreenButton && (
+
         <button
           type="button"
           onClick={() => {
             if (controlledOnToggleFullscreen) controlledOnToggleFullscreen(!isFullscreen);
             else toggleFullscreen();
           }}
-          className="absolute top-4 right-4 z-[2000] bg-white rounded-lg p-2 shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+
+          className="absolute top-24 right-4 z-[2000] bg-white rounded-lg p-3 shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors w-14 h-14 flex items-center justify-center"
           title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
         >
-          {isFullscreen ? <XMarkIcon className="h-5 w-5 text-slate-600" /> : <ArrowsPointingOutIcon className="h-5 w-5 text-slate-600" />}
+          {isFullscreen ? <XMarkIcon className="h-8 w-8 text-slate-600" /> : <ArrowsPointingOutIcon className="h-8 w-8 text-slate-600" />}
         </button>
       )}
 

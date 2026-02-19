@@ -1,11 +1,13 @@
-import { 
-  UserGroupIcon, 
-  MapPinIcon, 
-  TicketIcon, 
-  ClockIcon 
+import {
+  UserGroupIcon,
+  MapPinIcon,
+  TicketIcon,
+  ClockIcon
 } from "@heroicons/react/24/outline";
+import { useTranslation } from "react-i18next";
 
 export default function AdminStatsCards({ stats, loading }) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -20,7 +22,7 @@ export default function AdminStatsCards({ stats, loading }) {
 
   const cards = [
     {
-      title: "Total Vendors",
+      title: t("total_vendors"),
       value: stats.total_vendors,
       icon: UserGroupIcon,
       color: "bg-blue-500",
@@ -28,16 +30,16 @@ export default function AdminStatsCards({ stats, loading }) {
       text: "text-blue-600 dark:text-blue-400"
     },
     {
-      title: "Active Permits",
+      title: t("active_permits"),
       value: stats.active_permits,
-      subValue: `/ ${stats.total_permits} Total`,
+      subValue: `/ ${stats.total_permits} ${t("total")}`,
       icon: TicketIcon,
       color: "bg-emerald-500",
       bg: "bg-emerald-50 dark:bg-emerald-900/20",
       text: "text-emerald-600 dark:text-emerald-400"
     },
     {
-      title: "Owner Spaces",
+      title: t("owner_spaces"),
       value: stats.total_spaces,
       icon: MapPinIcon,
       color: "bg-purple-500",
@@ -45,7 +47,7 @@ export default function AdminStatsCards({ stats, loading }) {
       text: "text-purple-600 dark:text-purple-400"
     },
     {
-      title: "Pending Requests",
+      title: t("pending_requests_label"),
       value: stats.pending_requests,
       icon: ClockIcon,
       color: "bg-amber-500",
@@ -57,26 +59,27 @@ export default function AdminStatsCards({ stats, loading }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {cards.map((card, idx) => (
-        <div 
-          key={idx} 
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-all"
+
+        <div
+          key={idx}
+          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8 shadow-sm hover:shadow-md transition-all"
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+              <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
                 {card.title}
               </p>
-              <div className="mt-1 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-slate-900 dark:text-white">
+              <div className="flex items-baseline gap-3">
+                <span className="text-4xl font-extrabold text-slate-900 dark:text-white">
                   {card.value}
                 </span>
                 {card.subValue && (
-                  <span className="text-xs text-slate-400">{card.subValue}</span>
+                  <span className="text-sm font-medium text-slate-400 transform translate-y-[-2px]">{card.subValue}</span>
                 )}
               </div>
             </div>
-            <div className={`p-2 rounded-lg ${card.bg}`}>
-              <card.icon className={`w-6 h-6 ${card.text}`} />
+            <div className={`p-4 rounded-xl ${card.bg}`}>
+              <card.icon className={`w-8 h-8 ${card.text}`} />
             </div>
           </div>
         </div>

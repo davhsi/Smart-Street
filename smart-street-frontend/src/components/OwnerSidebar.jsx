@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronRightIcon, ChevronLeftIcon, PlusCircleIcon, ListBulletIcon } from "@heroicons/react/24/outline";
 
 export default function OwnerSidebar({
@@ -15,6 +16,7 @@ export default function OwnerSidebar({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState("list"); // "list", "create"
+  const { t } = useTranslation();
 
   return (
     <div
@@ -57,8 +59,8 @@ export default function OwnerSidebar({
                 }`}
             >
               <ListBulletIcon className="w-6 h-6" />
-              <span className="hidden sm:inline">My Spaces</span>
-              <span className="sm:hidden">Spaces</span>
+              <span className="hidden sm:inline">{t("my_spaces")}</span>
+              <span className="sm:hidden">{t("spaces")}</span>
             </button>
             <button
               onClick={() => setActiveTab("create")}
@@ -66,8 +68,8 @@ export default function OwnerSidebar({
                 }`}
             >
               <PlusCircleIcon className="w-6 h-6" />
-              <span className="hidden sm:inline">Create New</span>
-              <span className="sm:hidden">Create</span>
+              <span className="hidden sm:inline">{t("create_new")}</span>
+              <span className="sm:hidden">{t("create")}</span>
             </button>
           </div>
 
@@ -78,21 +80,21 @@ export default function OwnerSidebar({
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">Your Spaces</h2>
-                    <p className="text-base text-slate-500 dark:text-slate-400">Manage your locations</p>
+                    <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">{t("your_spaces")}</h2>
+                    <p className="text-base text-slate-500 dark:text-slate-400">{t("manage_locations")}</p>
                   </div>
                   <button onClick={fetchSpaces} disabled={loading} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
-                    Refresh
+                    {t("refresh")}
                   </button>
                 </div>
 
                 {loading ? (
-                  <p className="text-sm text-slate-400 italic">Loading...</p>
+                  <p className="text-sm text-slate-400 italic">{t("loading_text")}</p>
                 ) : spaces.length === 0 ? (
                   <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-lg text-center">
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">You haven't created any spaces yet.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{t("no_spaces_created")}</p>
                     <button onClick={() => setActiveTab("create")} className="text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline">
-                      Create your first space
+                      {t("create_first_space")}
                     </button>
                   </div>
                 ) : (
@@ -116,7 +118,7 @@ export default function OwnerSidebar({
                         <p className="text-sm text-slate-600 dark:text-slate-400 truncate font-medium">{space.address}</p>
                         <div className="flex items-center gap-2 mt-3">
                           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Active Space</span>
+                          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{t("active_space")}</span>
                         </div>
                       </div>
                     ))}
@@ -125,7 +127,7 @@ export default function OwnerSidebar({
 
                 {spaces.length > 0 && (
                   <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-2.5 rounded text-xs text-blue-700 dark:text-blue-300 font-medium flex items-center gap-2">
-                    <span>💡</span> Click a space card to center the map on it.
+                    <span>💡</span> {t("tip_click_space")}
                   </div>
                 )}
               </div>
@@ -135,13 +137,13 @@ export default function OwnerSidebar({
             {activeTab === "create" && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">Create Space</h2>
-                  <p className="text-base text-slate-500 dark:text-slate-400">Define a new zone for vendors</p>
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">{t("create_space")}</h2>
+                  <p className="text-base text-slate-500 dark:text-slate-400">{t("define_zone")}</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-1">Space Name</label>
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-1">{t("space_name")}</label>
                     <input
                       type="text"
                       value={form.spaceName}
@@ -152,7 +154,7 @@ export default function OwnerSidebar({
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-1">Address</label>
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-1">{t("address")}</label>
                     <input
                       type="text"
                       value={form.address}
@@ -165,12 +167,12 @@ export default function OwnerSidebar({
 
                   <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-2">
-                      Location & Radius {pin && <span className="text-green-600 dark:text-green-400 font-normal ml-1 text-xs bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded">Pin Set ✓</span>}
+                      {t("location_and_radius")} {pin && <span className="text-green-600 dark:text-green-400 font-normal ml-1 text-xs bg-green-100 dark:bg-green-900/30 px-1.5 py-0.5 rounded">{t("pin_set")}</span>}
                     </label>
 
                     {!pin && (
                       <div className="text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/50 p-2.5 rounded mb-3 flex items-start gap-2">
-                        <span>📍</span> Tap on the map to set the space center.
+                        <span>📍</span> {t("tap_map_set_center")}
                       </div>
                     )}
 
@@ -184,7 +186,7 @@ export default function OwnerSidebar({
                         className="flex-1 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-shadow"
                         placeholder="Radius (m)"
                       />
-                      <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">meters</span>
+                      <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t("meters")}</span>
                     </div>
                   </div>
 
@@ -193,7 +195,7 @@ export default function OwnerSidebar({
                     disabled={saving}
                     className="w-full rounded-lg bg-blue-600 py-3 text-sm font-bold text-white shadow-md hover:bg-blue-700 disabled:opacity-50 transition-all active:scale-[0.98]"
                   >
-                    {saving ? "Creating Space..." : "Create Space"}
+                    {saving ? t("creating_space") : t("create_space")}
                   </button>
                 </form>
               </div>

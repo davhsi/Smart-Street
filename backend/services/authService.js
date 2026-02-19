@@ -145,8 +145,37 @@ const me = async userId => {
   return { user: toClientUser(user) };
 };
 
+
+const updateProfile = async (userId, payload) => {
+  const { name } = payload;
+  const user = await userRepository.updateUser(userId, { name });
+  return toClientUser(user);
+};
+
+const changePassword = async (userId, { currentPassword, newPassword }) => {
+  const user = await userRepository.findById(userId);
+  if (!user) {
+    const err = new Error("User not found");
+    err.status = 404;
+    throw err;
+  }
+
+  const passwordOk = await bcrypt.compare(currentPassword, user.password_hash);
+  if (!passwordOk) {
+    const err = new Error("Current password incorrect");
+    err.status = 401;
+    throw err;
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await userRepository.updatePassword(userId, passwordHash);
+  return { message: "Password updated successfully" };
+};
+
 module.exports = {
   register,
   login,
-  me
+  me,
+  updateProfile,
+  changePassword
 };

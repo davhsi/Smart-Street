@@ -1,5 +1,6 @@
 import React from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { useTranslation } from "react-i18next";
 
 export default function VendorActionBar({
   intent,
@@ -12,6 +13,7 @@ export default function VendorActionBar({
   saving,
   className = ""
 }) {
+  const { t } = useTranslation();
   const isOwnerDefined = intent === "OWNER_DEFINED";
   const isRequestNew = intent === "REQUEST_NEW";
 
@@ -35,7 +37,7 @@ export default function VendorActionBar({
 
         <div className="flex-1 w-full grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-base font-bold text-slate-700 dark:text-slate-300 mb-1">Start Time</label>
+            <label className="block text-base font-bold text-slate-700 dark:text-slate-300 mb-1">{t('start_time')}</label>
             <input
               type="datetime-local"
               value={form.startTime}
@@ -45,7 +47,7 @@ export default function VendorActionBar({
             />
           </div>
           <div>
-            <label className="block text-base font-bold text-slate-700 dark:text-slate-300 mb-1">End Time</label>
+            <label className="block text-base font-bold text-slate-700 dark:text-slate-300 mb-1">{t('end_time')}</label>
             <input
               type="datetime-local"
               value={form.endTime}
@@ -59,14 +61,14 @@ export default function VendorActionBar({
         {/* Radius Input */}
         <div className="w-full md:w-32 lg:w-48">
           <label className="block text-base font-bold text-slate-700 dark:text-slate-300 mb-1">
-            Radius (m) <span className="md:hidden lg:inline">{isOwnerDefined && <span className="text-slate-400 font-normal">(Fixed)</span>}</span>
+            {t('radius_m')} <span className="md:hidden lg:inline">{isOwnerDefined && <span className="text-slate-400 font-normal">{t('fixed_label')}</span>}</span>
           </label>
           <input
             type="number"
             value={isOwnerDefined ? ownerDefinedRadius : requestedRadius}
             onChange={(e) => setRequestedRadius(e.target.value)}
             disabled={isOwnerDefined}
-            placeholder="e.g. 5"
+            placeholder={t('radius_placeholder')}
             className={`w-full text-lg rounded-lg border-slate-200 dark:border-slate-700 py-2 px-3 ${isOwnerDefined ? "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-500 cursor-not-allowed" : "bg-white dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500"
               }`}
           />
@@ -84,11 +86,11 @@ export default function VendorActionBar({
             }`}
         >
           {saving ? (
-            "Submitting..."
+            t('submitting')
           ) : (
             <>
               <PaperAirplaneIcon className="w-4 h-4" />
-              <span>Submit Request</span>
+              <span>{t('submit_request')}</span>
             </>
           )}
         </button>

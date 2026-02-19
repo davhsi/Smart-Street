@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Circle, useMapEvents, Popup } from "react-leaflet";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import api from "../services/api";
@@ -9,8 +10,11 @@ import MapContainerFullscreen from "../components/MapContainerFullscreen.jsx";
 import NotificationBell from "../components/NotificationBell.jsx";
 import NotificationModal from "../components/NotificationModal.jsx";
 import MapSearchControl from "../components/MapSearchControl.jsx";
+
 import ThemeToggle from "../components/ThemeToggle.jsx";
+import LanguageSwitcher from "../components/LanguageSwitcher.jsx";
 import OwnerSidebar from "../components/OwnerSidebar.jsx";
+import UserDropdown from "../components/UserDropdown.jsx";
 
 const defaultCenter = [11.3410, 77.7172];
 
@@ -24,6 +28,7 @@ const MapClickCatcher = ({ onClick }) => {
 export default function OwnerDashboard() {
   const { user, logout } = useAuth();
   const { success: showSuccess, error: showError } = useToast();
+  const { t } = useTranslation();
   const [spaces, setSpaces] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -80,38 +85,35 @@ export default function OwnerDashboard() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative">
+
+
+      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[3000]">
         <div className="px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-center min-h-[80px]">
           {/* Centered Title */}
           <div className="text-center z-10">
             <Link to="/" className="block">
-              <p className="text-xs md:text-sm text-blue-700 dark:text-blue-400 font-bold tracking-[0.25em] hover:opacity-80 transition-opacity mb-1">SMART STREET</p>
+              <p className="text-xs md:text-sm text-blue-700 dark:text-blue-400 font-bold tracking-[0.25em] hover:opacity-80 transition-opacity mb-1">{t("smart_street")}</p>
             </Link>
-            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">Owner Workspace</h1>
-            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">Create spaces (Pin + Radius)</p>
+            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">{t("owner_workspace")}</h1>
+            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">{t("create_spaces_hint")}</p>
           </div>
 
           {/* Right Controls - Absolute */}
           <div className="flex items-center gap-3 md:gap-5 absolute right-4 md:right-8 top-4 md:top-1/2 md:-translate-y-1/2">
             <div className="transform scale-110">
+              <LanguageSwitcher />
+            </div>
+            <div className="transform scale-110">
               <ThemeToggle />
             </div>
             <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+
 
             <div className="transform scale-110">
               <NotificationBell onClick={() => setShowNotificationModal(true)} />
             </div>
 
-            <span className="font-bold text-base md:text-lg text-slate-700 dark:text-slate-200 truncate max-w-[120px] md:max-w-none">
-              {user?.name}
-            </span>
-
-            <button
-              onClick={logout}
-              className="rounded-xl bg-slate-800 dark:bg-slate-700 px-5 py-2.5 text-sm md:text-base font-bold text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95"
-            >
-              Logout
-            </button>
+            <UserDropdown />
           </div>
         </div>
       </header>
@@ -142,7 +144,7 @@ export default function OwnerDashboard() {
           {pin && (
             <>
               <Marker position={pin}>
-                <Popup>Space center</Popup>
+                <Popup>{t("space_center")}</Popup>
               </Marker>
               {form.allowedRadius && Number(form.allowedRadius) > 0 && (
                 <Circle
@@ -150,7 +152,7 @@ export default function OwnerDashboard() {
                   radius={Number(form.allowedRadius)}
                   pathOptions={{ color: "#2563eb", fillOpacity: 0.2, weight: 2 }}
                 >
-                  <Popup>Space radius: {form.allowedRadius}m</Popup>
+                  <Popup>{t("space_radius", { radius: form.allowedRadius })}</Popup>
                 </Circle>
               )}
             </>

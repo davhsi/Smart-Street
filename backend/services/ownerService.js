@@ -1,6 +1,9 @@
 const ownerRepository = require("../repositories/ownerRepository");
 const spaceRepository = require("../repositories/spaceRepository");
 const requestRepository = require("../repositories/requestRepository");
+const notificationService = require("../services/notificationService");
+const adminRepository = require("../repositories/adminRepository");
+const userRepository = require("../repositories/userRepository");
 
 const ensureOwnerProfile = async userId => {
   const owner = await ownerRepository.findByUserId(userId);
@@ -42,6 +45,20 @@ const createSpace = async (userId, payload) => {
     lng: Number(lng),
     allowedRadius: Number(allowedRadius)
   });
+
+  // Notify all admin users about the new space
+  try {
+    const user = await userRepository.findById(userId);
+    const ownerName = user?.name || owner.owner_name || "Unknown";
+    const adminUserIds = await adminRepository.getAdminUserIds();
+    await Promise.all(
+      adminUserIds.map(adminId =>
+        notificationService.createNewOwnerSpaceNotification(adminId, spaceName || "Unnamed", ownerName)
+      )
+    );
+  } catch (notifErr) {
+    console.error("Failed to send admin notifications:", notifErr);
+  }
 
   return { space };
 };

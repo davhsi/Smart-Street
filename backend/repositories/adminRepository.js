@@ -93,7 +93,7 @@ const getRequestForUpdate = async (client, requestId) => {
 
 const checkApprovedConflictsTx = async (client, { spaceId, lat, lng, maxWidth, maxLength, startTime, endTime, requestId }) => {
   const requestRadius = radiusFromDims(maxWidth, maxLength);
-  
+
   const result = await client.query(
     `
     WITH req_point AS (
@@ -331,6 +331,13 @@ const listOwners = async () => {
   return result.rows;
 };
 
+const getAdminUserIds = async () => {
+  const result = await db.query(
+    `SELECT user_id FROM users WHERE role = 'ADMIN'`
+  );
+  return result.rows.map(r => r.user_id);
+};
+
 module.exports = {
   listPendingRequests,
   listAllRequests,
@@ -341,6 +348,7 @@ module.exports = {
   createPermitTx,
   listPermits,
   getVendorUserId,
+  getAdminUserIds,
   getDashboardStats,
   listVendors,
   listOwners

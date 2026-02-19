@@ -3,7 +3,9 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import VendorDashboard from "./pages/VendorDashboard.jsx";
 import OwnerDashboard from "./pages/OwnerDashboard.jsx";
+
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import Profile from "./pages/Profile.jsx";
 import PublicMap from "./pages/PublicMap.jsx";
 import VerifyPermit from "./pages/VerifyPermit.jsx";
 import Unauthorized from "./pages/Unauthorized.jsx";
@@ -56,12 +58,23 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/admin"
           element={
             <ProtectedRoute roles={["ADMIN"]}>
               <PageTransition>
                 <AdminDashboard />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute roles={["VENDOR", "OWNER", "ADMIN"]}>
+              <PageTransition>
+                <Profile />
               </PageTransition>
             </ProtectedRoute>
           }

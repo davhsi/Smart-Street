@@ -9,4 +9,6 @@ export const NOTIFICATION_STYLES = {
   REQUEST_REJECTED: "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30",
   PERMIT_ISSUED: "text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30",
   PERMIT_REVOKED: "text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30",
+  NEW_VENDOR_REQUEST: "text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30",
+  NEW_OWNER_SPACE: "text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30",
 };

@@ -61,30 +61,30 @@ export default function VendorSidebar({
           <div className="flex items-center border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-1 shrink-0">
             <button
               onClick={() => setActiveTab("new")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-lg font-semibold rounded-lg transition-all ${activeTab === "new" ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              className={`flex-1 flex items-center justify-center gap-1 py-3 text-base font-semibold rounded-lg transition-all whitespace-nowrap ${activeTab === "new" ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
             >
-              <PlusCircleIcon className="w-6 h-6" />
-              <span className="hidden sm:inline">{t('new', { defaultValue: 'New' })}</span>
-              <span className="sm:hidden">New</span>
+              <PlusCircleIcon className="w-5 h-5 shrink-0" />
+              <span className="hidden sm:inline">{t('tab_new')}</span>
+              <span className="sm:hidden">{t('tab_new')}</span>
             </button>
             <button
               onClick={() => setActiveTab("history")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-lg font-semibold rounded-lg transition-all ${activeTab === "history" ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              className={`flex-1 flex items-center justify-center gap-1 py-3 text-base font-semibold rounded-lg transition-all whitespace-nowrap ${activeTab === "history" ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
             >
-              <ClockIcon className="w-6 h-6" />
-              <span className="hidden sm:inline">{t('history', { defaultValue: 'History' })}</span>
-              <span className="sm:hidden">History</span>
+              <ClockIcon className="w-5 h-5 shrink-0" />
+              <span className="hidden sm:inline">{t('tab_history')}</span>
+              <span className="sm:hidden">{t('tab_history')}</span>
             </button>
             <button
               onClick={() => setActiveTab("permits")}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-lg font-semibold rounded-lg transition-all ${activeTab === "permits" ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              className={`flex-1 flex items-center justify-center gap-1 py-3 text-base font-semibold rounded-lg transition-all whitespace-nowrap ${activeTab === "permits" ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-200 dark:border-slate-700" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
             >
-              <DocumentCheckIcon className="w-6 h-6" />
-              <span className="hidden sm:inline">{t('permits', { defaultValue: 'Permits' })}</span>
-              <span className="sm:hidden">Permits</span>
+              <DocumentCheckIcon className="w-5 h-5 shrink-0" />
+              <span className="hidden sm:inline">{t('tab_permits')}</span>
+              <span className="sm:hidden">{t('tab_permits')}</span>
             </button>
           </div>
 
@@ -95,33 +95,33 @@ export default function VendorSidebar({
               <>
                 {/* Header */}
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">New Request</h2>
-                  <p className="text-base text-slate-500 dark:text-slate-400">Select intent & space</p>
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">{t('new_request_title')}</h2>
+                  <p className="text-base text-slate-500 dark:text-slate-400">{t('new_request_subtitle')}</p>
                 </div>
 
                 {/* 1. Intent Selection */}
                 <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">Request Type</h3>
+                  <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">{t('request_type')}</h3>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setIntent("OWNER_DEFINED")}
-                      className={`py-3 px-2 text-lg font-medium rounded-lg border transition-all ${intent === "OWNER_DEFINED"
+                      className={`py-3 px-2 text-sm font-medium rounded-lg border transition-all leading-tight text-center ${intent === "OWNER_DEFINED"
                         ? "bg-blue-600 text-white border-blue-600 shadow-md"
                         : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
                         }`}
                     >
-                      Owner Location
+                      {t('owner_location')}
                     </button>
                     <button
                       type="button"
                       onClick={() => setIntent("REQUEST_NEW")}
-                      className={`py-3 px-2 text-lg font-medium rounded-lg border transition-all ${intent === "REQUEST_NEW"
+                      className={`py-3 px-2 text-sm font-medium rounded-lg border transition-all leading-tight text-center ${intent === "REQUEST_NEW"
                         ? "bg-purple-600 text-white border-purple-600 shadow-md"
                         : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
                         }`}
                     >
-                      New Request
+                      {t('new_request_button')}
                     </button>
                   </div>
                 </div>
@@ -132,18 +132,18 @@ export default function VendorSidebar({
                 <div className="mt-4">
                   {!intent && (
                     <div className="text-sm text-slate-500 italic text-center py-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                      Please select a request type above to proceed.
+                      {t('select_request_type_hint')}
                     </div>
                   )}
 
                   {intent === "OWNER_DEFINED" && (
                     <div className="space-y-2 animate-fadeIn">
-                      <h3 className="text-base font-semibold text-slate-700 dark:text-slate-300">Select Space</h3>
+                      <h3 className="text-base font-semibold text-slate-700 dark:text-slate-300">{t('select_space')}</h3>
                       {loading ? (
-                        <div className="text-xs text-slate-400 italic">Loading spaces...</div>
+                        <div className="text-xs text-slate-400 italic">{t('loading_spaces')}</div>
                       ) : spaces.length === 0 ? (
                         <div className="text-xs text-red-500 bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-100 dark:border-red-900/30">
-                          No spaces available.
+                          {t('no_spaces_available')}
                         </div>
                       ) : (
                         <div className="space-y-2">
@@ -151,7 +151,7 @@ export default function VendorSidebar({
                             options={spaces.map(s => ({ value: s.space_id, label: s.space_name }))}
                             value={selectedSpaceId}
                             onChange={(val) => setSelectedSpaceId(val)}
-                            placeholder="Type to search spaces..."
+                            placeholder={t('search_spaces_placeholder')}
                             className="w-full"
                           />
                         </div>
@@ -161,13 +161,13 @@ export default function VendorSidebar({
 
                   {intent === "REQUEST_NEW" && (
                     <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-100 dark:border-purple-800 animate-fadeIn">
-                      <h3 className="text-base font-bold text-purple-900 dark:text-purple-300 mb-2">Select Location</h3>
+                      <h3 className="text-base font-bold text-purple-900 dark:text-purple-300 mb-2">{t('select_location')}</h3>
                       <p className="text-sm text-purple-800 dark:text-purple-200 mb-3">
-                        <span className="font-semibold">Tap on the map</span> to pin the location you want to request.
+                        <span className="font-semibold">{t('tap_on_map')}</span> {t('tap_map_hint')}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-purple-700 dark:text-purple-400">
                         <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
-                        Map interaction enabled
+                        {t('map_interaction_enabled')}
                       </div>
                     </div>
                   )}
@@ -179,12 +179,12 @@ export default function VendorSidebar({
             {activeTab === "history" && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">Request History</h2>
-                  <p className="text-base text-slate-500 dark:text-slate-400">Track your submissions</p>
+                  <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">{t('request_history_title')}</h2>
+                  <p className="text-base text-slate-500 dark:text-slate-400">{t('request_history_subtitle')}</p>
                 </div>
                 <div className="space-y-3">
                   {requests.length === 0 ? (
-                    <p className="text-base text-slate-400 italic">No requests found.</p>
+                    <p className="text-base text-slate-400 italic">{t('no_requests_found')}</p>
                   ) : (
                     requests.map(r => (
                       <div
@@ -199,10 +199,10 @@ export default function VendorSidebar({
                               }`}>{r.status}</span>
                           </div>
                         </div>
-                        <p className="text-slate-600 dark:text-slate-400 truncate text-base font-medium">{r.space_name || "Custom Location"}</p>
+                        <p className="text-slate-600 dark:text-slate-400 truncate text-base font-medium">{r.space_name || t('custom_location')}</p>
                         <div className="flex justify-between items-center mt-3">
                           <p className="text-sm text-slate-400">{new Date(r.submitted_at).toLocaleDateString()}</p>
-                          <span className="text-sm text-blue-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity">View Details →</span>
+                          <span className="text-sm text-blue-500 font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t('view_details')} →</span>
                         </div>
                       </div>
                     ))
@@ -215,12 +215,12 @@ export default function VendorSidebar({
             {activeTab === "permits" && (
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-base font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">My Permits</h2>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Valid Access Passes</p>
+                  <h2 className="text-base font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">{t('my_permits_title')}</h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t('my_permits_subtitle')}</p>
                 </div>
                 <div className="space-y-2">
                   {permits.length === 0 ? (
-                    <p className="text-sm text-slate-400 italic">No active permits.</p>
+                    <p className="text-sm text-slate-400 italic">{t('no_active_permits')}</p>
                   ) : (
                     permits.map((p, index) => (
                       <div key={p.permit_id} className="p-3 bg-green-50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/30 rounded-lg text-sm">
@@ -232,12 +232,12 @@ export default function VendorSidebar({
                             onClick={() => onOpenQr && onOpenQr(p)}
                             className="text-sm bg-green-200 dark:bg-green-900 text-green-900 dark:text-green-100 px-4 py-2 rounded-lg hover:bg-green-300 dark:hover:bg-green-800 transition-colors font-bold shadow-sm"
                           >
-                            View Permit
+                            {t('view_permit')}
                           </button>
                         </div>
                         <div className="flex gap-4 mt-2 text-xs font-semibold text-green-700 dark:text-green-400">
-                          <span>Valid: {new Date(p.valid_from).toLocaleDateString()}</span>
-                          <span>To: {new Date(p.valid_to).toLocaleDateString()}</span>
+                          <span>{t('valid_from')}: {new Date(p.valid_from).toLocaleDateString()}</span>
+                          <span>{t('valid_to')}: {new Date(p.valid_to).toLocaleDateString()}</span>
                         </div>
                       </div>
                     ))

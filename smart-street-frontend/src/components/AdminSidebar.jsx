@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronRightIcon, ChevronLeftIcon, InboxIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
 
 export default function AdminSidebar({
@@ -13,6 +14,7 @@ export default function AdminSidebar({
   className = ""
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <div
@@ -55,8 +57,8 @@ export default function AdminSidebar({
                 }`}
             >
               <InboxIcon className="w-6 h-6" />
-              <span className="hidden sm:inline">Pending</span>
-              <span className="sm:hidden">Tasks</span>
+              <span className="hidden sm:inline">{t("pending")}</span>
+              <span className="sm:hidden">{t("tasks")}</span>
             </button>
             <button
               onClick={() => setViewMode("history")}
@@ -64,8 +66,8 @@ export default function AdminSidebar({
                 }`}
             >
               <ArchiveBoxIcon className="w-6 h-6" />
-              <span className="hidden sm:inline">History</span>
-              <span className="sm:hidden">Archive</span>
+              <span className="hidden sm:inline">{t("history")}</span>
+              <span className="sm:hidden">{t("archive")}</span>
             </button>
           </div>
 
@@ -73,10 +75,10 @@ export default function AdminSidebar({
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-base font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-1">
-                  {viewMode === "pending" ? "Tasks" : "Archive"}
+                  {viewMode === "pending" ? t("tasks") : t("archive")}
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                  {viewMode === "pending" ? "Incoming requests" : "Past decisions"}
+                  {viewMode === "pending" ? t("incoming_requests") : t("past_decisions")}
                 </p>
               </div>
               <button
@@ -84,15 +86,15 @@ export default function AdminSidebar({
                 disabled={loading}
                 className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 disabled:opacity-50 font-semibold"
               >
-                {loading ? "..." : "Refresh"}
+                {loading ? "..." : t("refresh")}
               </button>
             </div>
 
             {loading ? (
-              <p className="text-xs text-slate-400 italic">Loading requests...</p>
+              <p className="text-xs text-slate-400 italic">{t("loading_requests")}</p>
             ) : requests.length === 0 ? (
               <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-lg text-center">
-                <p className="text-xs text-slate-500 dark:text-slate-400">No {viewMode} requests found.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t("no_requests_found", { mode: viewMode })}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -114,10 +116,10 @@ export default function AdminSidebar({
                       </span>
                     </div>
                     <p className="text-sm text-slate-800 dark:text-slate-200 font-medium truncate">
-                      {request.space_name || "Custom Location"}
+                      {request.space_name || t("custom_location")}
                     </p>
                     <div className="flex justify-between items-center mt-2 text-xs text-slate-500 dark:text-slate-400">
-                      <span>by <span className="font-semibold">{request.vendor_name}</span></span>
+                      <span>{t("by")} <span className="font-semibold">{request.vendor_name}</span></span>
                       <span>{new Date(request.submitted_at).toLocaleDateString()}</span>
                     </div>
                   </div>
@@ -126,7 +128,8 @@ export default function AdminSidebar({
             )}
           </div>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }

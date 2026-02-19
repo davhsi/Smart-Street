@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
 export default function AdminVendorList({ vendors, loading }) {
   const [search, setSearch] = useState("");
+  const { t } = useTranslation();
 
   const filtered = vendors?.filter(v =>
     v.vendor_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -27,87 +29,89 @@ export default function AdminVendorList({ vendors, loading }) {
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-full">
+
       {/* Header */}
-      <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-800 dark:text-white">Registered Vendors</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Total {vendors?.length || 0} vendors
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white">{t("registered_vendors")}</h2>
+          <p className="text-lg text-slate-500 dark:text-slate-400">
+            {t("total_count", { count: vendors?.length || 0 })} {t("vendors").toLowerCase()}
           </p>
         </div>
-        <div className="relative w-full sm:w-64">
-          <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+        <div className="relative w-full sm:w-80">
+          <MagnifyingGlassIcon className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
           <input
             type="text"
-            placeholder="Search vendors..."
+            placeholder={t("search_vendors")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
+            className="w-full pl-12 pr-4 py-3 text-base rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors"
           />
         </div>
       </div>
 
       {/* Table */}
+
       <div className="overflow-x-auto flex-1">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-slate-50 dark:bg-slate-800/50 text-sm uppercase text-slate-500 dark:text-slate-400 font-semibold sticky top-0">
+          <thead className="bg-slate-50 dark:bg-slate-800/50 text-lg uppercase text-slate-500 dark:text-slate-400 font-bold sticky top-0">
             <tr>
-              <th className="px-6 py-4">Vendor</th>
-              <th className="px-6 py-4">Contact</th>
-              <th className="px-6 py-4">Statistics</th>
-              <th className="px-6 py-4">Joined</th>
-              <th className="px-6 py-4">Status</th>
+              <th className="px-8 py-5">{t("vendor_label")}</th>
+              <th className="px-8 py-5">{t("contact")}</th>
+              <th className="px-8 py-5 text-center">{t("statistics")}</th>
+              <th className="px-8 py-5">{t("joined")}</th>
+              <th className="px-8 py-5">{t("status")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan="5" className="px-6 py-8 text-center text-slate-500 dark:text-slate-400 italic">
-                  No vendors found matching "{search}"
+                <td colSpan="5" className="px-8 py-10 text-center text-lg text-slate-500 dark:text-slate-400 italic">
+                  {t("no_vendors_match", { search })}
                 </td>
               </tr>
             ) : (
               filtered.map((vendor) => (
                 <tr key={vendor.vendor_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <UserCircleIcon className="w-6 h-6" />
+                  <td className="px-8 py-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <UserCircleIcon className="w-8 h-8" />
                       </div>
                       <div>
-                        <p className="font-bold text-lg text-slate-900 dark:text-white">{vendor.business_name}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{vendor.vendor_name}</p>
+                        <p className="font-bold text-xl text-slate-900 dark:text-white">{vendor.business_name}</p>
+                        <p className="text-base text-slate-500 dark:text-slate-400 font-medium">{vendor.vendor_name}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="text-base space-y-1">
+                  <td className="px-8 py-6">
+                    <div className="text-lg space-y-1">
                       <p className="text-slate-700 dark:text-slate-300 font-medium">{vendor.email}</p>
-                      <p className="text-sm text-slate-500">{vendor.phone_number}</p>
+                      <p className="text-base text-slate-500">{vendor.phone_number}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-6">
+                  <td className="px-8 py-6">
+                    <div className="flex items-center justify-center gap-8">
                       <div className="text-center">
-                        <span className="block text-lg font-bold text-slate-800 dark:text-slate-200">{vendor.active_permits}</span>
-                        <span className="text-xs text-slate-500 uppercase font-bold tracking-wide">Permits</span>
+                        <span className="block text-2xl font-bold text-slate-800 dark:text-slate-200">{vendor.active_permits}</span>
+                        <span className="text-xs text-slate-500 uppercase font-bold tracking-wide">{t("permits")}</span>
                       </div>
-                      <div className="h-10 w-px bg-slate-200 dark:bg-slate-700"></div>
+                      <div className="h-12 w-px bg-slate-200 dark:bg-slate-700"></div>
                       <div className="text-center">
-                        <span className="block text-lg font-bold text-slate-800 dark:text-slate-200">{vendor.total_requests}</span>
-                        <span className="text-xs text-slate-500 uppercase font-bold tracking-wide">Requests</span>
+                        <span className="block text-2xl font-bold text-slate-800 dark:text-slate-200">{vendor.total_requests}</span>
+                        <span className="text-xs text-slate-500 uppercase font-bold tracking-wide">{t("requests")}</span>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="text-base text-slate-600 dark:text-slate-400 font-medium">
+                  <td className="px-8 py-6">
+                    <span className="text-lg text-slate-600 dark:text-slate-400 font-medium">
                       {new Date(vendor.created_at).toLocaleDateString()}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                      Verified
+                  <td className="px-8 py-6">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-base font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                      {t("verified_label")}
                     </span>
                   </td>
                 </tr>

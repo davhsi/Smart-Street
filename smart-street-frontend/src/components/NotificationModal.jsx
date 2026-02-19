@@ -1,14 +1,16 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { motion } from "framer-motion";
-import { XMarkIcon, CheckCircleIcon, XCircleIcon, TicketIcon, BellIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, CheckCircleIcon, XCircleIcon, TicketIcon, BellIcon, InboxIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const notificationIcons = {
   REQUEST_APPROVED: CheckCircleIcon,
   REQUEST_REJECTED: XCircleIcon,
   PERMIT_ISSUED: TicketIcon,
-  PERMIT_REVOKED: XCircleIcon
+  PERMIT_REVOKED: XCircleIcon,
+  NEW_VENDOR_REQUEST: InboxIcon,
+  NEW_OWNER_SPACE: MapPinIcon
 };
 
 import { NOTIFICATION_STYLES } from "../utils/constants.js";
@@ -41,107 +43,99 @@ export default function NotificationModal({ isOpen, onClose }) {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-black/10 dark:bg-black/30 backdrop-blur-sm" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel
+                as={motion.div}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 p-6 text-left align-middle shadow-xl border border-slate-200 dark:border-slate-700"
               >
-                 {/* 
-                   Note: To use true spring physics we would typically replace Transition.Child with AnimatePresence
-                   but Headless UI integrates tightly. 
-                   For now, we stick to the standard Headless UI Transition which is robust. 
-                   If we really want spring, we can just use the CSS classes or a library like headlessui-framer-motion.
-                   However, let's try to pass `as={motion.div}` to the panel with spring config. 
-                 */}
-                <Dialog.Panel 
-                  as={motion.div}
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                  className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <Dialog.Title as="h3" className="text-lg font-semibold text-slate-900">
-                      Notifications
-                    </Dialog.Title>
+                <div className="flex items-center justify-between mb-4">
+                  <Dialog.Title as="h3" className="text-lg font-semibold text-slate-900 dark:text-white">
+                    Notifications
+                  </Dialog.Title>
+                  <button
+                    onClick={onClose}
+                    className="rounded-lg p-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    <XMarkIcon className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                  </button>
+                </div>
+
+                {unreadCount > 0 && (
+                  <div className="mb-4">
                     <button
-                      onClick={onClose}
-                      className="rounded-lg p-1 hover:bg-slate-100 transition-colors"
+                      onClick={handleMarkAllAsRead}
+                      className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                     >
-                      <XMarkIcon className="h-5 w-5 text-slate-500" />
+                      Mark all as read
                     </button>
                   </div>
+                )}
 
-                  {unreadCount > 0 && (
-                    <div className="mb-4">
-                      <button
-                        onClick={handleMarkAllAsRead}
-                        className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                      >
-                        Mark all as read
-                      </button>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="text-center py-8">
+                      <BellIcon className="h-12 w-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                      <p className="text-sm text-slate-500 dark:text-slate-400">No notifications yet</p>
                     </div>
-                  )}
+                  ) : (
+                    notifications.map((notification) => {
+                      const Icon = notificationIcons[notification.type] || BellIcon;
+                      const colorClass = NOTIFICATION_STYLES[notification.type] || "text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800";
 
-                  <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <div className="text-center py-8">
-                        <BellIcon className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-                        <p className="text-sm text-slate-500">No notifications yet</p>
-                      </div>
-                    ) : (
-                      notifications.map((notification) => {
-                        const Icon = notificationIcons[notification.type] || BellIcon;
-                        const colorClass = NOTIFICATION_STYLES[notification.type] || "text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800";
-
-                        return (
-                          <div
-                            key={notification.notification_id}
-                            className={`p-3 rounded-lg border ${
-                              notification.is_read ? "bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800" : "bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-900/30"
+                      return (
+                        <div
+                          key={notification.notification_id}
+                          className={`p-3 rounded-lg border ${notification.is_read ? "bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800" : "bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-900/30"
                             }`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <div className={`p-2 rounded-lg ${colorClass}`}>
-                                <Icon className="h-5 w-5" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-slate-900 dark:text-slate-200 mb-1">
-                                  {notification.title}
-                                </p>
-                                <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                                  {notification.message}
-                                </p>
-                                <p className="text-xs text-slate-500 dark:text-slate-500">
-                                  {new Date(notification.created_at).toLocaleString()}
-                                </p>
-                              </div>
-                              {!notification.is_read && (
-                                <button
-                                  onClick={() => handleMarkAsRead(notification.notification_id)}
-                                  className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                                >
-                                  Mark read
-                                </button>
-                              )}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={`p-2 rounded-lg ${colorClass}`}>
+                              <Icon className="h-5 w-5" />
                             </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-slate-900 dark:text-slate-200 mb-1">
+                                {notification.title}
+                              </p>
+                              <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                                {notification.message}
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-500">
+                                {new Date(notification.created_at).toLocaleString()}
+                              </p>
+                            </div>
+                            {!notification.is_read && (
+                              <button
+                                onClick={() => handleMarkAsRead(notification.notification_id)}
+                                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+                              >
+                                Mark read
+                              </button>
+                            )}
                           </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
       </Dialog>
     </Transition>

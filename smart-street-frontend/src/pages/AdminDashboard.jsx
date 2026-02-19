@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Circle, Popup } from "react-leaflet";
+import { useTranslation } from "react-i18next";
 import "leaflet/dist/leaflet.css";
 import { QRCodeCanvas } from "qrcode.react";
 import api from "../services/api";
@@ -12,6 +13,8 @@ import NotificationModal from "../components/NotificationModal.jsx";
 import { ConfirmModal } from "../components/Modal.jsx";
 import MapSearchControl from "../components/MapSearchControl.jsx";
 import AdminSidebar from "../components/AdminSidebar.jsx";
+
+
 import AdminRequestDetail from "../components/AdminRequestDetail.jsx";
 import AdminStatsCards from "../components/AdminStatsCards.jsx";
 import AdminVendorList from "../components/AdminVendorList.jsx";
@@ -19,6 +22,8 @@ import AdminOwnerList from "../components/AdminOwnerList.jsx";
 import { ChartBarSquareIcon, MapIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 
 import ThemeToggle from "../components/ThemeToggle.jsx";
+import LanguageSwitcher from "../components/LanguageSwitcher.jsx";
+import UserDropdown from "../components/UserDropdown.jsx";
 
 const defaultCenter = [11.3410, 77.7172];
 
@@ -29,8 +34,9 @@ const radiusFromDims = (maxWidth, maxLength) => {
 import { STATUS_COLORS } from "../utils/constants.js";
 
 export default function AdminDashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout, fetchNotifications } = useAuth();
   const { success: showSuccess, error: showError } = useToast();
+  const { t } = useTranslation();
   const [requests, setRequests] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [remarks, setRemarks] = useState("");
@@ -69,6 +75,13 @@ export default function AdminDashboard() {
     };
 
     fetchStats();
+  }, []);
+
+  // Poll notifications every 30s
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchRequests = async () => {
@@ -179,75 +192,72 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative">
-        <div className="px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-center min-h-[80px]">
+
+
+      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[3000]">
+        <div className="px-4 md:px-6 py-4 flex flex-col items-center gap-3 min-h-[80px] xl:grid xl:grid-cols-[1fr_auto_1fr] xl:items-center">
 
           {/* Left Tabs - Absolute on large desktop, hidden on smaller */}
-          <div className="hidden xl:flex items-center gap-2 absolute left-6 top-1/2 -translate-y-1/2">
+          <div className="hidden xl:flex items-center gap-1 justify-self-start">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all ${activeTab === "overview" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all whitespace-nowrap ${activeTab === "overview" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <ChartBarSquareIcon className="w-5 h-5" />
-              Overview
+              {t("overview")}
             </button>
             <button
               onClick={() => setActiveTab("map")}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all ${activeTab === "map" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all whitespace-nowrap ${activeTab === "map" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <MapIcon className="w-5 h-5" />
-              Map & Requests
+              {t("map_and_requests")}
             </button>
             <button
               onClick={() => setActiveTab("vendors")}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all ${activeTab === "vendors" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all whitespace-nowrap ${activeTab === "vendors" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <UserGroupIcon className="w-5 h-5" />
-              Vendors
+              {t("vendors")}
             </button>
             <button
               onClick={() => setActiveTab("owners")}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all ${activeTab === "owners" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all whitespace-nowrap ${activeTab === "owners" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <UserGroupIcon className="w-5 h-5" />
-              Owners
+              {t("owners")}
             </button>
           </div>
 
           {/* Centered Title */}
-          <div className="text-center z-10 mb-4 md:mb-0">
+          <div className="text-center z-10 mb-4 xl:mb-0 justify-self-center">
             <Link to="/" className="block">
-              <p className="text-xs md:text-sm text-blue-700 dark:text-blue-400 font-bold tracking-[0.25em] hover:opacity-80 transition-opacity mb-1">SMART STREET</p>
+              <p className="text-xs md:text-sm text-blue-700 dark:text-blue-400 font-bold tracking-[0.25em] hover:opacity-80 transition-opacity mb-1">{t("smart_street")}</p>
             </Link>
-            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">Admin console</h1>
-            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">Review requests & issue permits</p>
+            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">{t("admin_console")}</h1>
+            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">{t("review_requests_permits")}</p>
           </div>
 
           {/* Right Controls - Absolute on desktop */}
-          <div className="flex items-center gap-3 md:gap-5 md:absolute md:right-8 md:top-1/2 md:-translate-y-1/2">
+          <div className="flex items-center gap-3 md:gap-5 justify-self-end">
+            <div className="transform scale-110">
+              <LanguageSwitcher />
+            </div>
             <div className="transform scale-110">
               <ThemeToggle />
             </div>
             <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
 
+
             <div className="transform scale-110">
               <NotificationBell onClick={() => setShowNotificationModal(true)} />
             </div>
 
-            <span className="font-bold text-base md:text-lg text-slate-700 dark:text-slate-200 truncate max-w-[120px] md:max-w-none">
-              {user?.name}
-            </span>
-
-            <button
-              onClick={logout}
-              className="rounded-xl bg-slate-800 dark:bg-slate-700 px-5 py-2.5 text-sm md:text-base font-bold text-white hover:bg-slate-900 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 whitespace-nowrap"
-            >
-              Logout
-            </button>
+            <UserDropdown />
           </div>
         </div>
 
@@ -260,7 +270,7 @@ export default function AdminDashboard() {
                 }`}
             >
               <ChartBarSquareIcon className="w-5 h-5" />
-              Overview
+              {t("overview")}
             </button>
             <button
               onClick={() => setActiveTab("map")}
@@ -268,7 +278,7 @@ export default function AdminDashboard() {
                 }`}
             >
               <MapIcon className="w-5 h-5" />
-              Map & Requests
+              {t("map_and_requests")}
             </button>
             <button
               onClick={() => setActiveTab("vendors")}
@@ -276,7 +286,7 @@ export default function AdminDashboard() {
                 }`}
             >
               <UserGroupIcon className="w-5 h-5" />
-              Vendors
+              {t("vendors")}
             </button>
             <button
               onClick={() => setActiveTab("owners")}
@@ -284,49 +294,52 @@ export default function AdminDashboard() {
                 }`}
             >
               <UserGroupIcon className="w-5 h-5" />
-              Owners
+              {t("owners")}
             </button>
           </div>
         </div>
       </header>
 
       <main className="flex-1 relative h-[calc(100vh-140px)] overflow-hidden">
+
         {activeTab === "overview" && (
-          <div className="h-full overflow-y-auto p-4 md:p-6 max-w-7xl mx-auto w-full">
-            <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Dashboard Overview</h2>
+          <div className="h-full overflow-y-auto p-6 md:p-10 max-w-[1920px] mx-auto w-full">
+
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">{t("dashboard_overview")}</h2>
             <AdminStatsCards stats={stats} loading={statsLoading} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
               {/* Quick Actions or Recent Logs? For now recent logs */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-800 dark:text-white mb-4 uppercase tracking-wide">Recent Audit Logs</h3>
-                <div className="space-y-3">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 shadow-sm">
+                <h3 className="text-base font-bold text-slate-800 dark:text-white mb-6 uppercase tracking-wide">{t("recent_audit_logs")}</h3>
+                <div className="space-y-4">
                   {logs.slice(0, 8).map((log, i) => (
-                    <div key={i} className="flex gap-3 text-sm pb-3 border-b border-slate-50 dark:border-slate-800 last:border-0">
-                      <div className="text-xs text-slate-400 whitespace-nowrap font-mono">{new Date(log.created_at).toLocaleTimeString()}</div>
+                    <div key={i} className="flex gap-4 text-base pb-4 border-b border-slate-50 dark:border-slate-800 last:border-0">
+                      <div className="text-sm text-slate-400 whitespace-nowrap font-mono">{new Date(log.created_at).toLocaleTimeString()}</div>
                       <div>
                         <p className="text-slate-800 dark:text-slate-200 font-medium">{log.action}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">by Admin #{log.admin_id?.slice(0, 6)}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{t("by_admin", { id: log.admin_id?.slice(0, 6) })}</p>
                       </div>
                     </div>
                   ))}
-                  {logs.length === 0 && <p className="text-sm text-slate-400 italic">No logs found</p>}
+                  {logs.length === 0 && <p className="text-base text-slate-400 italic">{t("no_logs_found")}</p>}
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm flex flex-col justify-center items-center text-center">
-                <div className="p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-3">
-                  <MapIcon className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 shadow-sm flex flex-col justify-center items-center text-center">
+                <div className="p-5 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-5">
+                  <MapIcon className="w-12 h-12 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Review Pending Requests</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto mt-2 mb-6">
-                  There are {stats?.pending_requests || 0} requests waiting for your approval.
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{t("review_pending_requests")}</h3>
+                <p className="text-lg text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-3 mb-8">
+                  {t("pending_requests_count", { count: stats?.pending_requests || 0 })}
                 </p>
                 <button
                   onClick={() => setActiveTab("map")}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-lg font-bold transition-colors shadow-lg shadow-blue-500/20"
                 >
-                  Go to Map
+                  {t("go_to_map")}
                 </button>
               </div>
             </div>
@@ -387,8 +400,8 @@ export default function AdminDashboard() {
                       <div className="text-center py-8">
                         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 max-w-md mx-auto">
                           <p className="text-sm text-blue-800 dark:text-blue-300">
-                            <strong>👆 Select a request from the left panel</strong><br />
-                            Click any pending request to review its details and make a decision. The map will show the requested location and any spatial conflicts.
+                            <strong>👆 {t("select_request_hint")}</strong><br />
+                            {t("select_request_detail")}
                           </p>
                         </div>
                       </div>
@@ -407,12 +420,12 @@ export default function AdminDashboard() {
                     radius={selected.allowed_radius || 50}
                     pathOptions={{ color: "#22c55e", weight: 2, fillOpacity: 0.08 }}
                   >
-                    <Popup>Space boundary (radius: {selected.allowed_radius}m)</Popup>
+                    <Popup>{t("space_boundary", { radius: selected.allowed_radius })}</Popup>
                   </Circle>
                 )}
                 {/* Request pin + circle */}
                 <Marker position={[selected.lat, selected.lng]}>
-                  <Popup>Request location</Popup>
+                  <Popup>{t("request_location")}</Popup>
                 </Marker>
                 {requestRadius > 0 && (
                   <Circle
@@ -420,7 +433,7 @@ export default function AdminDashboard() {
                     radius={requestRadius}
                     pathOptions={{ color: "#2563eb", weight: 3, fillOpacity: 0.18 }}
                   >
-                    <Popup>Request area ({selected.max_width}m × {selected.max_length}m)</Popup>
+                    <Popup>{t("request_area", { width: selected.max_width, length: selected.max_length })}</Popup>
                   </Circle>
                 )}
                 {/* Conflict circles */}
@@ -432,7 +445,7 @@ export default function AdminDashboard() {
                       radius={c.radius}
                       pathOptions={{ color: "#ef4444", weight: 1, fillOpacity: 0.3 }}
                     >
-                      <Popup>Conflict Region</Popup>
+                      <Popup>{t("conflict_region")}</Popup>
                     </Circle>
                   ) : null
                 )}
@@ -450,9 +463,9 @@ export default function AdminDashboard() {
           isOpen={showRejectModal}
           onClose={() => setShowRejectModal(false)}
           onConfirm={handleReject}
-          title="Reject Request"
-          message={`Reject request #${selected?.request_id}? The vendor will be notified.`}
-          confirmText="Reject Request"
+          title={t("reject_request")}
+          message={t("reject_request_msg", { id: selected?.request_id })}
+          confirmText={t("reject_request")}
           confirmVariant="danger"
           loading={actionLoading}
         />
@@ -461,9 +474,9 @@ export default function AdminDashboard() {
           isOpen={showApproveModal}
           onClose={() => setShowApproveModal(false)}
           onConfirm={handleApprove}
-          title="Approve Request"
-          message={`Approve request #${selected?.request_id} and issue permit?`}
-          confirmText="Approve & Issue"
+          title={t("approve_request")}
+          message={t("approve_request_msg", { id: selected?.request_id })}
+          confirmText={t("approve_and_issue")}
           confirmVariant="primary"
           loading={actionLoading}
         />

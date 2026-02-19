@@ -29,4 +29,22 @@ router.post(
 
 router.get("/me", authenticate, authController.me);
 
+
+router.put(
+  "/me",
+  [authenticate, body("name").trim().notEmpty().withMessage("name is required"), validateRequest],
+  authController.updateProfile
+);
+
+router.put(
+  "/me/password",
+  [
+    authenticate,
+    body("currentPassword").notEmpty().withMessage("current password required"),
+    body("newPassword").isLength({ min: 8 }).withMessage("new password must be at least 8 characters"),
+    validateRequest
+  ],
+  authController.changePassword
+);
+
 module.exports = router;

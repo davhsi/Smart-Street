@@ -41,10 +41,31 @@ const createPermitRevokedNotification = async (vendorId, permitId) => {
   });
 };
 
+const createNewVendorRequestNotification = async (adminUserId, requestId, vendorName) => {
+  return await notificationRepository.createNotification({
+    userId: adminUserId,
+    type: "NEW_VENDOR_REQUEST",
+    title: "New Vendor Request",
+    message: `Vendor "${vendorName}" has submitted a new space request.`,
+    relatedRequestId: requestId
+  });
+};
+
+const createNewOwnerSpaceNotification = async (adminUserId, spaceName, ownerName) => {
+  return await notificationRepository.createNotification({
+    userId: adminUserId,
+    type: "NEW_OWNER_SPACE",
+    title: "New Owner Location",
+    message: `Owner "${ownerName}" has registered a new space "${spaceName}".`
+  });
+};
+
 module.exports = {
   createRequestApprovedNotification,
   createRequestRejectedNotification,
   createPermitIssuedNotification,
   createPermitRevokedNotification,
+  createNewVendorRequestNotification,
+  createNewOwnerSpaceNotification,
   repository: notificationRepository
 };
