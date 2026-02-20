@@ -132,7 +132,7 @@ export default function AdminDashboard() {
     if (selected && selected.lat && selected.lng) {
       window.dispatchEvent(
         new CustomEvent("centerMap", {
-          detail: { lat: selected.lat, lng: selected.lng, zoom: 18 }
+          detail: { lat: selected.lat, lng: selected.lng, zoom: 20 }
         })
       );
     }

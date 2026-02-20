@@ -70,7 +70,7 @@ const MapZoomToSpace = ({ lat, lng, radius }) => {
         ];
         map.fitBounds(bounds, {
           padding: [8, 8],
-          maxZoom: 19,
+          maxZoom: 22,
           animate: true,
           duration: 1.0
         });

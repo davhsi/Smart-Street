@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "react-leaflet";
+import L from "leaflet";
 
 // Free search with autocomplete using Photon (OSM-based, no API key needed).
 // Fetches suggestions as you type; selecting flies to the location.
@@ -78,8 +79,20 @@ export default function MapSearchControl({
     }
   };
 
+  // Prevent clicks from propagating to map (Leaflet native method)
+  const containerRef = useRef(null);
+  useEffect(() => {
+    if (containerRef.current) {
+      L.DomEvent.disableClickPropagation(containerRef.current);
+      L.DomEvent.disableScrollPropagation(containerRef.current);
+    }
+  }, []);
+
   return (
-    <div className={`z-[1000] ${className.includes('w-') ? '' : 'w-[280px] md:w-[400px]'} ${className}`}>
+    <div
+      ref={containerRef}
+      className={`z-[1000] ${className.includes('w-') ? '' : 'w-[280px] md:w-[400px]'} ${className}`}
+    >
       <form
         onSubmit={handleSubmit}
         className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3"

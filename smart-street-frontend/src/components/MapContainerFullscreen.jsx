@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import { ArrowsPointingOutIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import MapSearchControl from "./MapSearchControl.jsx";
@@ -49,9 +49,9 @@ export default function MapContainerFullscreen({
   showFullscreenButton = true
 }) {
   const [internalIsFullscreen, setInternalIsFullscreen] = useState(false);
-  const containerRef = useState(null)[1] || React.useRef(null);
-
+  const containerRef = useRef(null);
   const isFullscreen = controlledIsFullscreen !== undefined ? controlledIsFullscreen : internalIsFullscreen;
+  const [mapStyle, setMapStyle] = useState("street"); // "street" or "satellite"
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -105,21 +105,44 @@ export default function MapContainerFullscreen({
       className={`${className} ${isFullscreen ? "fullscreen-active fixed inset-0 z-[9999]" : "relative rounded-xl border border-slate-200 overflow-hidden"}`}
       style={containerStyle}
     >
-      {showFullscreenButton && (
+      {/* Control Buttons Container - Repositioned to top-6 to avoid overlap with zoom controls at top-44 */}
+      <div className="absolute top-6 right-16 z-[2000] flex items-center gap-2">
+        {showFullscreenButton && (
+          <button
+            type="button"
+            onClick={() => {
+              if (controlledOnToggleFullscreen) controlledOnToggleFullscreen(!isFullscreen);
+              else toggleFullscreen();
+            }}
+            className="bg-white dark:bg-slate-800 rounded-lg p-2.5 shadow-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors w-12 h-12 flex items-center justify-center transform active:scale-95"
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          >
+            {isFullscreen ? <XMarkIcon className="h-6 w-6 text-slate-600 dark:text-slate-300" /> : <ArrowsPointingOutIcon className="h-6 w-6 text-slate-600 dark:text-slate-300" />}
+          </button>
+        )}
 
+        {/* Layer Toggle Button */}
         <button
           type="button"
-          onClick={() => {
-            if (controlledOnToggleFullscreen) controlledOnToggleFullscreen(!isFullscreen);
-            else toggleFullscreen();
-          }}
-
-          className="absolute top-24 right-4 z-[2000] bg-white rounded-lg p-3 shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors w-14 h-14 flex items-center justify-center"
-          title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          onClick={() => setMapStyle(prev => prev === "street" ? "satellite" : "street")}
+          className={`bg-white dark:bg-slate-800 rounded-lg shadow-lg border transition-all w-24 h-12 flex items-center justify-between px-3 group overflow-hidden transform active:scale-95 ${mapStyle === 'satellite' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-200 dark:border-slate-700'
+            }`}
+          title={mapStyle === "street" ? "Switch to Satellite" : "Switch to Street Map"}
         >
-          {isFullscreen ? <XMarkIcon className="h-8 w-8 text-slate-600" /> : <ArrowsPointingOutIcon className="h-8 w-8 text-slate-600" />}
+          <div className="flex flex-col items-start">
+            <span className={`text-[10px] font-black uppercase leading-none tracking-tight transition-colors ${mapStyle === 'satellite' ? 'text-blue-600' : 'text-slate-500'}`}>
+              {mapStyle === 'street' ? 'Sat' : 'Map'}
+            </span>
+            <span className="text-[8px] font-medium text-slate-400 dark:text-slate-500 leading-none mt-0.5">View</span>
+          </div>
+          <div className="w-8 h-8 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40">
+            <div className={`w-6 h-6 rounded-sm shadow-sm transition-all duration-300 ${mapStyle === 'street'
+              ? 'bg-[url("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/15/15000/10000")] bg-cover'
+              : 'bg-[url("https://a.tile.openstreetmap.org/15/15000/10000.png")] bg-cover'
+              }`}></div>
+          </div>
         </button>
-      )}
+      </div>
 
       {/* Overlays (Sidebar, Action Bar) - Parent must ensure these have high z-index (e.g. z-[2000]) */}
       {overlayContent}
@@ -130,6 +153,7 @@ export default function MapContainerFullscreen({
           zoom={zoom}
           style={{ height: "100%", width: "100%" }}
           zoomControl={false}
+          maxZoom={22}
         >
           <MapInvalidator isFullscreen={isFullscreen} />
 
@@ -137,14 +161,48 @@ export default function MapContainerFullscreen({
             <MapSearchControl
               onSelect={onSearchSelect}
               externalQuery={searchQuery}
-              className="absolute top-6 z-[2000] left-4 right-4 md:left-1/2 md:-translate-x-1/2 md:w-[450px]"
+              className="absolute top-6 z-[2000] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-[500px]"
             />
           )}
 
           <TileLayer
-            attribution='&copy; <a href="https://osm.org/copyright">OSM</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution={mapStyle === "street" ? '&copy; <a href="https://osm.org/copyright">OSM</a>' : 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'}
+            url={mapStyle === "street"
+              ? "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              : "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            }
+            maxZoom={22}
+            maxNativeZoom={mapStyle === "street" ? 19 : 18}
           />
+          {mapStyle === "satellite" && (
+            <>
+              {/* Layer 1: Detailed place names, landmarks, and city markers from Esri */}
+              <TileLayer
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+                maxZoom={22}
+                maxNativeZoom={18}
+                opacity={1}
+                zIndex={11}
+              />
+              {/* Layer 2: High-density POIs like clinics, shops, and restaurants from CartoDB */}
+              <TileLayer
+                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                maxZoom={22}
+                maxNativeZoom={19}
+                opacity={1}
+                zIndex={12}
+              />
+              {/* Layer 3: Strategic road names and bypass indicators from Esri for clarity */}
+              <TileLayer
+                url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}"
+                maxZoom={22}
+                maxNativeZoom={18}
+                opacity={0.8}
+                zIndex={10}
+              />
+            </>
+          )}
           <MapZoomLocationControls />
           <MapEventListener />
           {children}

@@ -2,7 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import VendorDashboard from "./pages/VendorDashboard.jsx";
-import OwnerDashboard from "./pages/OwnerDashboard.jsx";
+import OwnerDashboardNew from "./pages/OwnerDashboardNew.jsx";
+import OwnerAddSpace from "./pages/OwnerAddSpace.jsx";
 
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import Profile from "./pages/Profile.jsx";
@@ -53,7 +54,17 @@ export default function App() {
           element={
             <ProtectedRoute roles={["OWNER"]}>
               <PageTransition>
-                <OwnerDashboard />
+                <OwnerDashboardNew />
+              </PageTransition>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/owner/add-space"
+          element={
+            <ProtectedRoute roles={["OWNER"]}>
+              <PageTransition>
+                <OwnerAddSpace />
               </PageTransition>
             </ProtectedRoute>
           }
