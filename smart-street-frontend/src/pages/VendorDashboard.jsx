@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, TileLayer, Marker, Circle, useMapEvents, useMap, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Circle, useMapEvents, useMap, Popup, Tooltip } from "react-leaflet";
 import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -26,8 +26,10 @@ import WeatherWidget from "../components/WeatherWidget.jsx";
 import {
   HomeIcon,
   MapIcon,
-  BuildingStorefrontIcon
+  BuildingStorefrontIcon,
+  ChevronUpIcon
 } from "@heroicons/react/24/outline";
+import { useRef } from "react";
 
 const defaultCenter = [11.3410, 77.7172];
 
@@ -141,6 +143,8 @@ export default function VendorDashboard() {
 
   // Request Detail State
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [highlightedRequest, setHighlightedRequest] = useState(null);
+  const [businessName, setBusinessName] = useState("");
 
   // Voice Assistant State
   const [isListening, setIsListening] = useState(false);
@@ -148,6 +152,22 @@ export default function VendorDashboard() {
   const [mapSearchQuery, setMapSearchQuery] = useState("");
   const [activeSection, setActiveSection] = useState("HOME"); // "HOME", "MAP", "STOREFRONT"
   const [favorites, setFavorites] = useState([]);
+
+  // Scroll to top state
+  const scrollRef = useRef(null);
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
+
+  const handleScroll = () => {
+    if (scrollRef.current && scrollRef.current.scrollTop > 300) {
+      setShowScrollBtn(true);
+    } else {
+      setShowScrollBtn(false);
+    }
+  };
+
+  const scrollToTop = () => {
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
 
 
@@ -354,6 +374,17 @@ export default function VendorDashboard() {
     }
   };
 
+  const fetchStorefront = async () => {
+    try {
+      const res = await api.get("/vendor/storefront");
+      if (res.data.storefront) {
+        setBusinessName(res.data.storefront.business_name || "");
+      }
+    } catch (err) {
+      console.error("Failed to fetch storefront info:", err);
+    }
+  };
+
   const handleToggleFavorite = async (spaceId) => {
     try {
       await api.post("/vendor/favorites", { spaceId });
@@ -369,6 +400,7 @@ export default function VendorDashboard() {
     fetchPermits();
     fetchAnalytics();
     fetchFavorites();
+    fetchStorefront();
   }, []);
 
   // Poll notifications every 30s
@@ -384,7 +416,8 @@ export default function VendorDashboard() {
     setSuccess(null);
     setPin(null);
     setRequestedRadius("");
-  }, [intent]);
+    setHighlightedRequest(null);
+  }, [intent, activeSection]);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -516,7 +549,11 @@ export default function VendorDashboard() {
 
 
 
-      <main className="flex-1 relative min-h-0">
+      <main
+        ref={scrollRef}
+        onScroll={handleScroll}
+        className="flex-1 relative min-h-0 overflow-y-auto overflow-x-hidden scroll-smooth"
+      >
         {activeSection === "HOME" && (
           <VendorHome
             analytics={analyticsData}
@@ -675,6 +712,42 @@ export default function VendorDashboard() {
               </>
             )}
 
+            {/* Highlighted Request Pin (View on Map) */}
+            {highlightedRequest && (
+              <Marker
+                position={[Number(highlightedRequest.lat), Number(highlightedRequest.lng)]}
+                icon={L.divIcon({
+                  className: 'custom-div-icon',
+                  html: `<div class="w-10 h-10 bg-blue-600 rounded-full border-4 border-white shadow-2xl flex items-center justify-center text-white scale-125 animate-bounce">
+                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>`,
+                  iconSize: [40, 40],
+                  iconAnchor: [20, 20]
+                })}
+              >
+                <Tooltip direction="top" offset={[0, -20]} opacity={1} permanent={false}>
+                  <div className="p-2 bg-slate-900 text-white rounded-lg shadow-xl border border-slate-700">
+                    <p className="font-black text-xs uppercase tracking-wider text-blue-400 mb-1">Permit Location</p>
+                    <p className="text-sm font-bold truncate mb-2">{businessName || user?.name || "Vendor"}</p>
+                    <div className="flex flex-col gap-1 text-[10px] text-slate-300">
+                      <div className="flex justify-between gap-4">
+                        <span>Starts:</span>
+                        <span className="font-mono text-white">
+                          {new Date(highlightedRequest.start_time).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between gap-4">
+                        <span>Ends:</span>
+                        <span className="font-mono text-white">
+                          {new Date(highlightedRequest.end_time).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Tooltip>
+              </Marker>
+            )}
+
             <MapFlyTo coords={flyToCoords} />
           </MapContainerFullscreen>
         )}
@@ -708,6 +781,7 @@ export default function VendorDashboard() {
         isOpen={!!selectedRequest}
         onClose={() => setSelectedRequest(null)}
         request={selectedRequest}
+        onViewHighlight={(req) => setHighlightedRequest(req)}
       />
 
       {/* Voice Assistant Overlay */}
@@ -717,6 +791,17 @@ export default function VendorDashboard() {
         setIsListening={setIsListening}
         status={voiceStatus}
       />
+
+      {/* Floating Scroll to Top Button */}
+      {showScrollBtn && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 right-8 z-[6000] bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 p-4 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 transition-all hover:scale-110 active:scale-95 group animate-in fade-in slide-in-from-bottom-4"
+          title="Scroll to Top"
+        >
+          <ChevronUpIcon className="w-6 h-6 stroke-[3] group-hover:-translate-y-1 transition-transform" />
+        </button>
+      )}
     </div>
   );
 }

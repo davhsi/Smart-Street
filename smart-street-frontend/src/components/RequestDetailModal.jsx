@@ -1,9 +1,9 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { XMarkIcon, CalendarIcon, MapPinIcon, ClockIcon, ClipboardDocumentListIcon, CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, CalendarIcon, MapPinIcon, ClockIcon, ClipboardDocumentListIcon, CheckCircleIcon, XCircleIcon, ArrowsPointingOutIcon } from "@heroicons/react/24/outline";
 import { STATUS_COLORS, STATUS_LABELS } from "../utils/constants";
 
-function StatusTimeline({ request }) {
+function StatusTimeline({ request, onView }) {
   const hasOwnerStep = request.space_id && request.owner_approved_by !== undefined;
   const status = request.status;
 
@@ -58,9 +58,18 @@ function StatusTimeline({ request }) {
 
   return (
     <div className="space-y-0">
-      <h4 className="text-base font-bold text-slate-900 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-1 mb-4">
-        Request Progress
-      </h4>
+      <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-1 mb-4">
+        <h4 className="text-base font-bold text-slate-900 dark:text-slate-200">
+          Request Progress
+        </h4>
+        <button
+          onClick={onView}
+          className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all border border-blue-200 dark:border-blue-800 group"
+        >
+          <ArrowsPointingOutIcon className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+          View
+        </button>
+      </div>
       <div className="relative pl-6">
         {steps.map((step, idx) => (
           <div key={idx} className="relative pb-5 last:pb-0">
@@ -100,11 +109,33 @@ function StatusTimeline({ request }) {
   );
 }
 
-export default function RequestDetailModal({ isOpen, onClose, request }) {
+export default function RequestDetailModal({ isOpen, onClose, request, onViewHighlight }) {
   if (!request) return null;
 
   const statusLabel = STATUS_LABELS[request.status] || request.status;
   const statusColorClass = STATUS_COLORS[request.status] || STATUS_COLORS.PENDING;
+
+  const handleViewOnMap = () => {
+    // Zoom in a bit more for specific permits
+    const zoomLevel = 19;
+
+    // Dispatch custom event for MapContainer to listen to
+    window.dispatchEvent(new CustomEvent('centerMap', {
+      detail: {
+        lat: Number(request.lat),
+        lng: Number(request.lng),
+        zoom: zoomLevel
+      }
+    }));
+
+    // Trigger highlighting in parent
+    if (onViewHighlight) {
+      onViewHighlight(request);
+    }
+
+    // Close the modal
+    onClose();
+  };
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -180,7 +211,7 @@ export default function RequestDetailModal({ isOpen, onClose, request }) {
                   </div>
 
                   {/* Progress Timeline */}
-                  <StatusTimeline request={request} />
+                  <StatusTimeline request={request} onView={handleViewOnMap} />
 
                   {/* ID, Date & Price */}
                   <div className="grid grid-cols-2 gap-4 text-base">

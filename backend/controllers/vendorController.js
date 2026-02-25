@@ -87,6 +87,15 @@ const updateStorefront = async (req, res, next) => {
   }
 };
 
+const getStorefront = async (req, res, next) => {
+  try {
+    const storefront = await vendorService.getStorefront(req.user.userId);
+    res.json({ success: true, storefront });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   submitRequest,
   listRequests,
@@ -95,5 +104,6 @@ module.exports = {
   getAnalytics,
   getFavorites,
   toggleFavorite,
-  updateStorefront
+  updateStorefront,
+  getStorefront
 };
