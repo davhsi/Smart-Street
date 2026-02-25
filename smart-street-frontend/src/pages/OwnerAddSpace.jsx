@@ -54,6 +54,7 @@ export default function OwnerAddSpace() {
         spaceName: "",
         address: "",
         allowedRadius: 50,
+        pricePerRadius: 0,
     });
 
     const handleSearch = async (e) => {
@@ -96,6 +97,7 @@ export default function OwnerAddSpace() {
                 lat: pin[0],
                 lng: pin[1],
                 allowedRadius: form.allowedRadius,
+                pricePerRadius: form.pricePerRadius,
             });
             // Redirect to spaces tab on dashboard
             // Wait, dashboard state management needs to know which tab. 
@@ -165,6 +167,21 @@ export default function OwnerAddSpace() {
                                 onChange={(e) => setForm({ ...form, allowedRadius: parseInt(e.target.value) })}
                                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
                             />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Price per Radius Unit (₹/meter)</label>
+                            <input
+                                type="number"
+                                required
+                                min="0"
+                                step="0.01"
+                                value={form.pricePerRadius}
+                                onChange={(e) => setForm({ ...form, pricePerRadius: parseFloat(e.target.value) })}
+                                className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                                placeholder="e.g. 2.50"
+                            />
+                            <p className="mt-1 text-xs text-slate-500 italic">Total cost = Radius × Price per meter</p>
                         </div>
 
                         {/* Selected Location Display */}

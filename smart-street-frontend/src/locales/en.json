@@ -35,6 +35,8 @@
     "owner_defined_guidance": "Submitting will use the owner-defined center point and a locked radius.",
     "new_location_guidance": "Tap on the map to place your new location pin.",
     "vendor_action_subtitle": "Choose intent → select owner space → submit request",
+    "estimated_price": "Estimated Price",
+    "total_price": "Total Price",
     "search_places": "Search places",
     "new_request_title": "New Request",
     "new_request_subtitle": "Select intent & space",

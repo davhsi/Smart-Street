@@ -155,7 +155,7 @@ export default function OwnerMap({ spaces, requests, initialCenterSpace }) {
                 })}
 
                 {/* Legend / Overlay Controls */}
-                <div className="absolute bottom-6 right-4 bg-white dark:bg-slate-900 p-3 rounded-lg shadow-lg z-[400] border border-slate-200 dark:border-slate-800">
+                <div className="absolute bottom-6 left-4 bg-white dark:bg-slate-900 p-3 rounded-lg shadow-lg z-[400] border border-slate-200 dark:border-slate-800">
                     <h4 className="text-xs font-bold uppercase text-slate-500 mb-2">Map Layers</h4>
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-3 h-3 bg-blue-500 rounded-full"></div>

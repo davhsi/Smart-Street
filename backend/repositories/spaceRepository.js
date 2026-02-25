@@ -7,7 +7,8 @@ const createSpace = async ({
   address,
   lat,
   lng,
-  allowedRadius
+  allowedRadius,
+  pricePerRadius
 }) => {
   const result = await db.query(
     `
@@ -16,14 +17,16 @@ const createSpace = async ({
       space_name,
       address,
       center,
-      allowed_radius
+      allowed_radius,
+      price_per_radius
     )
     VALUES (
       $1,
       $2,
       $3,
       ${pointFromLatLng(lat, lng)},
-      $4
+      $4,
+      $5
     )
     RETURNING
       space_id,
@@ -31,11 +34,12 @@ const createSpace = async ({
       space_name,
       address,
       allowed_radius,
+      price_per_radius,
       ST_Y(center::geometry) AS lat,
       ST_X(center::geometry) AS lng,
       created_at;
     `,
-    [ownerId, spaceName, address, allowedRadius]
+    [ownerId, spaceName, address, allowedRadius, pricePerRadius]
   );
 
   return result.rows[0];
@@ -50,6 +54,7 @@ const listByOwner = async ownerId => {
       space_name,
       address,
       allowed_radius,
+      price_per_radius,
       ST_Y(center::geometry) AS lat,
       ST_X(center::geometry) AS lng,
       created_at
@@ -71,6 +76,7 @@ const findById = async spaceId => {
       space_name,
       address,
       allowed_radius,
+      price_per_radius,
       ST_Y(center::geometry) AS lat,
       ST_X(center::geometry) AS lng,
       created_at
@@ -83,20 +89,32 @@ const findById = async spaceId => {
 };
 
 const listPublic = async () => {
-  // All spaces are now public by default (removed space_type enum)
+  // Enhanced to detect current occupancy status
   const result = await db.query(
     `
     SELECT
-      space_id,
-      owner_id,
-      space_name,
-      address,
-      allowed_radius,
-      ST_Y(center::geometry) AS lat,
-      ST_X(center::geometry) AS lng,
-      created_at
-    FROM spaces
-    ORDER BY created_at DESC;
+      s.space_id,
+      s.owner_id,
+      s.space_name,
+      s.address,
+      s.allowed_radius,
+      s.price_per_radius,
+      ST_Y(s.center::geometry) AS lat,
+      ST_X(s.center::geometry) AS lng,
+      s.created_at,
+      CASE 
+        WHEN sr_occupied.request_id IS NOT NULL THEN 'RED'
+        WHEN sr_soon.request_id IS NOT NULL THEN 'YELLOW'
+        ELSE 'GREEN'
+      END as occupancy_status
+    FROM spaces s
+    LEFT JOIN space_requests sr_occupied ON s.space_id = sr_occupied.space_id 
+      AND sr_occupied.status = 'APPROVED'
+      AND NOW() BETWEEN sr_occupied.start_time AND sr_occupied.end_time
+    LEFT JOIN space_requests sr_soon ON s.space_id = sr_soon.space_id
+      AND sr_soon.status = 'APPROVED'
+      AND sr_soon.start_time BETWEEN NOW() AND NOW() + INTERVAL '1 hour'
+    ORDER BY s.created_at DESC;
     `
   );
   return result.rows;

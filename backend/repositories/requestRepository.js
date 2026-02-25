@@ -19,6 +19,7 @@ const getRequestById = async requestId => {
       sr.submitted_at,
       sr.owner_approved_by,
       sr.owner_approved_at,
+      sr.total_price,
       ST_Y(sr.center::geometry) AS lat,
       ST_X(sr.center::geometry) AS lng,
       s.space_name,
@@ -70,6 +71,7 @@ const listOwnerRequests = async ownerId => {
       sr.submitted_at,
       sr.owner_approved_by,
       sr.owner_approved_at,
+      sr.total_price,
       ST_Y(sr.center::geometry) AS lat,
       ST_X(sr.center::geometry) AS lng,
       s.space_name,
@@ -94,6 +96,7 @@ const createRequest = async ({
   lng,
   maxWidth,
   maxLength,
+  totalPrice,
   startTime,
   endTime
 }) => {
@@ -105,6 +108,7 @@ const createRequest = async ({
       center,
       max_width,
       max_length,
+      total_price,
       start_time,
       end_time,
       status
@@ -115,8 +119,9 @@ const createRequest = async ({
       ${pointFromLatLng(lat, lng)},
       $3,
       $4,
-      $5::timestamptz,
+      $5,
       $6::timestamptz,
+      $7::timestamptz,
       'PENDING'::request_status
     )
     RETURNING
@@ -125,6 +130,7 @@ const createRequest = async ({
       space_id,
       max_width,
       max_length,
+      total_price,
       start_time,
       end_time,
       status,
@@ -132,7 +138,7 @@ const createRequest = async ({
       ST_Y(center::geometry) AS lat,
       ST_X(center::geometry) AS lng;
     `,
-    [vendorId, spaceId, maxWidth, maxLength, startTime, endTime]
+    [vendorId, spaceId, maxWidth, maxLength, totalPrice, startTime, endTime]
   );
 
   return result.rows[0];
@@ -145,6 +151,7 @@ const createRequestWithStatus = async ({
   lng,
   maxWidth,
   maxLength,
+  totalPrice,
   startTime,
   endTime,
   status
@@ -157,6 +164,7 @@ const createRequestWithStatus = async ({
       center,
       max_width,
       max_length,
+      total_price,
       start_time,
       end_time,
       status
@@ -167,9 +175,10 @@ const createRequestWithStatus = async ({
       ${pointFromLatLng(lat, lng)},
       $3,
       $4,
-      $5::timestamptz,
+      $5,
       $6::timestamptz,
-      $7::request_status
+      $7::timestamptz,
+      $8::request_status
     )
     RETURNING
       request_id,
@@ -177,6 +186,7 @@ const createRequestWithStatus = async ({
       space_id,
       max_width,
       max_length,
+      total_price,
       start_time,
       end_time,
       status,
@@ -184,7 +194,7 @@ const createRequestWithStatus = async ({
       ST_Y(center::geometry) AS lat,
       ST_X(center::geometry) AS lng;
     `,
-    [vendorId, spaceId, maxWidth, maxLength, startTime, endTime, status || 'PENDING']
+    [vendorId, spaceId, maxWidth, maxLength, totalPrice, startTime, endTime, status || 'PENDING']
   );
 
   return result.rows[0];
@@ -249,6 +259,7 @@ const listVendorRequests = async vendorId => {
       sr.submitted_at,
       sr.owner_approved_by,
       sr.owner_approved_at,
+      sr.total_price,
       ST_Y(sr.center::geometry) AS lat,
       ST_X(sr.center::geometry) AS lng,
       s.space_name,
@@ -278,6 +289,7 @@ const listVendorPermits = async vendorId => {
       sr.space_id,
       sr.max_width,
       sr.max_length,
+      sr.total_price,
       sr.start_time,
       sr.end_time,
       ST_Y(sr.center::geometry) AS lat,

@@ -63,7 +63,7 @@ export default function OwnerDashboardNew() {
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
                 {/* Top Header */}
-                <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 h-16 flex items-center justify-between px-6 shrink-0 sticky top-0 z-20">
+                <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 h-16 flex items-center justify-between px-6 shrink-0 sticky top-0 z-[5000]">
                     <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200 capitalize">
                         {activeTab.replace("-", " ")}
                     </h2>
@@ -136,7 +136,7 @@ export default function OwnerDashboardNew() {
                         />
                     )}
                     {activeTab === "map" && <OwnerMap spaces={spaces} requests={requests} initialCenterSpace={selectedSpace} />}
-                    {activeTab === "settings" && <div className="p-6">Settings (Coming Soon)</div>}
+
                 </main>
             </div>
 

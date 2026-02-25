@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS spaces (
   owner_id UUID REFERENCES owners(owner_id) ON DELETE SET NULL,
   center GEOGRAPHY(POINT, 4326) NOT NULL,
   allowed_radius FLOAT8 NOT NULL,  -- meters
+  price_per_radius FLOAT8 NOT NULL DEFAULT 0,
   space_name TEXT NOT NULL,
   address TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -59,6 +60,7 @@ CREATE TABLE IF NOT EXISTS space_requests (
   max_length FLOAT8 NOT NULL,      -- meters
   start_time TIMESTAMPTZ NOT NULL,
   end_time TIMESTAMPTZ NOT NULL,
+  total_price FLOAT8 NOT NULL DEFAULT 0,
   status request_status NOT NULL DEFAULT 'PENDING',
   reviewed_by UUID REFERENCES users(user_id),
   reviewed_at TIMESTAMPTZ,

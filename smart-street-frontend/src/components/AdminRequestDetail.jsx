@@ -64,10 +64,10 @@ export default function AdminRequestDetail({
           </div>
         </div>
         <div className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 flex justify-between items-center">
-          <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">{t("conflicts_label")}</span>
+          <span className="text-sm font-semibold text-slate-600 dark:text-slate-400">{t("total_price") || "Total Price"}</span>
           <div className="text-right">
-            <p className={`text-base font-semibold ${selected.conflicts?.length > 0 ? "text-red-600 dark:text-red-400" : "text-slate-900 dark:text-white"}`}>
-              {selected.conflicts?.length || 0}
+            <p className="text-base font-bold text-blue-600 dark:text-blue-400">
+              <span className="text-xs font-normal opacity-70">₹</span> {Number(selected.total_price || 0).toLocaleString()}
             </p>
           </div>
         </div>

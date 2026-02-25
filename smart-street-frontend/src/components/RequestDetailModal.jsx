@@ -70,18 +70,18 @@ function StatusTimeline({ request }) {
             )}
             {/* Dot */}
             <div className={`absolute left-[-20px] top-1 w-3 h-3 rounded-full border-2 transition-all ${step.done
-                ? step.rejected ? "border-red-500 bg-red-500" : "border-blue-500 bg-blue-500"
-                : step.active
-                  ? "border-orange-400 bg-orange-400 animate-pulse"
-                  : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
+              ? step.rejected ? "border-red-500 bg-red-500" : "border-blue-500 bg-blue-500"
+              : step.active
+                ? "border-orange-400 bg-orange-400 animate-pulse"
+                : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900"
               }`} />
             {/* Content */}
             <div className="flex items-center justify-between gap-2">
               <span className={`text-sm font-semibold ${step.done
-                  ? step.rejected ? "text-red-600 dark:text-red-400" : "text-slate-800 dark:text-slate-200"
-                  : step.active
-                    ? "text-orange-600 dark:text-orange-400"
-                    : "text-slate-400 dark:text-slate-500"
+                ? step.rejected ? "text-red-600 dark:text-red-400" : "text-slate-800 dark:text-slate-200"
+                : step.active
+                  ? "text-orange-600 dark:text-orange-400"
+                  : "text-slate-400 dark:text-slate-500"
                 }`}>
                 {step.done && !step.rejected && <CheckCircleIcon className="w-4 h-4 inline mr-1 text-green-500" />}
                 {step.rejected && <XCircleIcon className="w-4 h-4 inline mr-1 text-red-500" />}
@@ -108,7 +108,7 @@ export default function RequestDetailModal({ isOpen, onClose, request }) {
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-[3000]" onClose={onClose}>
+      <Dialog as="div" className="relative z-[6000]" onClose={onClose}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -182,7 +182,7 @@ export default function RequestDetailModal({ isOpen, onClose, request }) {
                   {/* Progress Timeline */}
                   <StatusTimeline request={request} />
 
-                  {/* ID & Date */}
+                  {/* ID, Date & Price */}
                   <div className="grid grid-cols-2 gap-4 text-base">
                     <div>
                       <p className="text-sm text-slate-500 dark:text-slate-400">Request ID</p>
@@ -192,6 +192,14 @@ export default function RequestDetailModal({ isOpen, onClose, request }) {
                       <p className="text-sm text-slate-500 dark:text-slate-400">Submitted On</p>
                       <p className="text-slate-900 dark:text-white text-base">{new Date(request.submitted_at).toLocaleDateString()} {new Date(request.submitted_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
+                    {request.total_price > 0 && (
+                      <div className="col-span-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Total Price</p>
+                        <p className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                          <span className="text-base font-normal opacity-70">₹</span> {Number(request.total_price).toLocaleString()}
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Location Info */}

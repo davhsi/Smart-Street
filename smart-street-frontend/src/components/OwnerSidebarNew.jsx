@@ -51,20 +51,6 @@ export default function OwnerSidebarNew({ activeTab, setActiveTab }) {
                 })}
             </nav>
 
-            {/* Bottom Actions */}
-            <div className="p-4 border-t border-slate-100 dark:border-slate-800">
-                <button
-                    onClick={() => setActiveTab("settings")}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all
-            ${activeTab === "settings"
-                            ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-200"
-                            : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
-                        }`}
-                >
-                    <Cog6ToothIcon className="w-5 h-5 text-slate-400" />
-                    {t("settings") || "Settings"}
-                </button>
-            </div>
         </div>
     );
 }

@@ -194,7 +194,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 
 
-      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[3000]">
+      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[5000]">
         <div className="px-4 md:px-6 py-4 flex flex-col items-center gap-3 min-h-[80px] xl:grid xl:grid-cols-[1fr_auto_1fr] xl:items-center">
 
           {/* Left Tabs - Absolute on large desktop, hidden on smaller */}

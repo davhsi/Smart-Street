@@ -47,7 +47,7 @@ export default function UserDropdown() {
 
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 py-1 overflow-hidden z-[3000] animate-in fade-in zoom-in-95 duration-100 origin-top-right">
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 py-1 overflow-hidden z-[5000] animate-in fade-in zoom-in-95 duration-100 origin-top-right">
                     <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-700 md:hidden">
                         <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{user?.name}</p>
                         <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{user?.role?.toLowerCase()}</p>

@@ -124,6 +124,13 @@ const submitRequest = async (userId, payload) => {
   const hasOwner = space && space.owner_id;
   const initialStatus = hasOwner ? 'OWNER_PENDING' : 'PENDING';
 
+  // Calculate total price based on fixed owner radius and their price_per_radius
+  let totalPrice = 0;
+  if (space && space.price_per_radius) {
+    const radius = radiusFromDims(Number(maxWidth), Number(maxLength));
+    totalPrice = radius * Number(space.price_per_radius);
+  }
+
   const request = await requestRepository.createRequestWithStatus({
     vendorId: vendor.vendor_id,
     spaceId,
@@ -131,6 +138,7 @@ const submitRequest = async (userId, payload) => {
     lng: Number(lng),
     maxWidth: Number(maxWidth),
     maxLength: Number(maxLength),
+    totalPrice,
     startTime,
     endTime,
     status: initialStatus
@@ -170,6 +178,26 @@ const listRequests = async userId => {
   return await requestRepository.listVendorRequests(vendor.vendor_id);
 };
 
+const getAnalytics = async userId => {
+  const vendor = await ensureVendorExists(userId);
+  return await vendorRepository.getAnalytics(vendor.vendor_id);
+};
+
+const getFavorites = async userId => {
+  const vendor = await ensureVendorExists(userId);
+  return await vendorRepository.getFavorites(vendor.vendor_id);
+};
+
+const toggleFavorite = async (userId, spaceId) => {
+  const vendor = await ensureVendorExists(userId);
+  return await vendorRepository.toggleFavorite(vendor.vendor_id, spaceId);
+};
+
+const updateStorefront = async (userId, data) => {
+  const vendor = await ensureVendorExists(userId);
+  return await vendorRepository.updateStorefront(vendor.vendor_id, data);
+};
+
 const listPermits = async userId => {
   const vendor = await ensureVendorExists(userId);
   return await requestRepository.listVendorPermits(vendor.vendor_id);
@@ -178,5 +206,9 @@ const listPermits = async userId => {
 module.exports = {
   submitRequest,
   listRequests,
-  listPermits
+  listPermits,
+  getAnalytics,
+  getFavorites,
+  toggleFavorite,
+  updateStorefront
 };

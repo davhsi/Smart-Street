@@ -50,9 +50,50 @@ const listPermits = async (req, res, next) => {
   }
 };
 
+const getAnalytics = async (req, res, next) => {
+  try {
+    const analytics = await vendorService.getAnalytics(req.user.userId);
+    res.json({ success: true, analytics });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getFavorites = async (req, res, next) => {
+  try {
+    const favorites = await vendorService.getFavorites(req.user.userId);
+    res.json({ success: true, favorites });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const toggleFavorite = async (req, res, next) => {
+  try {
+    const { spaceId } = req.body;
+    const result = await vendorService.toggleFavorite(req.user.userId, spaceId);
+    res.json({ success: true, ...result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateStorefront = async (req, res, next) => {
+  try {
+    const storefront = await vendorService.updateStorefront(req.user.userId, req.body);
+    res.json({ success: true, storefront });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   submitRequest,
   listRequests,
   listPublicSpaces,
-  listPermits
+  listPermits,
+  getAnalytics,
+  getFavorites,
+  toggleFavorite,
+  updateStorefront
 };

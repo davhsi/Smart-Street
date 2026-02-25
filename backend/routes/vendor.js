@@ -27,5 +27,9 @@ router.post(
 
 router.get("/requests", vendorController.listRequests);
 router.get("/permits", vendorController.listPermits);
+router.get("/analytics", vendorController.getAnalytics);
+router.get("/favorites", vendorController.getFavorites);
+router.post("/favorites", vendorController.toggleFavorite);
+router.put("/storefront", vendorController.updateStorefront);
 
 module.exports = router;

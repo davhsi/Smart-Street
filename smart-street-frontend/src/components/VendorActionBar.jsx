@@ -1,5 +1,5 @@
-import React from "react";
-import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import { HeartIcon as HeartIconOutline } from "@heroicons/react/24/outline";
 import { useTranslation } from "react-i18next";
 
 export default function VendorActionBar({
@@ -9,13 +9,20 @@ export default function VendorActionBar({
   requestedRadius,
   setRequestedRadius,
   ownerDefinedRadius,
+  pricePerRadius,
   handleSubmit,
   saving,
+  isFavorite,
+  onToggleFavorite,
+  showFavorite,
   className = ""
 }) {
   const { t } = useTranslation();
   const isOwnerDefined = intent === "OWNER_DEFINED";
   const isRequestNew = intent === "REQUEST_NEW";
+
+  const currentRadius = isOwnerDefined ? ownerDefinedRadius : (requestedRadius || 0);
+  const estimatedPrice = currentRadius * (pricePerRadius || 0);
 
   return (
     <div className={`
@@ -73,6 +80,31 @@ export default function VendorActionBar({
               }`}
           />
         </div>
+
+        {/* Price Estimate */}
+        {estimatedPrice > 0 && (
+          <div className="w-full md:w-auto px-4 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800 text-center md:text-left">
+            <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">{t('estimated_price') || 'Estimated Price'}</p>
+            <p className="text-xl font-black text-blue-700 dark:text-blue-300">
+              <span className="text-sm font-medium opacity-70">₹</span> {estimatedPrice.toLocaleString()}
+            </p>
+          </div>
+        )}
+
+        {/* Favorite Toggle */}
+        {showFavorite && (
+          <button
+            type="button"
+            onClick={onToggleFavorite}
+            className={`p-3 rounded-xl border-2 transition-all active:scale-95 ${isFavorite
+                ? "bg-rose-50 border-rose-200 text-rose-500 shadow-sm"
+                : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400"
+              }`}
+            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            {isFavorite ? <HeartIconSolid className="w-6 h-6" /> : <HeartIconOutline className="w-6 h-6" />}
+          </button>
+        )}
 
         {/* Submit Button */}
         <button

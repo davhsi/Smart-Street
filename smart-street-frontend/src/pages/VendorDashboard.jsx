@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, Marker, Circle, useMapEvents, useMap, Popup } from "react-leaflet";
 import { Link } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import VendorSidebar from "../components/VendorSidebar.jsx";
 import VendorActionBar from "../components/VendorActionBar.jsx";
 import api from "../services/api";
@@ -16,10 +17,17 @@ import VoiceAssistant from "../components/VoiceAssistant.jsx";
 import { parseBookingIntent } from "../utils/voiceUtils.js";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 
-import AnalyticsChart from "../components/AnalyticsChart.jsx";
+import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../components/LanguageSwitcher.jsx";
 import UserDropdown from "../components/UserDropdown.jsx";
-import { useTranslation } from "react-i18next";
+import VendorHome from "../components/vendor/VendorHome.jsx";
+import VendorStorefront from "../components/vendor/VendorStorefront.jsx";
+import WeatherWidget from "../components/WeatherWidget.jsx";
+import {
+  HomeIcon,
+  MapIcon,
+  BuildingStorefrontIcon
+} from "@heroicons/react/24/outline";
 
 const defaultCenter = [11.3410, 77.7172];
 
@@ -138,6 +146,8 @@ export default function VendorDashboard() {
   const [isListening, setIsListening] = useState(false);
   const [voiceStatus, setVoiceStatus] = useState(""); // "Processing...", "Locating...", etc.
   const [mapSearchQuery, setMapSearchQuery] = useState("");
+  const [activeSection, setActiveSection] = useState("HOME"); // "HOME", "MAP", "STOREFRONT"
+  const [favorites, setFavorites] = useState([]);
 
 
 
@@ -328,10 +338,28 @@ export default function VendorDashboard() {
 
   const fetchAnalytics = async () => {
     try {
-      const { data } = await api.get("/analytics");
-      setAnalyticsData(data.stats || []);
+      const { data } = await api.get("/vendor/analytics");
+      setAnalyticsData(data.analytics || []);
     } catch (err) {
       console.error("Failed to load analytics:", err);
+    }
+  };
+
+  const fetchFavorites = async () => {
+    try {
+      const { data } = await api.get("/vendor/favorites");
+      setFavorites(data.favorites || []);
+    } catch (err) {
+      console.error("Failed to load favorites:", err);
+    }
+  };
+
+  const handleToggleFavorite = async (spaceId) => {
+    try {
+      await api.post("/vendor/favorites", { spaceId });
+      fetchFavorites();
+    } catch (err) {
+      showError("Failed to update favorites");
     }
   };
 
@@ -340,6 +368,7 @@ export default function VendorDashboard() {
     fetchRequests();
     fetchPermits();
     fetchAnalytics();
+    fetchFavorites();
   }, []);
 
   // Poll notifications every 30s
@@ -443,19 +472,41 @@ export default function VendorDashboard() {
     <div className="h-screen flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 
 
-      <header className="flex-none bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[3000]">
-        <div className="relative px-4 md:px-6 py-4 md:py-5 flex flex-col md:flex-row items-center justify-center">
-          <div className="text-center z-0">
-            <Link to="/" className="block">
-              <p className="text-sm md:text-base text-blue-700 dark:text-blue-400 font-semibold tracking-[0.2em] hover:opacity-80 transition-opacity">SMART STREET</p>
+      <header className="flex-none bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[5000]">
+        <div className="relative px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-between">
+          <div className="flex items-center gap-8">
+            <Link to="/" className="hidden lg:block">
+              <p className="text-xs text-blue-700 dark:text-blue-400 font-black tracking-widest">SMART STREET</p>
             </Link>
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">{t('vendor_workspace')}</h1>
-            <p className="text-sm md:text-base text-slate-600 dark:text-slate-400">{t('vendor_action_subtitle')}</p>
+
+            <nav className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+              <button
+                onClick={() => setActiveSection("HOME")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeSection === "HOME" ? "bg-white dark:bg-slate-700 text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200"}`}
+              >
+                <HomeIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">Home</span>
+              </button>
+              <button
+                onClick={() => setActiveSection("MAP")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeSection === "MAP" ? "bg-white dark:bg-slate-700 text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200"}`}
+              >
+                <MapIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">Explore Map</span>
+              </button>
+              <button
+                onClick={() => setActiveSection("STOREFRONT")}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeSection === "STOREFRONT" ? "bg-white dark:bg-slate-700 text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200"}`}
+              >
+                <BuildingStorefrontIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">Storefront</span>
+              </button>
+            </nav>
           </div>
-          <div className="mt-4 md:mt-0 md:absolute md:right-6 flex items-center gap-2 md:gap-3 text-sm md:text-lg text-slate-700 dark:text-slate-300 w-full md:w-auto justify-center md:justify-end z-10">
+
+          <div className="flex items-center gap-2 md:gap-3 text-sm md:text-lg text-slate-700 dark:text-slate-300">
             <LanguageSwitcher />
             <ThemeToggle />
-
             <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
             <NotificationBell onClick={() => setShowNotificationModal(true)} />
             <UserDropdown />
@@ -466,130 +517,167 @@ export default function VendorDashboard() {
 
 
       <main className="flex-1 relative min-h-0">
-        {/* MAP-FIRST LAYOUT */}
-        <MapContainerFullscreen
-          center={selectedSpace ? [Number(selectedSpace.lat), Number(selectedSpace.lng)] : defaultCenter}
-          zoom={selectedSpace ? 16 : 13}
-          height="100%"
-          onSearchSelect={(lat, lng) => {
-            // In request-new mode, also move the pin to the searched location
-            if (intent === "REQUEST_NEW") {
-              handlePinSet([lat, lng]);
-            }
-          }}
-          searchQuery={mapSearchQuery}
-          searchPlaceholder={t('search_places')}
-          isFullscreen={fullscreen}
-          onToggleFullscreen={setFullscreen}
-          showFullscreenButton={true}
-          overlayContent={
-            <>
-              <VendorSidebar
-                intent={intent}
-                setIntent={setIntent}
-                spaces={spaces}
-                selectedSpaceId={selectedSpaceId}
-                setSelectedSpaceId={setSelectedSpaceId}
-                loading={loading}
-                requests={requests}
-                permits={permits}
-                onOpenQr={handleOpenQr}
-                onRequestClick={setSelectedRequest}
-                analyticsData={analyticsData}
-              />
-              {intent && (
-                <VendorActionBar
-                  intent={intent}
-                  form={form}
-                  setForm={setForm}
-                  requestedRadius={requestedRadius}
-                  setRequestedRadius={setRequestedRadius}
-                  ownerDefinedRadius={ownerDefinedRadius}
-                  handleSubmit={handleSubmit}
-                  saving={saving}
-                />
-              )}
-            </>
-          }
-        >
-          {/* Always render owner-defined spaces as selectable markers */}
-          {spaces.map(space => {
-            if (!space?.lat || !space?.lng) return null;
-            const isSelected = space.space_id === selectedSpaceId;
-            return (
-              <Marker
-                key={space.space_id}
-                position={[Number(space.lat), Number(space.lng)]}
-                eventHandlers={{
-                  click: () => setSelectedSpaceId(space.space_id)
-                }}
-              >
-                <Popup>
-                  <div className="text-sm">
-                    <div className="font-semibold">{space.space_name}</div>
-                    <div className="text-xs text-slate-600">{space.address}</div>
-                    <div className="text-xs text-slate-700 mt-1">
-                      <span className="font-semibold">Allowed radius:</span> {space.allowed_radius}m
-                    </div>
-                    <div className="text-xs text-slate-700">
-                      <span className="font-semibold">Status:</span> {isSelected ? "Selected" : "Tap marker to select"}
-                    </div>
-                  </div>
-                </Popup>
-              </Marker>
-            );
-          })}
-
-          {/* Selected owner space boundary */}
-          {selectedSpace?.lat && selectedSpace?.lng && selectedSpace?.allowed_radius && (
-            <>
-              <MapZoomToSpace
-                key={`zoom-${selectedSpace.space_id}`}
-                lat={Number(selectedSpace.lat)}
-                lng={Number(selectedSpace.lng)}
-                radius={Number(selectedSpace.allowed_radius)}
-              />
-              <Circle
-                center={[Number(selectedSpace.lat), Number(selectedSpace.lng)]}
-                radius={Number(selectedSpace.allowed_radius)}
-                pathOptions={{ color: "#22c55e", fillOpacity: 0.08, weight: 2 }}
-              >
-                <Popup>Owner space boundary</Popup>
-              </Circle>
-            </>
-          )}
-
-          {/* Click-to-pin only in REQUEST_NEW mode (with validation) */}
-          <MapClickCatcher
-            onClick={coord => handlePinSet(coord)}
-            intent={intent}
+        {activeSection === "HOME" && (
+          <VendorHome
+            analytics={analyticsData}
+            favorites={favorites}
+            onToggleFavorite={handleToggleFavorite}
+            onSelectSpace={(space) => {
+              setSelectedSpaceId(space.space_id);
+              if (space.lat) setFlyToCoords([Number(space.lat), Number(space.lng)]);
+              setActiveSection("MAP");
+              setIntent(space.space_id ? "OWNER_DEFINED" : "REQUEST_NEW");
+            }}
           />
+        )}
 
-          {/* New-location request preview */}
-          {intent === "REQUEST_NEW" && pin && (
-            <>
-              <Marker
-                position={pin}
-                draggable={true}
-                eventHandlers={markerDragHandlers}
-              >
-                <Popup>New requested location (Drag to move)</Popup>
-              </Marker>
-              {previewRadius > 0 && (
-                <Circle
-                  center={pin}
-                  radius={previewRadius}
-                  pathOptions={{ color: "#2563eb", fillOpacity: 0.18, weight: 2 }}
+        {activeSection === "STOREFRONT" && <VendorStorefront />}
+
+        {activeSection === "MAP" && (
+          <MapContainerFullscreen
+            center={selectedSpace ? [Number(selectedSpace.lat), Number(selectedSpace.lng)] : defaultCenter}
+            zoom={selectedSpace ? 16 : 13}
+            height="100%"
+            onSearchSelect={(lat, lng) => {
+              if (intent === "REQUEST_NEW") {
+                handlePinSet([lat, lng]);
+              }
+            }}
+            searchQuery={mapSearchQuery}
+            searchPlaceholder={t('search_places')}
+            isFullscreen={fullscreen}
+            onToggleFullscreen={setFullscreen}
+            showFullscreenButton={true}
+            overlayContent={
+              <>
+                <WeatherWidget />
+                <VendorSidebar
+                  intent={intent}
+                  setIntent={setIntent}
+                  spaces={spaces}
+                  selectedSpaceId={selectedSpaceId}
+                  setSelectedSpaceId={setSelectedSpaceId}
+                  loading={loading}
+                  requests={requests}
+                  permits={permits}
+                  onOpenQr={handleOpenQr}
+                  onRequestClick={setSelectedRequest}
+                />
+                {intent && (
+                  <VendorActionBar
+                    intent={intent}
+                    form={form}
+                    setForm={setForm}
+                    requestedRadius={requestedRadius}
+                    setRequestedRadius={setRequestedRadius}
+                    ownerDefinedRadius={ownerDefinedRadius}
+                    pricePerRadius={selectedSpace?.price_per_radius || 0}
+                    handleSubmit={handleSubmit}
+                    saving={saving}
+                    isFavorite={favorites.some(f => f.space_id === selectedSpaceId)}
+                    onToggleFavorite={() => handleToggleFavorite(selectedSpaceId)}
+                    showFavorite={!!selectedSpaceId}
+                  />
+                )}
+              </>
+            }
+          >
+            {/* Owner-defined spaces with occupancy markers */}
+            {spaces.map(space => {
+              if (!space?.lat || !space?.lng) return null;
+              const isSelected = space.space_id === selectedSpaceId;
+
+              const dotColor = space.occupancy_status === 'RED' ? 'bg-red-500' :
+                space.occupancy_status === 'YELLOW' ? 'bg-amber-500' : 'bg-emerald-500';
+
+              // custom icon for occupancy
+              const icon = L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div class="w-8 h-8 ${dotColor} rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white scale-110">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 9.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-7.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+                      </div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16]
+              });
+
+              return (
+                <Marker
+                  key={space.space_id}
+                  position={[Number(space.lat), Number(space.lng)]}
+                  icon={icon}
+                  eventHandlers={{
+                    click: () => setSelectedSpaceId(space.space_id)
+                  }}
                 >
-                  <Popup>Requested area (preview)</Popup>
-                </Circle>
-              )}
-            </>
-          )}
+                  <Popup>
+                    <div className="text-sm p-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-3 h-3 rounded-full ${dotColor}`}></div>
+                        <div className="font-black text-slate-800 uppercase tracking-tight">{space.space_name}</div>
+                      </div>
+                      <div className="text-xs text-slate-500 mb-2">{space.address}</div>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex justify-between gap-4">
+                          <span className="text-slate-400 font-bold uppercase text-[9px]">Status</span>
+                          <span className={`text-[10px] font-black ${space.occupancy_status === 'RED' ? 'text-red-500' : space.occupancy_status === 'YELLOW' ? 'text-amber-500' : 'text-emerald-500'}`}>
+                            {space.occupancy_status === 'RED' ? 'OCCUPIED' : space.occupancy_status === 'YELLOW' ? 'EXPIRING SOON' : 'AVAILABLE'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between gap-4">
+                          <span className="text-slate-400 font-bold uppercase text-[9px]">Price</span>
+                          <span className="text-[10px] font-black text-blue-600">₹{space.price_per_radius}/m</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Popup>
+                </Marker>
+              );
+            })}
 
-          {/* Voice-triggered FlyTo (must be child of MapContainer) */}
-          <MapFlyTo coords={flyToCoords} />
-        </MapContainerFullscreen>
+            {/* Selected owner space boundary */}
+            {selectedSpace?.lat && selectedSpace?.lng && selectedSpace?.allowed_radius && (
+              <>
+                <MapZoomToSpace
+                  key={`zoom-${selectedSpace.space_id}`}
+                  lat={Number(selectedSpace.lat)}
+                  lng={Number(selectedSpace.lng)}
+                  radius={Number(selectedSpace.allowed_radius)}
+                />
+                <Circle
+                  center={[Number(selectedSpace.lat), Number(selectedSpace.lng)]}
+                  radius={Number(selectedSpace.allowed_radius)}
+                  pathOptions={{ color: "#22c55e", fillOpacity: 0.08, weight: 2 }}
+                />
+              </>
+            )}
+
+            <MapClickCatcher
+              onClick={coord => handlePinSet(coord)}
+              intent={intent}
+            />
+
+            {intent === "REQUEST_NEW" && pin && (
+              <>
+                <Marker
+                  position={pin}
+                  draggable={true}
+                  eventHandlers={markerDragHandlers}
+                >
+                  <Popup>New requested location (Drag to move)</Popup>
+                </Marker>
+                {previewRadius > 0 && (
+                  <Circle
+                    center={pin}
+                    radius={previewRadius}
+                    pathOptions={{ color: "#2563eb", fillOpacity: 0.18, weight: 2 }}
+                  />
+                )}
+              </>
+            )}
+
+            <MapFlyTo coords={flyToCoords} />
+          </MapContainerFullscreen>
+        )}
       </main>
 
       {/* Notification Modal */}
@@ -599,7 +687,10 @@ export default function VendorDashboard() {
         onNotificationClick={(notification) => {
           if (notification.related_request_id) {
             const req = requests.find(r => String(r.request_id) === String(notification.related_request_id));
-            if (req) setSelectedRequest(req);
+            if (req) {
+              setSelectedRequest(req);
+              setActiveSection("MAP");
+            }
             setShowNotificationModal(false);
           }
         }}
