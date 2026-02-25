@@ -29,16 +29,15 @@ export default function VendorStorefront() {
 
     const fetchVendor = async () => {
         try {
-            const res = await api.get("/auth/me"); // Assuming this returns vendor info or we fetch from vendor repo
-            // Ideally we need a dedicated /vendor/profile endpoint
-            const vendorData = res.data.user;
-            // Fetching from /vendor/storefront if it exists or use auth me
-            // For now, let's assume we have the vendor object
-            setVendor(vendorData);
-            setBusinessName(vendorData.business_name || "");
-            setCategory(vendorData.category || "");
-            setStallPhoto(vendorData.stall_photo || "");
-            setMenuItems(vendorData.menu_items || []);
+            const res = await api.get("/vendor/storefront");
+            const vendorData = res.data.storefront;
+            if (vendorData) {
+                setVendor(vendorData);
+                setBusinessName(vendorData.business_name || "");
+                setCategory(vendorData.category || "Food");
+                setStallPhoto(vendorData.stall_photo || "");
+                setMenuItems(vendorData.menu_items || []);
+            }
         } catch (err) {
             console.error("Failed to fetch vendor storefront", err);
         } finally {

@@ -203,6 +203,11 @@ const listPermits = async userId => {
   return await requestRepository.listVendorPermits(vendor.vendor_id);
 };
 
+const getStorefront = async userId => {
+  const vendor = await ensureVendorExists(userId);
+  return vendor;
+};
+
 module.exports = {
   submitRequest,
   listRequests,
@@ -210,5 +215,6 @@ module.exports = {
   getAnalytics,
   getFavorites,
   toggleFavorite,
-  updateStorefront
+  updateStorefront,
+  getStorefront
 };

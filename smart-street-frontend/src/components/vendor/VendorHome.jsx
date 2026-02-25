@@ -156,6 +156,34 @@ export default function VendorHome({ onSelectSpace, analytics, favorites, onTogg
                         )}
                     </div>
                 </section>
+
+                {/* Top Locations Section */}
+                {analytics?.locationStats?.length > 0 && (
+                    <section className="space-y-4 lg:col-span-2">
+                        <div className="flex items-center justify-between px-2">
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <TrophyIcon className="w-5 h-5 text-amber-500" />
+                                Your Top Locations
+                            </h2>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {analytics.locationStats.map((loc, idx) => (
+                                <div key={idx} className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:shadow-md transition-all">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center font-black text-slate-400">
+                                            {idx + 1}
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-slate-900 dark:text-white">{loc.space_name}</p>
+                                            <p className="text-xs text-slate-500">{loc.visit_count} Successful Bookings</p>
+                                        </div>
+                                    </div>
+                                    <ChevronRightIcon className="w-5 h-5 text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
             </div>
         </div>
     );
