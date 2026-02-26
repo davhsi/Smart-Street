@@ -32,7 +32,20 @@ router.get("/permits", adminController.listPermits);
 router.get("/audit-logs", adminController.listAuditLogs);
 router.get("/stats", adminController.getStats);
 router.get("/vendors", adminController.listVendors);
+router.get("/vendors/:id", [
+  param("id").isUUID().withMessage("valid vendor id is required")
+],
+  validateRequest,
+  adminController.getVendor
+);
+
 router.get("/owners", adminController.listOwners);
+router.get("/owners/:id", [
+  param("id").isUUID().withMessage("valid owner id is required")
+],
+  validateRequest,
+  adminController.getOwner
+);
 
 module.exports = router;
 

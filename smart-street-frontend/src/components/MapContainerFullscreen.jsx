@@ -46,7 +46,9 @@ export default function MapContainerFullscreen({
   isFullscreen: controlledIsFullscreen,
   onToggleFullscreen: controlledOnToggleFullscreen,
   overlayContent,
-  showFullscreenButton = true
+  showFullscreenButton = true,
+  searchClassName = "absolute top-6 z-[2000] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-[500px]",
+  controlsClassName = "absolute top-24 right-4 z-[1000] flex flex-col gap-2"
 }) {
   const [internalIsFullscreen, setInternalIsFullscreen] = useState(false);
   const containerRef = useRef(null);
@@ -123,7 +125,7 @@ export default function MapContainerFullscreen({
             <MapSearchControl
               onSelect={onSearchSelect}
               externalQuery={searchQuery}
-              className="absolute top-6 z-[2000] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-[500px]"
+              className={searchClassName}
             />
           )}
 
@@ -166,6 +168,7 @@ export default function MapContainerFullscreen({
             </>
           )}
           <MapZoomLocationControls
+            className={controlsClassName}
             mapStyle={mapStyle}
             setMapStyle={setMapStyle}
             isFullscreen={isFullscreen}

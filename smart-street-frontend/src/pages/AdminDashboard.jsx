@@ -44,6 +44,7 @@ export default function AdminDashboard() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [routingLoading, setRoutingLoading] = useState(false);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
@@ -365,6 +366,9 @@ export default function AdminDashboard() {
             zoom={selected ? 16 : 13}
             height="100vh"
             showFullscreenButton={false}
+            searchPlaceholder={t('search_places')}
+            searchClassName="absolute top-6 z-[2000] left-1/2 -translate-x-1/2 w-[calc(100%-5rem)] md:w-[500px]"
+            controlsClassName="absolute top-6 z-[1000] right-4 md:right-[calc(50%-330px)] flex flex-col gap-2"
             overlayContent={
               <>
                 {/* LEFT SIDEBAR: List */}
@@ -425,7 +429,17 @@ export default function AdminDashboard() {
                 )}
                 {/* Request pin + circle */}
                 <Marker position={[selected.lat, selected.lng]}>
-                  <Popup>{t("request_location")}</Popup>
+                  <Popup>
+                    <div className="font-semibold text-center mt-1">
+                      <span className="text-slate-500 text-xs uppercase tracking-wider block mb-1">Status</span>
+                      <span className={`px-2 py-0.5 rounded-md text-sm font-bold ${selected.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
+                          selected.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                            'bg-yellow-100 text-yellow-700'
+                        }`}>
+                        {selected.status || 'PENDING'}
+                      </span>
+                    </div>
+                  </Popup>
                 </Marker>
                 {requestRadius > 0 && (
                   <Circle
@@ -458,11 +472,44 @@ export default function AdminDashboard() {
         <NotificationModal
           isOpen={showNotificationModal}
           onClose={() => setShowNotificationModal(false)}
-          onNotificationClick={(notification) => {
+          onNotificationClick={async (notification) => {
+            setShowNotificationModal(false);
+
+            if (notification.type === "NEW_OWNER_SPACE") {
+              setActiveTab("owners");
+              return;
+            }
+
             if (notification.related_request_id) {
-              setActiveTab("map");
-              setSelectedId(notification.related_request_id);
-              setShowNotificationModal(false);
+              const reqId = notification.related_request_id;
+
+              try {
+                // Determine if the request is pending or in history by fetching directly
+                setRoutingLoading(true);
+                const pendingRes = await api.get("/admin/requests");
+                const pendingRequests = pendingRes.data.requests || [];
+                const isPending = pendingRequests.some(r => String(r.request_id) === String(reqId));
+
+                if (isPending) {
+                  setViewMode("pending");
+                  setRequests(pendingRequests);
+                  setActiveTab("map");
+                  setSelectedId(reqId);
+                } else {
+                  const historyRes = await api.get("/admin/requests?history=true");
+                  const historyRequests = historyRes.data.requests || [];
+                  setViewMode("history");
+                  setRequests(historyRequests);
+                  setActiveTab("map");
+                  setSelectedId(reqId);
+                }
+              } catch (err) {
+                console.error("Error routing to notification request:", err);
+                setActiveTab("map");
+                setSelectedId(reqId);
+              } finally {
+                setRoutingLoading(false);
+              }
             }
           }}
         />
@@ -487,6 +534,80 @@ export default function AdminDashboard() {
           confirmVariant="primary"
           loading={actionLoading}
         />
+
+        {/* Full-screen Loading Overlay for Actions */}
+        {actionLoading && (
+          <div className="fixed inset-0 z-[10000] bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300">
+            <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl flex flex-col items-center gap-4">
+              <svg className="h-12 w-12 text-slate-900 dark:text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                  {`
+                    .spinner-tick {
+                      animation: spinner-fade 1s linear infinite;
+                      stroke: currentColor;
+                      stroke-width: 2.5;
+                      stroke-linecap: round;
+                    }
+                    @keyframes spinner-fade {
+                      0% { opacity: 1; }
+                      100% { opacity: 0; }
+                    }
+                  `}
+                </style>
+                <g transform="translate(12, 12)">
+                  <line x1="0" y1="-9" x2="0" y2="-5" className="spinner-tick" style={{ animationDelay: '-1s' }} />
+                  <line x1="6.36" y1="-6.36" x2="3.54" y2="-3.54" className="spinner-tick" style={{ animationDelay: '-0.875s' }} />
+                  <line x1="9" y1="0" x2="5" y2="0" className="spinner-tick" style={{ animationDelay: '-0.75s' }} />
+                  <line x1="6.36" y1="6.36" x2="3.54" y2="3.54" className="spinner-tick" style={{ animationDelay: '-0.625s' }} />
+                  <line x1="0" y1="9" x2="0" y2="5" className="spinner-tick" style={{ animationDelay: '-0.5s' }} />
+                  <line x1="-6.36" y1="6.36" x2="-3.54" y2="3.54" className="spinner-tick" style={{ animationDelay: '-0.375s' }} />
+                  <line x1="-9" y1="0" x2="-5" y2="0" className="spinner-tick" style={{ animationDelay: '-0.25s' }} />
+                  <line x1="-6.36" y1="-6.36" x2="-3.54" y2="-3.54" className="spinner-tick" style={{ animationDelay: '-0.125s' }} />
+                </g>
+              </svg>
+              <p className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                Loading... Please Wait...
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Full-screen Loading Overlay for Routing */}
+        {routingLoading && (
+          <div className="fixed inset-0 z-[10000] bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300">
+            <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl flex flex-col items-center gap-4">
+              <svg className="h-12 w-12 text-slate-900 dark:text-white" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                  {`
+                    .spinner-tick-black {
+                      animation: spinner-fade-black 1s linear infinite;
+                      stroke: currentColor;
+                      stroke-width: 2.5;
+                      stroke-linecap: round;
+                    }
+                    @keyframes spinner-fade-black {
+                      0% { opacity: 1; }
+                      100% { opacity: 0; }
+                    }
+                  `}
+                </style>
+                <g transform="translate(12, 12)">
+                  <line x1="0" y1="-9" x2="0" y2="-5" className="spinner-tick-black" style={{ animationDelay: '-1s' }} />
+                  <line x1="6.36" y1="-6.36" x2="3.54" y2="-3.54" className="spinner-tick-black" style={{ animationDelay: '-0.875s' }} />
+                  <line x1="9" y1="0" x2="5" y2="0" className="spinner-tick-black" style={{ animationDelay: '-0.75s' }} />
+                  <line x1="6.36" y1="6.36" x2="3.54" y2="3.54" className="spinner-tick-black" style={{ animationDelay: '-0.625s' }} />
+                  <line x1="0" y1="9" x2="0" y2="5" className="spinner-tick-black" style={{ animationDelay: '-0.5s' }} />
+                  <line x1="-6.36" y1="6.36" x2="-3.54" y2="3.54" className="spinner-tick-black" style={{ animationDelay: '-0.375s' }} />
+                  <line x1="-9" y1="0" x2="-5" y2="0" className="spinner-tick-black" style={{ animationDelay: '-0.25s' }} />
+                  <line x1="-6.36" y1="-6.36" x2="-3.54" y2="-3.54" className="spinner-tick-black" style={{ animationDelay: '-0.125s' }} />
+                </g>
+              </svg>
+              <p className="text-lg font-bold text-slate-800 dark:text-slate-200">
+                Loading... Please Wait...
+              </p>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -62,11 +62,11 @@ export default function AdminStatsCards({ stats, loading }) {
 
         <div
           key={idx}
-          className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8 shadow-sm hover:shadow-md transition-all"
+          className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8 shadow-sm hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group"
         >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
+              <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
                 {card.title}
               </p>
               <div className="flex items-baseline gap-3">
@@ -78,7 +78,7 @@ export default function AdminStatsCards({ stats, loading }) {
                 )}
               </div>
             </div>
-            <div className={`p-4 rounded-xl ${card.bg}`}>
+            <div className={`p-4 rounded-xl bg-gradient-to-br ${card.bg} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
               <card.icon className={`w-8 h-8 ${card.text}`} />
             </div>
           </div>

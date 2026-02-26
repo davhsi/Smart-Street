@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MagnifyingGlassIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import AdminVendorDetail from "./AdminVendorDetail.jsx";
 
 export default function AdminVendorList({ vendors, loading }) {
   const [search, setSearch] = useState("");
+  const [selectedVendorId, setSelectedVendorId] = useState(null);
   const { t } = useTranslation();
 
   const filtered = vendors?.filter(v =>
@@ -72,14 +74,18 @@ export default function AdminVendorList({ vendors, loading }) {
               </tr>
             ) : (
               filtered.map((vendor) => (
-                <tr key={vendor.vendor_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                <tr
+                  key={vendor.vendor_id}
+                  onClick={() => setSelectedVendorId(vendor.vendor_id)}
+                  className="hover:bg-blue-50/50 dark:hover:bg-slate-800/80 transition-all duration-200 group border-b border-transparent hover:border-blue-100 dark:hover:border-slate-700 cursor-pointer"
+                >
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                      <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white dark:group-hover:bg-blue-500 transition-colors duration-300 shadow-sm">
                         <UserCircleIcon className="w-8 h-8" />
                       </div>
                       <div>
-                        <p className="font-bold text-xl text-slate-900 dark:text-white">{vendor.business_name}</p>
+                        <p className="font-bold text-xl text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{vendor.business_name}</p>
                         <p className="text-base text-slate-500 dark:text-slate-400 font-medium">{vendor.vendor_name}</p>
                       </div>
                     </div>
@@ -92,12 +98,12 @@ export default function AdminVendorList({ vendors, loading }) {
                   </td>
                   <td className="px-8 py-6">
                     <div className="flex items-center justify-center gap-8">
-                      <div className="text-center">
+                      <div className="text-center transform group-hover:scale-110 transition-transform duration-300">
                         <span className="block text-2xl font-bold text-slate-800 dark:text-slate-200">{vendor.active_permits}</span>
                         <span className="text-xs text-slate-500 uppercase font-bold tracking-wide">{t("permits")}</span>
                       </div>
                       <div className="h-12 w-px bg-slate-200 dark:bg-slate-700"></div>
-                      <div className="text-center">
+                      <div className="text-center transform group-hover:scale-110 transition-transform duration-300">
                         <span className="block text-2xl font-bold text-slate-800 dark:text-slate-200">{vendor.total_requests}</span>
                         <span className="text-xs text-slate-500 uppercase font-bold tracking-wide">{t("requests")}</span>
                       </div>
@@ -109,8 +115,8 @@ export default function AdminVendorList({ vendors, loading }) {
                     </span>
                   </td>
                   <td className="px-8 py-6">
-                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-base font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-base font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 group-hover:shadow-sm transition-shadow">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 group-hover:animate-pulse"></span>
                       {t("verified_label")}
                     </span>
                   </td>
@@ -120,6 +126,20 @@ export default function AdminVendorList({ vendors, loading }) {
           </tbody>
         </table>
       </div>
+
+      {/* Slide-out Panel Overlay */}
+      {selectedVendorId && (
+        <>
+          <div
+            className="fixed inset-0 bg-slate-900/20 dark:bg-slate-900/60 backdrop-blur-sm z-[4999] transition-opacity"
+            onClick={() => setSelectedVendorId(null)}
+          />
+          <AdminVendorDetail
+            vendorId={selectedVendorId}
+            onClose={() => setSelectedVendorId(null)}
+          />
+        </>
+      )}
     </div>
   );
 }

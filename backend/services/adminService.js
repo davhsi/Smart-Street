@@ -73,24 +73,24 @@ const approveRequest = async ({ adminUserId, requestId, remarks, ipAddress }) =>
       start_time: updated.start_time,
       end_time: updated.end_time
     };
-    
+
     const permit = await adminRepository.createPermitTx(client, {
       requestId: updated.request_id,
       qrPayload: jwt.sign({ temp: "pending" }, process.env.JWT_SECRET), // Temporary, will update
       validFrom: updated.start_time,
       validTo: updated.end_time
     });
-    
+
     // Update QR payload with permit_id
     qrPayloadObj.permit_id = permit.permit_id;
     const finalQrPayload = jwt.sign(qrPayloadObj, process.env.JWT_SECRET, { expiresIn: "1y" });
-    
+
     // Update permit with final QR payload
     await client.query(
       `UPDATE permits SET qr_payload = $1 WHERE permit_id = $2`,
       [finalQrPayload, permit.permit_id]
     );
-    
+
     permit.qr_payload = finalQrPayload;
 
     await client.query("COMMIT");
@@ -115,22 +115,22 @@ const approveRequest = async ({ adminUserId, requestId, remarks, ipAddress }) =>
     // We do this asynchronously/after commit so we don't block the UI if blockchain is slow
     // But for this demo, we'll await it to ensure we get the hash back immediately
     try {
-       const blockchainService = require('./blockchainService');
-       // Unique data to hash: Permit ID + Valid From + Vendor ID
-       const uniqueString = `${permit.permit_id}-${permit.valid_from}-${updated.vendor_id}`;
-       const txHash = await blockchainService.recordPermitOnChain(uniqueString);
-       
-       if (txHash) {
-         // Update DB with the hash
-         await db.query(
-            `UPDATE permits SET transaction_hash = $1 WHERE permit_id = $2`,
-            [txHash, permit.permit_id]
-         );
-         permit.transaction_hash = txHash;
-       }
+      const blockchainService = require('./blockchainService');
+      // Unique data to hash: Permit ID + Valid From + Vendor ID
+      const uniqueString = `${permit.permit_id}-${permit.valid_from}-${updated.vendor_id}`;
+      const txHash = await blockchainService.recordPermitOnChain(uniqueString);
+
+      if (txHash) {
+        // Update DB with the hash
+        await db.query(
+          `UPDATE permits SET transaction_hash = $1 WHERE permit_id = $2`,
+          [txHash, permit.permit_id]
+        );
+        permit.transaction_hash = txHash;
+      }
     } catch (bcError) {
-        console.error("Blockchain recording failed but permit issued:", bcError);
-        // We do NOT rollback the permit.
+      console.error("Blockchain recording failed but permit issued:", bcError);
+      // We do NOT rollback the permit.
     }
     // -----------------------------    
 
@@ -220,6 +220,16 @@ const listOwners = async () => {
   return { owners };
 };
 
+const getOwnerDetails = async (ownerId) => {
+  const owner = await adminRepository.getOwnerDetails(ownerId);
+  return { owner };
+};
+
+const getVendorDetails = async (vendorId) => {
+  const vendor = await adminRepository.getVendorDetails(vendorId);
+  return { vendor };
+};
+
 module.exports = {
   listPendingRequests,
   listHistoryRequests,
@@ -230,6 +240,8 @@ module.exports = {
   listAuditLogs,
   getDashboardStats,
   listVendors,
-  listOwners
+  listOwners,
+  getOwnerDetails,
+  getVendorDetails
 };
 

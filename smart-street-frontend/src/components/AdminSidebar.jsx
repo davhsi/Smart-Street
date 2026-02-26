@@ -21,7 +21,7 @@ export default function AdminSidebar({
       className={`fixed transition-all duration-300 shadow-xl border border-slate-200 dark:border-slate-800 z-[30]
         ${collapsed
           ? "w-12 h-12 rounded-full overflow-hidden bg-white/90 dark:bg-slate-900/90 top-28 left-4 md:top-28 md:left-4"
-          : "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-t-2xl md:rounded-xl flex flex-col"
+          : "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-t-2xl md:rounded-xl flex flex-col"
         }
         ${!collapsed && `
           bottom-0 left-0 right-0 w-full max-h-[50vh] 

@@ -338,6 +338,78 @@ const getAdminUserIds = async () => {
   return result.rows.map(r => r.user_id);
 };
 
+const getOwnerDetails = async (ownerId) => {
+  const result = await db.query(`
+    SELECT
+      o.owner_id,
+      o.owner_name,
+      o.contact_info,
+      o.created_at,
+      u.email,
+      u.phone AS phone_number,
+      u.name AS user_name,
+      (SELECT COUNT(*) FROM spaces s WHERE s.owner_id = o.owner_id) AS total_spaces,
+      (SELECT COALESCE(SUM(sr.total_price), 0) FROM space_requests sr JOIN spaces s ON s.space_id = sr.space_id WHERE s.owner_id = o.owner_id AND sr.status = 'APPROVED') AS total_revenue
+    FROM owners o
+    JOIN users u ON u.user_id = o.user_id
+    WHERE o.owner_id = $1
+  `, [ownerId]);
+
+  const owner = result.rows[0];
+  if (!owner) return null;
+
+  const spacesResult = await db.query(`
+    SELECT space_id, space_name, address, price_per_radius, allowed_radius, 'VERIFIED' AS status, created_at,
+           (SELECT COALESCE(SUM(total_price), 0) FROM space_requests WHERE space_id = spaces.space_id AND status = 'APPROVED') AS revenue
+    FROM spaces
+    WHERE owner_id = $1
+    ORDER BY created_at DESC
+  `, [ownerId]);
+
+  owner.spaces = spacesResult.rows;
+  return owner;
+};
+
+const getVendorDetails = async (vendorId) => {
+  const result = await db.query(`
+    SELECT
+      v.vendor_id,
+      v.business_name,
+      v.category,
+      v.created_at,
+      u.name AS vendor_name,
+      u.email,
+      u.phone AS phone_number,
+      (SELECT COUNT(*) FROM permits p JOIN space_requests sr ON sr.request_id = p.request_id WHERE sr.vendor_id = v.vendor_id AND p.status = 'VALID') AS active_permits,
+      (SELECT COALESCE(SUM(total_price), 0) FROM space_requests WHERE vendor_id = v.vendor_id AND status = 'APPROVED') AS total_spent
+    FROM vendors v
+    JOIN users u ON u.user_id = v.user_id
+    WHERE v.vendor_id = $1
+  `, [vendorId]);
+
+  const vendor = result.rows[0];
+  if (!vendor) return null;
+
+  const requestsResult = await db.query(`
+    SELECT 
+      sr.request_id,
+      sr.start_time,
+      sr.end_time,
+      sr.status,
+      sr.total_price,
+      sr.submitted_at,
+      s.space_name,
+      s.address
+    FROM space_requests sr
+    LEFT JOIN spaces s ON s.space_id = sr.space_id
+    WHERE sr.vendor_id = $1
+    ORDER BY sr.submitted_at DESC
+  `, [vendorId]);
+
+  vendor.requests = requestsResult.rows;
+  return vendor;
+};
+
 module.exports = {
   listPendingRequests,
   listAllRequests,
@@ -351,5 +423,7 @@ module.exports = {
   getAdminUserIds,
   getDashboardStats,
   listVendors,
-  listOwners
+  listOwners,
+  getOwnerDetails,
+  getVendorDetails
 };

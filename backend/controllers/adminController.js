@@ -93,6 +93,26 @@ const listOwners = async (req, res, next) => {
   }
 };
 
+const getOwner = async (req, res, next) => {
+  try {
+    const result = await adminService.getOwnerDetails(req.params.id);
+    if (!result.owner) return res.status(404).json({ message: "Owner not found" });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getVendor = async (req, res, next) => {
+  try {
+    const result = await adminService.getVendorDetails(req.params.id);
+    if (!result.vendor) return res.status(404).json({ message: "Vendor not found" });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   listRequests,
   approve,
@@ -102,6 +122,8 @@ module.exports = {
   listAuditLogs,
   getStats,
   listVendors,
-  listOwners
+  listOwners,
+  getOwner,
+  getVendor
 };
 

@@ -120,7 +120,35 @@ export default function VendorActionBar({
             }`}
         >
           {saving ? (
-            t('submitting')
+            <>
+              <svg className="h-5 w-5 text-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <style>
+                  {`
+                    .spinner-tick-small {
+                      animation: spinner-fade 1s linear infinite;
+                      stroke: currentColor;
+                      stroke-width: 2.5;
+                      stroke-linecap: round;
+                    }
+                    @keyframes spinner-fade {
+                      0% { opacity: 1; }
+                      100% { opacity: 0; }
+                    }
+                  `}
+                </style>
+                <g transform="translate(12, 12)">
+                  <line x1="0" y1="-9" x2="0" y2="-5" className="spinner-tick-small" style={{ animationDelay: '-1s' }} />
+                  <line x1="6.36" y1="-6.36" x2="3.54" y2="-3.54" className="spinner-tick-small" style={{ animationDelay: '-0.875s' }} />
+                  <line x1="9" y1="0" x2="5" y2="0" className="spinner-tick-small" style={{ animationDelay: '-0.75s' }} />
+                  <line x1="6.36" y1="6.36" x2="3.54" y2="3.54" className="spinner-tick-small" style={{ animationDelay: '-0.625s' }} />
+                  <line x1="0" y1="9" x2="0" y2="5" className="spinner-tick-small" style={{ animationDelay: '-0.5s' }} />
+                  <line x1="-6.36" y1="6.36" x2="-3.54" y2="3.54" className="spinner-tick-small" style={{ animationDelay: '-0.375s' }} />
+                  <line x1="-9" y1="0" x2="-5" y2="0" className="spinner-tick-small" style={{ animationDelay: '-0.25s' }} />
+                  <line x1="-6.36" y1="-6.36" x2="-3.54" y2="-3.54" className="spinner-tick-small" style={{ animationDelay: '-0.125s' }} />
+                </g>
+              </svg>
+              <span>{t('submitting')}</span>
+            </>
           ) : (
             <>
               <PaperAirplaneIcon className="w-4 h-4" />

@@ -7,7 +7,8 @@ export default function MapZoomLocationControls({
   setMapStyle,
   isFullscreen,
   onToggleFullscreen,
-  showFullscreenButton
+  showFullscreenButton,
+  className = "absolute top-24 right-4 z-[1000] flex flex-col gap-2"
 }) {
   const map = useMap();
 
@@ -33,8 +34,7 @@ export default function MapZoomLocationControls({
 
   return (
     <div
-
-      className="absolute top-24 right-4 z-[1000] flex flex-col gap-2"
+      className={className}
       onDoubleClick={disablePropagation}
       onMouseDown={disablePropagation}
       onClick={disablePropagation}

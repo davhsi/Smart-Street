@@ -1,4 +1,5 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useTranslation } from "react-i18next";
 
 const Modal = ({
   isOpen,
@@ -59,6 +60,8 @@ const ConfirmModal = ({
   confirmVariant = "primary",
   loading = false
 }) => {
+  const { t } = useTranslation();
+
   const handleConfirm = () => {
     onConfirm();
     if (!loading) onClose();
@@ -92,9 +95,9 @@ const ConfirmModal = ({
           <button
             onClick={handleConfirm}
             disabled={loading}
-            className={`px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 ${getConfirmButtonClasses()}`}
+            className={`px-4 py-2 text-sm font-medium rounded-lg disabled:opacity-50 flex items-center justify-center gap-2 ${getConfirmButtonClasses()}`}
           >
-            {loading ? "Processing..." : confirmText}
+            {loading ? t("processing", "Processing...") : confirmText}
           </button>
         </>
       }
