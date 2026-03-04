@@ -52,7 +52,9 @@ const verifyPermit = async qrCodeData => {
 
   const checks = {
     permitStatus: permit.permit_status === "VALID",
-    timeValidity: now >= validFrom && now <= validTo,
+    timeValidity: now <= validTo, // Not expired
+    isFuture: now < validFrom,
+    isActiveNow: now >= validFrom && now <= validTo,
     requestStatus: permit.status === "APPROVED",
     spatialCorrectness: true
   };

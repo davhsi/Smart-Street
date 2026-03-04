@@ -27,7 +27,7 @@ const listPendingRequests = async () => {
     LEFT JOIN spaces s ON s.space_id = sr.space_id
     JOIN vendors v ON v.vendor_id = sr.vendor_id
     JOIN users u ON u.user_id = v.user_id
-    WHERE sr.status = 'PENDING'
+    WHERE sr.status IN ('PENDING', 'OWNER_APPROVED')
     ORDER BY sr.submitted_at ASC;
     `
   );
