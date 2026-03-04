@@ -28,8 +28,7 @@ export default function VerifyPermit() {
 
       try {
          let response;
-         // Heuristic: If it looks like a UUID, treat as ID. Otherwise treat as QR Data (JWT).
-         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(codeToVerify);
+         const isUUID = /^[0-9a-fA-F-]{8,36}$/.test(codeToVerify);
 
          if (isUUID) {
             response = await api.get(`/public/verify-permit/${codeToVerify}`);
@@ -71,33 +70,35 @@ export default function VerifyPermit() {
       reader.onload = (e) => {
          const img = new Image();
          img.onload = () => {
-            // Create a larger canvas to ensure a "Quiet Zone" (white border) around the QR code
-            // Scale up the image (Super Sampling) to help jsQR read dense codes
-            const scale = 4;
-            const padding = 40; // Larger padding for scaled image
-
+            // Try first with original image
             const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-            // precise dimensions
-            canvas.width = (img.width * scale) + (padding * 2);
-            canvas.height = (img.height * scale) + (padding * 2);
+            // If the image is huge (like our generated 600x900 card), don't scale it, just read it directly
+            // If it's small, scale it up to help jsQR
+            let scale = 1;
+            if (img.width < 400 && img.height < 400) scale = 3;
 
-            // Fill entire canvas with white (Contrast background)
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+
             ctx.fillStyle = "#FFFFFF";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Disable smoothing to keep pixels sharp (Critical for QR)
             ctx.imageSmoothingEnabled = false;
-
-            // Draw image scaled up and centered
-            ctx.drawImage(img, padding, padding, img.width * scale, img.height * scale);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            // Attempt scan
-            const code = jsQR(imageData.data, imageData.width, imageData.height, {
-               inversionAttempts: "attemptBoth",
+
+            let code = jsQR(imageData.data, imageData.width, imageData.height, {
+               inversionAttempts: "dontInvert",
             });
+
+            // Fallback attempt with inversion
+            if (!code) {
+               code = jsQR(imageData.data, imageData.width, imageData.height, {
+                  inversionAttempts: "attemptBoth",
+               });
+            }
 
             if (code) {
                console.log("QR Code found:", code.data);
@@ -124,6 +125,7 @@ export default function VerifyPermit() {
    const handleFileChange = (e) => {
       if (e.target.files && e.target.files[0]) {
          processFile(e.target.files[0]);
+         e.target.value = "";
       }
    };
 
@@ -197,6 +199,7 @@ export default function VerifyPermit() {
                         accept="image/png, image/jpeg"
                         className="hidden"
                         onChange={handleFileChange}
+                        onClick={(e) => e.stopPropagation()}
                      />
 
                      <div className="flex flex-col items-center justify-center py-12 px-4">
@@ -228,12 +231,12 @@ export default function VerifyPermit() {
                            <textarea
                               value={qrCodeData || permitId}
                               onChange={e => {
-                                 const val = e.target.value;
-                                 if (/^[0-9a-f-]{36}$/i.test(val)) {
+                                 const val = e.target.value.trim();
+                                 if (/^[0-9a-fA-F-]{8,36}$/.test(val)) {
                                     setPermitId(val);
                                     setQrCodeData("");
                                  } else {
-                                    setQrCodeData(val);
+                                    setQrCodeData(e.target.value);
                                     setPermitId("");
                                  }
                               }}

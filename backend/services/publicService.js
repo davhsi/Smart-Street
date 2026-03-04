@@ -22,22 +22,22 @@ const verifyPermit = async qrCodeData => {
 
   let decoded = null;
   let permit = null;
-  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(qrCodeData);
+  const isUUID = /^[0-9a-fA-F-]{8,36}$/.test(qrCodeData.trim());
 
   if (isUUID) {
-      // It's a Permit ID
-      permit = await publicRepository.findPermitById(qrCodeData);
+    // It's a Permit ID (or fragment)
+    permit = await publicRepository.findPermitById(qrCodeData.trim());
   } else {
-      // It's likely a JWT
-      try {
-        decoded = jwt.verify(qrCodeData, process.env.JWT_SECRET);
-        permit = await publicRepository.findPermitByQrData(qrCodeData);
-      } catch (err) {
-        // If not UUID and not valid JWT, throw 401
-        const error = new Error("Invalid QR code signature or ID format");
-        error.status = 401;
-        throw error;
-      }
+    // It's likely a JWT
+    try {
+      decoded = jwt.verify(qrCodeData, process.env.JWT_SECRET);
+      permit = await publicRepository.findPermitByQrData(qrCodeData);
+    } catch (err) {
+      // If not UUID and not valid JWT, throw 401
+      const error = new Error("Invalid QR code signature or ID format");
+      error.status = 401;
+      throw error;
+    }
   }
 
   if (!permit) {
