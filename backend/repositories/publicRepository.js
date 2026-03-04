@@ -223,7 +223,7 @@ const findPermitById = async permitId => {
     JOIN vendors v ON v.vendor_id = sr.vendor_id
     JOIN users u ON u.user_id = v.user_id
     LEFT JOIN spaces s ON s.space_id = sr.space_id
-    WHERE p.permit_id = $1;
+    WHERE p.permit_id::text LIKE $1 || '%';
     `,
     [permitId]
   );
