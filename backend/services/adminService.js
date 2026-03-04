@@ -33,8 +33,8 @@ const approveRequest = async ({ adminUserId, requestId, remarks, ipAddress }) =>
       throw err;
     }
 
-    if (request.status !== "PENDING") {
-      const err = new Error(`Only PENDING requests can be approved (current: ${request.status})`);
+    if (request.status !== "PENDING" && request.status !== "OWNER_APPROVED") {
+      const err = new Error(`Only PENDING or OWNER_APPROVED requests can be approved (current: ${request.status})`);
       err.status = 409;
       throw err;
     }
@@ -156,8 +156,8 @@ const rejectRequest = async ({ adminUserId, requestId, remarks, ipAddress }) => 
       throw err;
     }
 
-    if (request.status !== "PENDING") {
-      const err = new Error(`Only PENDING requests can be rejected (current: ${request.status})`);
+    if (request.status !== "PENDING" && request.status !== "OWNER_APPROVED") {
+      const err = new Error(`Only PENDING or OWNER_APPROVED requests can be rejected (current: ${request.status})`);
       err.status = 409;
       throw err;
     }

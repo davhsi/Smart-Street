@@ -104,10 +104,10 @@ const approveRequest = async (ownerUserId, requestId) => {
     throw err;
   }
 
-  // Update to PENDING (now goes to admin queue)
+  // Update to OWNER_APPROVED (now goes to admin queue)
   const updated = await requestRepository.updateOwnerApproval({
     requestId,
-    status: "PENDING",
+    status: "OWNER_APPROVED",
     ownerUserId
   });
 
