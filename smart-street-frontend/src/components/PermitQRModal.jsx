@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { QRCodeCanvas } from "qrcode.react";
+import QRCode from "qrcode";
 import { XMarkIcon, ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 
 export default function PermitQRModal({ isOpen, onClose, permit }) {
@@ -16,9 +17,6 @@ export default function PermitQRModal({ isOpen, onClose, permit }) {
   });
 
   const downloadCard = async () => {
-    const qrCanvas = qrRef.current?.querySelector("canvas");
-    if (!qrCanvas) return;
-
     // Create a new canvas to draw the card
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -85,15 +83,39 @@ export default function PermitQRModal({ isOpen, onClose, permit }) {
     ctx.fill();
     ctx.restore();
 
-    // Draw the actual QR
+    // NUCLEAR FIX: Generate QR matrix data and draw each module as a pure rectangle.
+    // This uses ZERO canvas-to-canvas copies, ZERO image scaling, ZERO OS-dependent paths.
+    // Just math + fillRect = identical output on Windows, Linux, macOS.
     const qrPadding = 30;
-    ctx.drawImage(
-      qrCanvas,
-      qrBoxX + qrPadding,
-      qrBoxY + qrPadding,
-      qrBoxSize - (qrPadding * 2),
-      qrBoxSize - (qrPadding * 2)
-    );
+    const qrDrawSize = qrBoxSize - (qrPadding * 2); // 280px
+    const qrOriginX = qrBoxX + qrPadding;
+    const qrOriginY = qrBoxY + qrPadding;
+
+    // Get raw QR matrix (array of 0s and 1s)
+    const qrObj = QRCode.create(qrData, { errorCorrectionLevel: "H" });
+    const moduleCount = qrObj.modules.size; // e.g., 73 modules per side
+    const marginModules = 2; // quiet zone
+    const totalModules = moduleCount + marginModules * 2;
+    const cellSize = qrDrawSize / totalModules; // exact floating point for even distribution
+
+    // White background for the QR area
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(qrOriginX, qrOriginY, qrDrawSize, qrDrawSize);
+
+    // Draw each dark module as a black rectangle
+    ctx.fillStyle = "#000000";
+    for (let row = 0; row < moduleCount; row++) {
+      for (let col = 0; col < moduleCount; col++) {
+        if (qrObj.modules.data[row * moduleCount + col]) {
+          // Use Math.round for pixel-snapped coordinates (no sub-pixel anti-aliasing)
+          const x = Math.round(qrOriginX + (col + marginModules) * cellSize);
+          const y = Math.round(qrOriginY + (row + marginModules) * cellSize);
+          const w = Math.round(qrOriginX + (col + marginModules + 1) * cellSize) - x;
+          const h = Math.round(qrOriginY + (row + marginModules + 1) * cellSize) - y;
+          ctx.fillRect(x, y, w, h);
+        }
+      }
+    }
 
     // 4. Details
     const startY = 600;
@@ -203,7 +225,7 @@ export default function PermitQRModal({ isOpen, onClose, permit }) {
                     <div ref={qrRef}>
                       <QRCodeCanvas
                         value={qrData}
-                        size={200}
+                        size={280}
                         level={"H"}
                         includeMargin={true}
                       />
