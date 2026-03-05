@@ -246,5 +246,19 @@
     "review_hint": "Review",
     "review_hint_detail": "Check map for red conflict circles. Green circle = owner space.",
     "size_label": "Size",
-    "conflicts_label": "Conflicts"
+    "conflicts_label": "Conflicts",
+    "sign_up": "Sign Up",
+    "have_account": "Already have an account?",
+    "remember_me": "Remember me",
+    "forgot_password": "Forgot Password?",
+    "reset_password": "Reset Password",
+    "remember_password": "Remembered your password?",
+    "processing": "Processing...",
+    "send_reset_link": "Send Reset Link",
+    "reset_token": "Reset Token",
+    "check_your_mail": "Check your mail",
+    "reset_link_sent_to": "We sent a password reset link to",
+    "click_link_inside": "Click the link inside to continue.",
+    "demo_token_link": "Demo Token Link (Development Only):",
+    "return_to_login": "Return to Login"
 }

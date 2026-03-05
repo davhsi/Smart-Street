@@ -94,7 +94,7 @@ export default function NotificationModal({ isOpen, onClose, onNotificationClick
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black/10 dark:bg-black/30 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -110,10 +110,10 @@ export default function NotificationModal({ isOpen, onClose, onNotificationClick
             >
               <Dialog.Panel
                 as={motion.div}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 p-6 text-left align-middle shadow-xl border border-slate-200 dark:border-slate-700"
+                initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl p-6 text-left align-middle shadow-2xl border border-white/50 dark:border-slate-700/50"
               >
                 <div className="flex items-center justify-between mb-4">
                   <Dialog.Title as="h3" className="text-lg font-semibold text-slate-900 dark:text-white">

@@ -15,15 +15,15 @@ import {
 } from "@heroicons/react/24/outline";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.jsx";
-import authBg from "../assets/auth-bg.png";
+import InteractiveParticles from "../components/InteractiveParticles.jsx";
 
 const InputField = ({ label, icon: Icon, type = "text", value, onChange, placeholder, required = true, focused, onFocus, onBlur, ...props }) => (
-  <div className="relative group mt-6">
-    <label className={`absolute left-0 -top-6 text-xs font-bold uppercase tracking-wider transition-all duration-300 ${focused || value ? 'text-cyan-600 dark:text-cyan-400 opacity-100' : 'text-slate-400 opacity-0 translate-y-2'}`}>
+  <div className="relative group mt-5">
+    <label className={`absolute left-0 -top-5 text-[11px] font-bold uppercase tracking-wider transition-all duration-300 ${focused || value ? 'text-cyan-600 dark:text-cyan-400 opacity-100' : 'text-slate-500 dark:text-slate-400 opacity-0 translate-y-2'}`}>
       {label}
     </label>
-    <div className="flex items-center gap-3 pb-2 border-b-2 border-slate-200 dark:border-slate-800 relative">
-      {Icon && <Icon className={`w-6 h-6 transition-colors duration-300 ${focused ? 'text-cyan-500' : 'text-slate-400 dark:text-slate-500'}`} />}
+    <div className="flex items-center gap-3 pb-2.5 border-b-2 border-slate-200 dark:border-slate-700/80 relative">
+      {Icon && <Icon className={`w-5 h-5 transition-colors duration-300 ${focused ? 'text-cyan-500' : 'text-slate-400 dark:text-slate-500'}`} />}
       <input
         type={type}
         value={value}
@@ -31,7 +31,7 @@ const InputField = ({ label, icon: Icon, type = "text", value, onChange, placeho
         onFocus={onFocus}
         onBlur={onBlur}
         required={required}
-        className="w-full bg-transparent text-lg text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none font-medium"
+        className="w-full bg-transparent text-base text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none font-semibold"
         placeholder={focused ? '' : placeholder}
         {...props}
       />
@@ -86,78 +86,75 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-slate-50 dark:bg-[#0B1120] overflow-hidden transition-colors duration-500 font-sans">
-
-      {/* Left Side: Branding & Image (Desktop only or top on mobile) */}
-      <div className="relative w-full md:w-[50%] lg:w-[60%] h-[35vh] md:h-screen flex text-center md:text-left items-center justify-center md:justify-start overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-10000 hover:scale-[1.05]"
-          style={{ backgroundImage: `url(${authBg})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-900/80 via-cyan-900/60 to-slate-900/80 z-10" />
-
-        {/* Branding Content */}
-        <div className="relative z-20 px-8 py-12 md:p-16 text-white space-y-6 md:space-y-8 max-w-2xl w-full hidden md:block">
-          <Link to="/" className="inline-flex md:flex items-center gap-3 mb-6 md:mb-12 group hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-gradient-to-tr from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
-              <BuildingStorefrontIcon className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-white">{t("app_name")}</span>
-          </Link>
-
-          <div className="space-y-4 md:space-y-6 animate-fade-in-up">
-            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black leading-[1.1] tracking-tighter select-none">
-              {t("join")} <br className="hidden md:block" />
-              <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent"> {t("future") || "Smart Street"}</span>
-            </h1>
-            <p className="text-lg md:text-xl lg:text-2xl text-slate-200 font-light tracking-wide max-w-lg leading-relaxed mx-auto md:mx-0">
-              {t("landing_tagline") || "Empowering urban spaces with intelligent management."}
-            </p>
-            <div className="pt-4 md:pt-8 hidden sm:block">
-              <Link
-                to="/public"
-                className="group inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-lg hover:bg-white/20 transition-all shadow-xl"
-              >
-                {t("explore_map") || "Explore Public Map"}
-                <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </div>
-          </div>
+    <div className="min-h-screen w-full flex bg-white dark:bg-[#0B1120] font-sans">
+      
+      {/* Left Panel - Branding/Visual */}
+      <div className="hidden lg:flex lg:w-5/12 xl:w-1/2 relative overflow-hidden bg-slate-900 flex-col justify-between p-12 lg:p-16">
+        <div className="absolute inset-0 z-0">
+          <InteractiveParticles />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-teal-900/80 pointer-events-none z-0" />
+        
+        <div className="relative z-10 flex items-center gap-3">
+           <div className="w-12 h-12 bg-gradient-to-tr from-teal-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-500/30">
+            <BuildingStorefrontIcon className="w-7 h-7 text-white" />
+           </div>
+           <span className="text-2xl font-black text-white tracking-tight">{t("app_name")}</span>
+        </div>
+        
+        <div className="relative z-10 max-w-lg mb-20 animate-fade-in-up">
+          <h1 className="text-5xl lg:text-6xl font-black text-white leading-[1.1] mb-6 tracking-tight">
+            {t("join_smart_street")}
+          </h1>
+          <p className="text-xl text-teal-50/80 font-medium leading-relaxed">
+            {t("landing_tagline_2")}
+          </p>
+        </div>
+        
+        <div className="relative z-10 text-teal-100/40 text-sm font-medium">
+          {t("footer_copyright")}
         </div>
       </div>
 
-      {/* Right Side Wrapper */}
-      <div className="relative w-full md:w-[50%] lg:w-[40%] min-h-[65vh] md:h-screen flex flex-col bg-slate-50 dark:bg-[#0B1120] z-40 shadow-[-20px_0_40px_-5px_rgba(0,0,0,0.1)] dark:shadow-[-20px_0_40px_-5px_rgba(0,0,0,0.3)]">
+      {/* Right Panel - Form */}
+      <div className="w-full lg:w-7/12 xl:w-1/2 flex flex-col relative bg-slate-50/50 dark:bg-transparent overflow-y-auto">
+        {/* Header / Nav */}
+        <nav className="flex justify-between items-center p-6 gap-4 z-50 lg:justify-end shrink-0">
+          <Link to="/" className="flex items-center gap-2 lg:hidden">
+            <div className="w-10 h-10 bg-gradient-to-tr from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-md shadow-cyan-500/20">
+              <BuildingStorefrontIcon className="w-6 h-6 text-white" />
+            </div>
+          </Link>
+          <div className="flex items-center gap-3 ml-auto">
+            <Link
+              to="/login"
+              className="hidden sm:inline-flex items-center px-5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all shadow-sm"
+            >
+              {t("sign_in")}
+            </Link>
+            <div className="bg-white dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-2 shadow-sm">
+              <LanguageSwitcher />
+              <ThemeToggle />
+            </div>
+          </div>
+        </nav>
 
-        {/* Wavy S-Curve SVG overlaying the left image (Desktop Only) */}
-        <div className="hidden md:block absolute top-0 left-0 h-full w-24 xl:w-32 -translate-x-[99%] text-slate-50 dark:text-[#0B1120] overflow-hidden pointer-events-none z-30">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="h-full w-full fill-current">
-            <path d="M 100 0 C 20 25, 80 75, 0 100 L 100 100 Z" />
-          </svg>
-        </div>
-
-        {/* Toggles */}
-        <div className="absolute top-6 right-6 flex items-center gap-3 z-50">
-          <LanguageSwitcher />
-          <ThemeToggle />
-        </div>
-
-        {/* Scrollable Content */}
-        <div className="flex-1 w-full overflow-y-auto flex items-center justify-center px-6 sm:px-12 py-10 md:py-16 mt-12 md:mt-0">
-          {/* Register Form Container */}
-          <div className="relative w-full max-w-md space-y-8 py-8 animate-fade-in-up z-40">
-
-            <div className="space-y-3">
-              <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{t("sign_up")}</h2>
-              <div className="text-sm md:text-base text-slate-500 dark:text-slate-400 font-light">
-                {t("have_account") || "Already have an account?"}{" "}
-                <Link to="/login" className="text-cyan-600 dark:text-cyan-400 font-bold hover:underline tracking-tight transition-colors">{t("sign_in")}</Link>
+        {/* Form Container */}
+        <div className="flex-1 flex flex-col justify-center px-6 py-8 lg:px-16 w-full max-w-2xl mx-auto z-10">
+          <div className="w-full animate-fade-in-up">
+            
+            <div className="space-y-3 mb-10">
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">{t("create_account")}</h2>
+              <div className="text-base text-slate-500 dark:text-slate-400 font-medium">
+                {t("have_account")}{" "}
+                <Link to="/login" className="text-cyan-600 dark:text-cyan-400 font-bold hover:underline tracking-tight transition-colors">
+                  {t("sign_in")}
+                </Link>
               </div>
             </div>
 
             {/* Role Selection Tabs */}
-            <div className="flex bg-slate-200/50 dark:bg-slate-900/50 p-1 rounded-2xl border border-slate-300/50 dark:border-slate-800 backdrop-blur-sm">
+            <div className="flex bg-white dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-8">
               {[
                 { id: "VENDOR", label: t("vendor_role"), icon: BuildingStorefrontIcon },
                 { id: "OWNER", label: t("space_owner_role"), icon: KeyIcon },
@@ -168,18 +165,18 @@ export default function Register() {
                   key={role.id}
                   onClick={() => handleRoleChange(role.id)}
                   className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${activeRole === role.id
-                    ? "bg-slate-50 dark:bg-slate-800 text-cyan-600 dark:text-cyan-400 shadow-sm border border-slate-200 dark:border-slate-700"
-                    : "text-slate-500 hover:text-slate-800 dark:hover:text-white"
+                    ? "bg-slate-900 dark:bg-cyan-600 text-white shadow-md shadow-slate-900/10 dark:shadow-cyan-900/20"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     }`}
                 >
-                  <role.icon className="w-4 h-4" />
+                  <role.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   <span className="hidden sm:inline">{role.label}</span>
                 </button>
               ))}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
                 <InputField
                   label={t("full_name")} icon={UserIcon} value={form.name}
                   onChange={e => updateField("name", e.target.value)}
@@ -261,7 +258,7 @@ export default function Register() {
               </div>
 
               {error && (
-                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-sm font-medium text-red-600 dark:text-red-400 flex items-center gap-3 shadow-sm animate-fade-in-up mt-6">
+                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 text-sm font-semibold text-red-600 dark:text-red-400 flex items-center gap-3 shadow-sm animate-fade-in-up mt-6">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 shrink-0">
                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                   </svg>
@@ -272,20 +269,24 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-6 py-4 rounded-2xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-bold text-lg shadow-xl shadow-cyan-600/20 hover:shadow-cyan-600/40 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                className="w-full py-4 rounded-2xl bg-slate-900 dark:bg-cyan-600 hover:bg-slate-800 dark:hover:bg-cyan-500 text-white font-bold text-lg shadow-xl shadow-slate-900/20 dark:shadow-cyan-900/30 transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 mt-8 flex items-center justify-center gap-2 group"
               >
                 {loading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    {t("creating_profile")}
-                  </div>
-                ) : t("complete_registration")}
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    {t("complete_registration")}
+                    <ArrowRightIcon className="w-5 h-5 opacity-70 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </button>
             </form>
 
-            <p className="text-center text-sm text-slate-400 dark:text-slate-500 font-light mt-8">
-              {t("footer_secure")}
-            </p>
+          </div>
+          
+          {/* Footer */}
+          <div className="mt-8 lg:mt-auto pt-8 text-center text-sm text-slate-400 dark:text-slate-500 font-medium lg:hidden">
+            {t("footer_secure")}
           </div>
         </div>
       </div>

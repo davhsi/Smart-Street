@@ -506,31 +506,31 @@ export default function VendorDashboard() {
     <div className="h-screen flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 
 
-      <header className="flex-none bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[5000]">
+      <header className="flex-none bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.05)] border-b border-white/50 dark:border-slate-800/50 transition-colors duration-300 relative z-[5000] sticky top-0">
         <div className="relative px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-between">
           <div className="flex items-center gap-8">
             <Link to="/" className="hidden lg:block">
-              <p className="text-xs text-blue-700 dark:text-blue-400 font-black tracking-widest">SMART STREET</p>
+              <p className="text-xs text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500 font-black tracking-[0.25em] hover:opacity-80 transition-opacity">SMART STREET</p>
             </Link>
 
-            <nav className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+            <nav className="flex items-center gap-1 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-inner">
               <button
                 onClick={() => setActiveSection("HOME")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeSection === "HOME" ? "bg-white dark:bg-slate-700 text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200"}`}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeSection === "HOME" ? "bg-white dark:bg-slate-700 text-cyan-600 dark:text-cyan-400 shadow-sm shadow-cyan-900/5 ring-1 ring-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-300 hover:bg-white/50 dark:hover:bg-slate-700/50"}`}
               >
                 <HomeIcon className="w-5 h-5" />
                 <span className="hidden sm:inline">Home</span>
               </button>
               <button
                 onClick={() => setActiveSection("MAP")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeSection === "MAP" ? "bg-white dark:bg-slate-700 text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200"}`}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeSection === "MAP" ? "bg-white dark:bg-slate-700 text-cyan-600 dark:text-cyan-400 shadow-sm shadow-cyan-900/5 ring-1 ring-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-300 hover:bg-white/50 dark:hover:bg-slate-700/50"}`}
               >
                 <MapIcon className="w-5 h-5" />
                 <span className="hidden sm:inline">Explore Map</span>
               </button>
               <button
                 onClick={() => setActiveSection("STOREFRONT")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeSection === "STOREFRONT" ? "bg-white dark:bg-slate-700 text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200"}`}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeSection === "STOREFRONT" ? "bg-white dark:bg-slate-700 text-cyan-600 dark:text-cyan-400 shadow-sm shadow-cyan-900/5 ring-1 ring-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-300 hover:bg-white/50 dark:hover:bg-slate-700/50"}`}
               >
                 <BuildingStorefrontIcon className="w-5 h-5" />
                 <span className="hidden sm:inline">Storefront</span>

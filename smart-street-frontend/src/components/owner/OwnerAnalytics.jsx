@@ -127,8 +127,8 @@ export default function OwnerAnalytics({ spaces, requests, loading, onNavigate }
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Chart */}
-                <div className="lg:col-span-2 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">Revenue Trend</h3>
+                <div className="lg:col-span-2 bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl p-6 rounded-3xl border border-white/50 dark:border-slate-700/50 shadow-sm hover:shadow-lg transition-all duration-300">
+                    <h3 className="text-xl font-black text-slate-800 dark:text-slate-200 mb-6 tracking-tight">Revenue Trend</h3>
                     <div className="h-64 w-full">
                         <ResponsiveContainer width="100%" height="100%" minHeight={200} debounce={100}>
                             <AreaChart data={chartData}>
@@ -152,8 +152,8 @@ export default function OwnerAnalytics({ spaces, requests, loading, onNavigate }
                 </div>
 
                 {/* Recent Activity / Quick Actions */}
-                <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">Recent Activity</h3>
+                <div className="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl p-6 rounded-3xl border border-white/50 dark:border-slate-700/50 shadow-sm hover:shadow-lg transition-all duration-300">
+                    <h3 className="text-xl font-black text-slate-800 dark:text-slate-200 mb-6 tracking-tight">Recent Activity</h3>
                     <div className="space-y-4">
                         {requests.slice(0, 5).map(req => (
                             <div
@@ -187,11 +187,13 @@ function KpiCard({ title, value, icon: Icon, trend, color, bgColor, alert, onCli
     return (
         <div
             onClick={onClick}
-            className={`bg-white dark:bg-slate-900 p-6 rounded-xl border transition-all ${alert ? 'border-orange-300 ring-4 ring-orange-50 dark:ring-orange-900/10' : 'border-slate-200 dark:border-slate-800'} 
-            ${onClick ? 'cursor-pointer hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700' : ''} shadow-sm flex items-start justify-between group`}
+            className={`bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl p-6 rounded-3xl border transition-all duration-300 hover:-translate-y-2 hover:shadow-xl ${alert ? 'border-orange-300 shadow-orange-500/10' : 'border-white/50 dark:border-slate-700/50 shadow-sm'} ${onClick ? 'cursor-pointer hover:border-blue-300 dark:hover:border-blue-700' : ''} flex items-start justify-between group relative overflow-hidden`}
         >
-            <div>
-                <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</h3>
+            {/* Subtle Gloss Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div className="relative z-10">
+                <h3 className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{title}</h3>
                 <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-2">{value}</p>
                 {trend && <p className="text-xs font-medium text-green-600 mt-1">{trend} from last month</p>}
             </div>

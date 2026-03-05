@@ -196,14 +196,14 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 
 
-      <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[5000]">
+      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.05)] border-b border-white/50 dark:border-slate-800/50 transition-colors duration-300 relative z-[5000] sticky top-0">
         <div className="px-4 md:px-6 py-4 flex flex-col items-center gap-3 min-h-[80px] xl:grid xl:grid-cols-[1fr_auto_1fr] xl:items-center">
 
           {/* Left Tabs - Absolute on large desktop, hidden on smaller */}
           <div className="hidden xl:flex items-center gap-1 justify-self-start">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all whitespace-nowrap ${activeTab === "overview" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-xl transition-all duration-300 whitespace-nowrap ${activeTab === "overview" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm shadow-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <ChartBarSquareIcon className="w-5 h-5" />
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("map")}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all whitespace-nowrap ${activeTab === "map" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-xl transition-all duration-300 whitespace-nowrap ${activeTab === "map" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm shadow-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <MapIcon className="w-5 h-5" />
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("vendors")}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all whitespace-nowrap ${activeTab === "vendors" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-xl transition-all duration-300 whitespace-nowrap ${activeTab === "vendors" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm shadow-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <UserGroupIcon className="w-5 h-5" />
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("owners")}
-              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-lg transition-all whitespace-nowrap ${activeTab === "owners" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-xl transition-all duration-300 whitespace-nowrap ${activeTab === "owners" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm shadow-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <UserGroupIcon className="w-5 h-5" />
@@ -237,11 +237,11 @@ export default function AdminDashboard() {
 
           {/* Centered Title */}
           <div className="text-center z-10 mb-4 xl:mb-0 justify-self-center">
-            <Link to="/" className="block">
-              <p className="text-xs md:text-sm text-blue-700 dark:text-blue-400 font-bold tracking-[0.25em] hover:opacity-80 transition-opacity mb-1">{t("smart_street")}</p>
+            <Link to="/" className="block group">
+              <p className="text-xs md:text-sm text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500 font-bold tracking-[0.25em] group-hover:opacity-80 transition-opacity mb-1">{t("smart_street")}</p>
             </Link>
-            <h1 className="text-xl md:text-3xl font-bold text-slate-900 dark:text-white mb-1">{t("admin_console")}</h1>
-            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">{t("review_requests_permits")}</p>
+            <h1 className="text-xl md:text-3xl font-black text-slate-900 dark:text-white mb-1 tracking-tight">{t("admin_console")}</h1>
+            <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-light">{t("review_requests_permits")}</p>
           </div>
 
           {/* Right Controls - Absolute on desktop */}
@@ -265,10 +265,10 @@ export default function AdminDashboard() {
 
         {/* Navigation Tabs - Mobile/Tablet Only (below XL) */}
         <div className="w-full xl:hidden border-t border-slate-100 dark:border-slate-800/50">
-          <div className="flex gap-2 justify-center px-4 py-2 overflow-x-auto">
+          <div className="flex gap-2 justify-center px-4 py-2 overflow-x-auto scbar-hidden">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold rounded-lg transition-all ${activeTab === "overview" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "overview" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <ChartBarSquareIcon className="w-5 h-5" />
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("map")}
-              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold rounded-lg transition-all ${activeTab === "map" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "map" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <MapIcon className="w-5 h-5" />
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("vendors")}
-              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold rounded-lg transition-all ${activeTab === "vendors" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "vendors" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <UserGroupIcon className="w-5 h-5" />
@@ -292,7 +292,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab("owners")}
-              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-base font-bold rounded-lg transition-all ${activeTab === "owners" ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 ring-1 ring-blue-200 dark:ring-blue-800" : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "owners" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
               <UserGroupIcon className="w-5 h-5" />
@@ -305,41 +305,42 @@ export default function AdminDashboard() {
       <main className="flex-1 relative h-[calc(100vh-140px)] overflow-hidden">
 
         {activeTab === "overview" && (
-          <div className="h-full overflow-y-auto p-6 md:p-10 max-w-[1920px] mx-auto w-full">
+          <div className="h-full overflow-y-auto p-6 md:p-10 max-w-[1920px] mx-auto w-full animate-fade-in-up">
 
-            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">{t("dashboard_overview")}</h2>
+            <h2 className="text-3xl font-black text-slate-800 dark:text-white mb-8 tracking-tight">{t("dashboard_overview")}</h2>
             <AdminStatsCards stats={stats} loading={statsLoading} />
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
               {/* Quick Actions or Recent Logs? For now recent logs */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 shadow-sm">
-                <h3 className="text-base font-bold text-slate-800 dark:text-white mb-6 uppercase tracking-wide">{t("recent_audit_logs")}</h3>
+              <div className="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all duration-300">
+                <h3 className="text-sm font-black text-slate-800 dark:text-white mb-6 uppercase tracking-widest">{t("recent_audit_logs")}</h3>
                 <div className="space-y-4">
                   {logs.slice(0, 8).map((log, i) => (
-                    <div key={i} className="flex gap-4 text-base pb-4 border-b border-slate-50 dark:border-slate-800 last:border-0">
-                      <div className="text-sm text-slate-400 whitespace-nowrap font-mono">{new Date(log.created_at).toLocaleTimeString()}</div>
+                    <div key={i} className="flex gap-4 text-base pb-4 border-b border-slate-100 dark:border-slate-800/50 last:border-0 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 -mx-4 px-4 rounded-xl transition-colors items-center pt-2">
+                      <div className="text-xs text-slate-400 whitespace-nowrap font-mono bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-md">{new Date(log.created_at).toLocaleTimeString()}</div>
                       <div>
-                        <p className="text-slate-800 dark:text-slate-200 font-medium">{log.action}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{t("by_admin", { id: log.admin_id?.slice(0, 6) })}</p>
+                        <p className="text-slate-800 dark:text-slate-200 font-bold text-sm">{log.action}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t("by_admin", { id: log.admin_id?.slice(0, 6) })}</p>
                       </div>
                     </div>
                   ))}
-                  {logs.length === 0 && <p className="text-base text-slate-400 italic">{t("no_logs_found")}</p>}
+                  {logs.length === 0 && <p className="text-sm text-slate-400 font-light italic">{t("no_logs_found")}</p>}
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 shadow-sm flex flex-col justify-center items-center text-center">
-                <div className="p-5 bg-blue-50 dark:bg-blue-900/30 rounded-full mb-5">
-                  <MapIcon className="w-12 h-12 text-blue-600 dark:text-blue-400" />
+              <div className="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-center items-center text-center">
+                <div className="p-6 bg-gradient-to-tr from-teal-500/20 to-cyan-500/20 rounded-full mb-6 relative group">
+                  <div className="absolute inset-0 bg-cyan-400 blur-xl opacity-20 group-hover:opacity-40 transition-opacity rounded-full"></div>
+                  <MapIcon className="w-12 h-12 text-cyan-600 dark:text-cyan-400 relative z-10" />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{t("review_pending_requests")}</h3>
-                <p className="text-lg text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-3 mb-8">
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{t("review_pending_requests")}</h3>
+                <p className="text-base text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-3 mb-8 font-light leading-relaxed">
                   {t("pending_requests_count", { count: stats?.pending_requests || 0 })}
                 </p>
                 <button
                   onClick={() => setActiveTab("map")}
-                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-lg font-bold transition-colors shadow-lg shadow-blue-500/20"
+                  className="px-8 py-4 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-white rounded-2xl text-lg font-bold transition-all shadow-xl shadow-cyan-600/20 hover:shadow-cyan-600/40 hover:-translate-y-1"
                 >
                   {t("go_to_map")}
                 </button>
