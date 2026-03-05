@@ -192,9 +192,16 @@ export default function PublicSidebar({
                       <div className={`absolute top-0 left-0 w-1 h-full ${isOpenNow ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-700'}`} />
                       
                       <div className="flex justify-between items-start mb-1 pl-2">
-                        <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
-                          {vendor.business_name}
-                        </h3>
+                        <div className="flex flex-col">
+                          <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">
+                            {vendor.business_name}
+                          </h3>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <StarSolid className="w-3 h-3 text-yellow-400" />
+                            <span className="font-bold text-xs text-slate-700 dark:text-slate-300">4.{Math.floor((vendor.vendor_id % 9)) + 1}</span>
+                            <span className="text-slate-400 text-xs">({(vendor.vendor_id % 40) + 10})</span>
+                          </div>
+                        </div>
                         <span className={`text-xs font-bold px-2 py-1 rounded-full ${
                           isOpenNow 
                           ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" 

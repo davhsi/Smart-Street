@@ -63,7 +63,7 @@ export default function OwnerDashboardNew() {
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
                 {/* Top Header */}
-                <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 h-16 flex items-center justify-between px-6 shrink-0 sticky top-0 z-[5000]">
+                <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.05)] border-b border-white/50 dark:border-slate-800/50 h-16 flex items-center justify-between px-6 shrink-0 sticky top-0 z-[5000] transition-colors duration-300">
                     <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200 capitalize">
                         {activeTab.replace("-", " ")}
                     </h2>

@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
 import VendorDashboard from "./pages/VendorDashboard.jsx";
 import OwnerDashboardNew from "./pages/OwnerDashboardNew.jsx";
 import OwnerAddSpace from "./pages/OwnerAddSpace.jsx";
@@ -39,6 +40,7 @@ export default function App() {
         <Route path="/verify" element={<VerifyPermit />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
           path="/vendor"
           element={

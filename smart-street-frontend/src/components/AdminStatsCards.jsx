@@ -61,8 +61,11 @@ export default function AdminStatsCards({ stats, loading }) {
 
         <div
           key={idx}
-          className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-6 lg:p-8 shadow-sm hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group"
+          className="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-3xl p-6 lg:p-8 shadow-sm hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-900/10 dark:hover:shadow-cyan-500/10 transition-all duration-300 group relative overflow-hidden"
         >
+          {/* Subtle Gloss Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">

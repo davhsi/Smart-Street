@@ -18,6 +18,24 @@ const login = async (req, res, next) => {
   }
 };
 
+const forgotPassword = async (req, res, next) => {
+  try {
+    const result = await authService.forgotPassword(req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const result = await authService.resetPassword(req.body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 const me = async (req, res, next) => {
   try {
     const result = await authService.me(req.user.userId);
@@ -49,6 +67,8 @@ const changePassword = async (req, res, next) => {
 module.exports = {
   register,
   login,
+  forgotPassword,
+  resetPassword,
   me,
   updateProfile,
   changePassword

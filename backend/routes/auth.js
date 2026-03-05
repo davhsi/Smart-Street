@@ -4,6 +4,9 @@ const authController = require("../controllers/authController");
 const validateRequest = require("../middleware/validateRequest");
 const { authenticate } = require("../middleware/authMiddleware");
 
+// Temporary dict to hold memory-based tokens for demo
+global.resetTokens = global.resetTokens || {};
+
 router.post(
   "/register",
   [
@@ -25,6 +28,25 @@ router.post(
   ],
   validateRequest,
   authController.login
+);
+
+router.post(
+  "/forgot-password",
+  [
+    body("email").isEmail().withMessage("valid email required")
+  ],
+  validateRequest,
+  authController.forgotPassword
+);
+
+router.post(
+  "/reset-password",
+  [
+    body("token").notEmpty().withMessage("token required"),
+    body("newPassword").isLength({ min: 8 }).withMessage("new password must be at least 8 characters")
+  ],
+  validateRequest,
+  authController.resetPassword
 );
 
 router.get("/me", authenticate, authController.me);

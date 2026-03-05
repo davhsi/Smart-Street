@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const axios = require("axios");
 const userRepository = require("../repositories/userRepository");
 
 const allowedRoles = ["VENDOR", "OWNER", "ADMIN"];
@@ -135,6 +137,83 @@ const login = async payload => {
   };
 };
 
+const forgotPassword = async (payload) => {
+  const { email } = payload;
+  const user = await userRepository.findByEmail(email);
+
+  if (!user) {
+    // For security, do not reveal if a user exists
+    return { message: "If that email is in our system, a reset token has been generated." };
+  }
+
+  // Generate a mock token
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  
+  // Store it in global pseudo-cache (in production, use DB/Redis)
+  global.resetTokens = global.resetTokens || {};
+  global.resetTokens[resetToken] = {
+    userId: user.user_id,
+    expiresAt: Date.now() + 15 * 60 * 1000 // 15 mins
+  };
+
+  try {
+    const resetUrl = `http://localhost:5173/forgot-password?token=${resetToken}`;
+    const emailParams = {
+      service_id: process.env.EMAILJS_SERVICE_ID,
+      template_id: process.env.EMAILJS_TEMPLATE_ID,
+      user_id: process.env.EMAILJS_PUBLIC_KEY,
+      accessToken: process.env.EMAILJS_PRIVATE_KEY,
+      template_params: {
+        email: user.email,
+        link: resetUrl,
+        to_email: user.email
+      }
+    };
+
+    await axios.post("https://api.emailjs.com/api/v1.0/email/send", emailParams, {
+      headers: {
+        'Content-Type': 'application/json',
+        'origin': 'http://localhost:5173'
+      }
+    });
+  } catch (error) {
+    console.error("EmailJS Error:", error.response ? error.response.data : error.message);
+    const err = new Error("Failed to send reset email. Please try again later.");
+    err.status = 500;
+    throw err;
+  }
+
+  return { 
+    message: "Reset token generated and sent to email."
+  };
+};
+
+const resetPassword = async (payload) => {
+  const { token, newPassword } = payload;
+  
+  const tokenData = global.resetTokens[token];
+  if (!tokenData) {
+    const err = new Error("Invalid or expired token.");
+    err.status = 400;
+    throw err;
+  }
+
+  if (Date.now() > tokenData.expiresAt) {
+    delete global.resetTokens[token];
+    const err = new Error("Token has expired.");
+    err.status = 400;
+    throw err;
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await userRepository.updatePassword(tokenData.userId, passwordHash);
+  
+  // Cleanup token
+  delete global.resetTokens[token];
+
+  return { message: "Password has been successfully reset." };
+};
+
 const me = async userId => {
   const user = await userRepository.findById(userId);
   if (!user) {
@@ -175,6 +254,8 @@ const changePassword = async (userId, { currentPassword, newPassword }) => {
 module.exports = {
   register,
   login,
+  forgotPassword,
+  resetPassword,
   me,
   updateProfile,
   changePassword

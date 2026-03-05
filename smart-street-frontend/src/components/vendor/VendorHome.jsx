@@ -87,9 +87,9 @@ export default function VendorHome({ onSelectSpace, analytics, favorites, onTogg
                             Recent Re-request
                         </h2>
                     </div>
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <div className="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-3xl shadow-sm overflow-hidden hover:shadow-xl transition-shadow duration-300">
                         {analytics?.recentRequests?.length > 0 ? (
-                            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                            <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
                                 {analytics.recentRequests.map(req => (
                                     <div key={req.request_id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors flex items-center justify-between group">
                                         <div className="flex items-center gap-4">
@@ -129,9 +129,9 @@ export default function VendorHome({ onSelectSpace, analytics, favorites, onTogg
                             Favorite Places
                         </h2>
                     </div>
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
+                    <div className="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-3xl shadow-sm overflow-hidden hover:shadow-xl transition-shadow duration-300">
                         {favorites.length > 0 ? (
-                            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+                            <div className="divide-y divide-slate-100 dark:divide-slate-800/50">
                                 {favorites.map(fav => (
                                     <div key={fav.space_id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors flex items-center justify-between">
                                         <div className="flex items-center gap-4">
@@ -177,7 +177,7 @@ export default function VendorHome({ onSelectSpace, analytics, favorites, onTogg
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {analytics.locationStats.map((loc, idx) => (
-                                <div key={idx} className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center justify-between group hover:shadow-md transition-all">
+                                <div key={idx} className="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 p-5 rounded-3xl flex items-center justify-between group hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
                                     <div className="flex items-center gap-4">
                                         <div className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center font-black text-slate-400">
                                             {idx + 1}
@@ -206,11 +206,14 @@ function StatCard({ icon, label, value, color }) {
     };
 
     return (
-        <div className="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex items-center gap-5 group hover:shadow-md transition-shadow">
-            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${colorMap[color]}`}>
+        <div className="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 p-6 rounded-[2.5rem] shadow-sm flex items-center gap-5 group hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-900/10 dark:hover:shadow-cyan-500/10 transition-all duration-300 relative overflow-hidden">
+             {/* Subtle Gloss Overlay */}
+             <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent dark:from-white/5 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div className={`w-16 h-16 rounded-2xl flex items-center justify-center relative z-10 ${colorMap[color]}`}>
                 {icon}
             </div>
-            <div>
+            <div className="relative z-10">
                 <p className="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{label}</p>
                 <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 group-hover:scale-105 transition-transform origin-left">{value}</p>
             </div>

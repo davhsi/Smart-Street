@@ -187,7 +187,7 @@ export default function PublicMap() {
 
             <Link
               to="/login"
-              className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 backdrop-blur-md px-3 py-2 sm:px-4 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all shadow-md shadow-cyan-600/20"
+              className="bg-cyan-600 hover:bg-cyan-500 backdrop-blur-md px-4 py-2 sm:px-5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold text-white transition-all shadow-md shadow-cyan-600/30 border border-cyan-500"
             >
               {t('login')}
             </Link>
@@ -231,6 +231,12 @@ export default function PublicMap() {
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold text-base">{vendor.business_name}</h3>
                       <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded font-medium uppercase">{vendor.category}</span>
+                    </div>
+                    {/* Add mock rating here since real rating isn't in DB yet */}
+                    <div className="flex items-center gap-1 mb-1">
+                      <span className="text-yellow-400 text-xs">★</span>
+                      <span className="font-bold text-xs">4.{Math.floor(Math.random() * 9) + 1}</span>
+                      <span className="text-slate-400 text-xs">({Math.floor(Math.random() * 50) + 10})</span>
                     </div>
                     <p className="text-xs text-slate-600 mb-1">{vendor.address}</p>
                     <p className="text-xs text-slate-500 mb-2">{vendor.space_name}</p>
