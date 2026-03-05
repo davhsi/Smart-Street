@@ -57,6 +57,44 @@ export default function VerifyPermit() {
       }
    };
 
+   // Helper: attempt jsQR on given canvas imageData
+   const tryJsQR = (imageData) => {
+      let code = jsQR(imageData.data, imageData.width, imageData.height, {
+         inversionAttempts: "dontInvert",
+      });
+      if (!code) {
+         code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: "attemptBoth",
+         });
+      }
+      return code;
+   };
+
+   // Helper: draw a crop of the source image onto a fresh canvas and return its imageData
+   const getCroppedImageData = (img, sx, sy, sw, sh) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      canvas.width = sw;
+      canvas.height = sh;
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, sw, sh);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+      return ctx.getImageData(0, 0, sw, sh);
+   };
+
+   // Helper: binarize imageData (convert to pure black/white) to remove anti-aliasing
+   const binarize = (imageData) => {
+      const data = new Uint8ClampedArray(imageData.data);
+      for (let i = 0; i < data.length; i += 4) {
+         const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+         const val = gray < 128 ? 0 : 255;
+         data[i] = data[i + 1] = data[i + 2] = val;
+         data[i + 3] = 255;
+      }
+      return new ImageData(data, imageData.width, imageData.height);
+   };
+
    const processFile = (file) => {
       if (!file) return;
 
@@ -70,43 +108,72 @@ export default function VerifyPermit() {
       reader.onload = (e) => {
          const img = new Image();
          img.onload = () => {
-            // Try first with original image
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d", { willReadFrequently: true });
+            const W = img.width;
+            const H = img.height;
 
-            // If the image is huge (like our generated 600x900 card), don't scale it, just read it directly
-            // If it's small, scale it up to help jsQR
-            let scale = 1;
-            if (img.width < 400 && img.height < 400) scale = 3;
+            // Build a list of crop regions to try (in order of likelihood)
+            const crops = [
+               // 1. Full image at native resolution
+               { sx: 0, sy: 0, sw: W, sh: H, label: "full" },
+               // 2. Center 60% — removes header/footer noise
+               { sx: W * 0.2, sy: H * 0.2, sw: W * 0.6, sh: H * 0.6, label: "center60" },
+               // 3. Upper-center (where QR sits in our 600x900 permit card: ~y=200..540)
+               { sx: W * 0.15, sy: H * 0.18, sw: W * 0.7, sh: H * 0.45, label: "upperCenter" },
+               // 4. Center 40% — tight crop
+               { sx: W * 0.3, sy: H * 0.3, sw: W * 0.4, sh: H * 0.4, label: "center40" },
+               // 5. Top half
+               { sx: 0, sy: 0, sw: W, sh: H * 0.6, label: "topHalf" },
+            ];
 
-            canvas.width = img.width * scale;
-            canvas.height = img.height * scale;
-
-            ctx.fillStyle = "#FFFFFF";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.imageSmoothingEnabled = false;
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-            let code = jsQR(imageData.data, imageData.width, imageData.height, {
-               inversionAttempts: "dontInvert",
-            });
-
-            // Fallback attempt with inversion
-            if (!code) {
-               code = jsQR(imageData.data, imageData.width, imageData.height, {
-                  inversionAttempts: "attemptBoth",
-               });
+            // For small images (standalone QR), scale up instead
+            if (W < 400 && H < 400) {
+               const canvas = document.createElement("canvas");
+               const ctx = canvas.getContext("2d", { willReadFrequently: true });
+               canvas.width = W * 3;
+               canvas.height = H * 3;
+               ctx.fillStyle = "#FFFFFF";
+               ctx.fillRect(0, 0, canvas.width, canvas.height);
+               ctx.imageSmoothingEnabled = false;
+               ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+               const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+               const code = tryJsQR(imageData) || tryJsQR(binarize(imageData));
+               if (code) {
+                  console.log("QR Code found (scaled up):", code.data);
+                  handleVerify(code.data);
+                  return;
+               }
             }
 
-            if (code) {
-               console.log("QR Code found:", code.data);
-               handleVerify(code.data);
-            } else {
-               console.warn("QR Scan failed. Orig Dimensions:", img.width, "x", img.height);
-               setError("Could not read QR code. Please try a clearer image, or manually paste the text data.");
+            // Try each crop region, with both raw and binarized versions
+            for (const crop of crops) {
+               const sx = Math.round(crop.sx);
+               const sy = Math.round(crop.sy);
+               const sw = Math.round(crop.sw);
+               const sh = Math.round(crop.sh);
+
+               if (sw < 10 || sh < 10) continue;
+
+               const imageData = getCroppedImageData(img, sx, sy, sw, sh);
+
+               // Try raw pixels
+               let code = tryJsQR(imageData);
+               if (code) {
+                  console.log(`QR found via [${crop.label}] raw:`, code.data);
+                  handleVerify(code.data);
+                  return;
+               }
+
+               // Try binarized (removes anti-aliasing artifacts)
+               code = tryJsQR(binarize(imageData));
+               if (code) {
+                  console.log(`QR found via [${crop.label}] binarized:`, code.data);
+                  handleVerify(code.data);
+                  return;
+               }
             }
+
+            console.warn("QR Scan failed after all strategies. Dimensions:", W, "x", H);
+            setError("Could not read QR code. Please try a clearer image, or manually paste the text data.");
          };
          img.src = e.target.result;
       };
