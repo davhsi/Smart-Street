@@ -9,8 +9,10 @@ import {
 } from "@heroicons/react/24/outline";
 import api from "../../services/api";
 import LoadingSpinner from "../LoadingSpinner";
+import { useToast } from "../../context/ToastContext";
 
 export default function VendorStorefront() {
+    const { success, error } = useToast();
     const [vendor, setVendor] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -40,7 +42,7 @@ export default function VendorStorefront() {
                 setMenuItems(vendorData.menu_items || []);
             }
         } catch (err) {
-            console.error("Failed to fetch vendor storefront", err);
+            // Error handled visually by failing to load UI
         } finally {
             setLoading(false);
         }
@@ -68,9 +70,10 @@ export default function VendorStorefront() {
                 menuItems
             });
             setSaved(true);
+            success("Storefront updated successfully!");
             setTimeout(() => setSaved(false), 3000);
         } catch (err) {
-            alert("Failed to save changes");
+            error("Failed to save changes");
         } finally {
             setSaving(false);
         }
@@ -90,13 +93,6 @@ export default function VendorStorefront() {
                     <h1 className="text-3xl font-black text-slate-900 dark:text-white">Digital Storefront</h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-2">Manage how your stall appears to citizens on the public map.</p>
                 </div>
-                <button
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-2xl font-black shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2 active:scale-95 disabled:opacity-50"
-                >
-                    {saving ? "Saving..." : saved ? <><CheckCircleIcon className="w-5 h-5" /> Saved</> : "Save Changes"}
-                </button>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -113,7 +109,7 @@ export default function VendorStorefront() {
                             <input
                                 value={businessName}
                                 onChange={e => setBusinessName(e.target.value)}
-                                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                                className="w-full text-[16px] md:text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
                                 placeholder="Name of your stall"
                             />
                         </div>
@@ -122,7 +118,7 @@ export default function VendorStorefront() {
                             <select
                                 value={category}
                                 onChange={e => setCategory(e.target.value)}
-                                className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none appearance-none"
+                                className="w-full text-base md:text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none appearance-none"
                             >
                                 <option value="Food">Street Food</option>
                                 <option value="Beverage">Beverages</option>
@@ -138,7 +134,7 @@ export default function VendorStorefront() {
                                 <input
                                     value={stallPhoto}
                                     onChange={e => setStallPhoto(e.target.value)}
-                                    className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
+                                    className="flex-1 text-[16px] md:text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
                                     placeholder="https://example.com/photo.jpg"
                                 />
                             </div>
@@ -168,13 +164,13 @@ export default function VendorStorefront() {
                         <input
                             value={newItemName}
                             onChange={e => setNewItemName(e.target.value)}
-                            className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
+                            className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 text-[16px] md:text-sm outline-none focus:ring-1 focus:ring-blue-500"
                             placeholder="Item name"
                         />
                         <input
                             value={newItemPrice}
                             onChange={e => setNewItemPrice(e.target.value)}
-                            className="w-24 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-24 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-[16px] md:text-sm outline-none focus:ring-1 focus:ring-blue-500"
                             placeholder="Price (₹)"
                         />
                         <button
@@ -211,6 +207,19 @@ export default function VendorStorefront() {
                         )}
                     </div>
                 </section>
+            </div>
+
+            {/* Sticky Save Footer */}
+            <div className="fixed bottom-20 md:bottom-10 left-0 w-full px-4 md:px-0 z-40 flex justify-center pointer-events-none">
+                <div className="pointer-events-auto w-full max-w-4xl flex justify-end">
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 md:py-3 rounded-2xl font-black shadow-2xl shadow-blue-500/30 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+                    >
+                        {saving ? <span className="flex items-center gap-2"><LoadingSpinner size="sm" className="text-white" /> Saving...</span> : saved ? <span className="flex items-center gap-2"><CheckCircleIcon className="w-5 h-5" /> Saved</span> : "Save Changes"}
+                    </button>
+                </div>
             </div>
         </div>
     );

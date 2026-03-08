@@ -26,10 +26,18 @@ const MapEventListener = () => {
 const MapInvalidator = ({ isFullscreen }) => {
   const map = useMap();
   useEffect(() => {
-    const timer = setTimeout(() => {
+    // Fire immediately on mount to handle flex/grid parents with no explicit height
+    const mountTimer = setTimeout(() => {
+      map.invalidateSize({ animate: false });
+    }, 100);
+    // Fire again on fullscreen toggle
+    const fsTimer = setTimeout(() => {
       map.invalidateSize();
-    }, 250);
-    return () => clearTimeout(timer);
+    }, 300);
+    return () => {
+      clearTimeout(mountTimer);
+      clearTimeout(fsTimer);
+    };
   }, [map, isFullscreen]);
   return null;
 };
@@ -47,8 +55,8 @@ export default function MapContainerFullscreen({
   onToggleFullscreen: controlledOnToggleFullscreen,
   overlayContent,
   showFullscreenButton = true,
-  searchClassName = "absolute top-6 z-[2000] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-[500px]",
-  controlsClassName = "absolute top-24 right-4 z-[1000] flex flex-col gap-2"
+  searchClassName = "absolute top-6 z-[20] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] md:w-[500px]",
+  controlsClassName = "absolute top-1/2 -translate-y-1/2 right-3 z-[10] flex flex-col gap-3"
 }) {
   const [internalIsFullscreen, setInternalIsFullscreen] = useState(false);
   const containerRef = useRef(null);
@@ -111,7 +119,7 @@ export default function MapContainerFullscreen({
       {/* Overlays (Sidebar, Action Bar) - Parent must ensure these have high z-index (e.g. z-[2000]) */}
       {overlayContent}
 
-      <div className="w-full h-full z-0 isolate">
+      <div className="w-full h-full min-h-0 z-0 isolate">
         <MapContainer
           center={center}
           zoom={zoom}

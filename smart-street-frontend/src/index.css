@@ -22,6 +22,29 @@
       transform: translate(0px, 0px) scale(1);
     }
   }
+
+  /* Shimmer sweep for skeleton loading screens */
+  --animate-shimmer: shimmer 1.5s infinite;
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
+}
+
+/* Scrollbar-hide utility (used by horizontal scroll strips) */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer base {
@@ -33,7 +56,7 @@
   input,
   select,
   textarea {
-    @apply text-base md:text-sm;
+    @apply text-[16px] md:text-sm;
   }
 
   /* Premium Scrollbar Styling */

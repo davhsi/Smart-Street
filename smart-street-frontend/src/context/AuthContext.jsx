@@ -16,10 +16,23 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem("smartstreet_token");
     const storedUser = localStorage.getItem("smartstreet_user");
     if (storedToken && storedUser) {
+      // Restore existing session from localStorage
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
+      setInitializing(false);
+    } else {
+      // No localStorage session — check if there's a valid remember-me cookie
+      api
+        .post("/auth/auto-login", {}, { withCredentials: true })
+        .then(({ data }) => {
+          // Cookie was valid — restore session silently
+          persistSession(data.token, data.user);
+        })
+        .catch(() => {
+          // No valid cookie, user must log in manually
+        })
+        .finally(() => setInitializing(false));
     }
-    setInitializing(false);
   }, []);
 
   const persistSession = (nextToken, nextUser) => {
@@ -36,11 +49,15 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("smartstreet_user");
   };
 
-  const login = async ({ email, password }) => {
+  const login = async ({ email, password, rememberMe = false }) => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await api.post("/auth/login", { email, password });
+      const { data } = await api.post(
+        "/auth/login",
+        { email, password, rememberMe },
+        { withCredentials: true }  // Allow the HttpOnly cookie to be set
+      );
       persistSession(data.token, data.user);
       return data.user;
     } catch (err) {
@@ -94,8 +111,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    clearSession();
+  const logout = async () => {
+    try {
+      // Revoke the remember-me token server-side and clear the HttpOnly cookie
+      await api.post("/auth/logout", {}, { withCredentials: true });
+    } catch (_) {
+      // Ignore errors — still clear client session
+    } finally {
+      clearSession();
+    }
   };
 
   const fetchNotifications = async () => {

@@ -230,7 +230,7 @@ export default function VerifyPermit() {
             </div>
          </header>
 
-         <main className={`relative mx-auto px-6 py-12 transition-all duration-500 ${result ? "max-w-7xl" : "max-w-3xl"}`}>
+         <main className={`relative mx-auto px-4 sm:px-6 py-8 sm:py-12 transition-all duration-500 ${result ? "max-w-7xl" : "max-w-3xl"}`}>
             <div className={`bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl rounded-3xl shadow-2xl shadow-cyan-900/5 border border-white/50 dark:border-slate-700/50 p-8 md:p-10 transition-all duration-500 ${result ? "grid grid-cols-1 lg:grid-cols-2 gap-10 items-start" : ""}`}>
 
                {/* Left Column: Form */}
@@ -311,7 +311,11 @@ export default function VerifyPermit() {
                                  }}
                                  placeholder={t("paste_qr_placeholder")}
                                  rows={2}
-                                 className="w-full pl-4 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all shadow-sm font-mono text-sm resize-none placeholder:text-slate-400"
+                                 autoCapitalize="none"
+                                 autoCorrect="off"
+                                 spellCheck="false"
+                                 inputMode="text"
+                                 className="w-full pl-4 pr-4 py-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all shadow-sm font-mono text-base resize-none placeholder:text-slate-400"
                               />
                            </div>
                         </div>
@@ -319,7 +323,7 @@ export default function VerifyPermit() {
                         <button
                            type="submit"
                            disabled={verifying}
-                           className="w-full py-3.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-white font-bold shadow-lg shadow-cyan-600/30 hover:shadow-cyan-600/40 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                           className="w-full py-4 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-white font-bold shadow-lg shadow-cyan-600/30 hover:shadow-cyan-600/40 hover:-translate-y-0.5 active:scale-95 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed transition-all touch-manipulation"
                         >
                            {verifying ? (
                               <span className="flex items-center justify-center gap-2">

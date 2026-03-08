@@ -30,6 +30,7 @@ import {
   BuildingStorefrontIcon,
   ChevronUpIcon
 } from "@heroicons/react/24/outline";
+import BottomNav from "../components/BottomNav.jsx";
 import { useRef } from "react";
 
 const defaultCenter = [11.3410, 77.7172];
@@ -49,11 +50,14 @@ const getDistanceMeters = (lat1, lng1, lat2, lng2) => {
   return R * c;
 };
 
-const MapClickCatcher = ({ onClick, intent }) => {
+const MapClickCatcher = ({ onClick, intent, setSheetState }) => {
   useMapEvents({
     click: e => {
+      // Auto-collapse bottom sheet when user clicks the map
+      if (setSheetState) {
+        setSheetState("collapsed");
+      }
       if (intent === "REQUEST_NEW") {
-        // Allow click anywhere - auto-detection handles the rest
         onClick([e.latlng.lat, e.latlng.lng]);
       }
     }
@@ -137,6 +141,7 @@ export default function VendorDashboard() {
   const [flyToCoords, setFlyToCoords] = useState(null); // For programmatic moves (voice)
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [sheetState, setSheetState] = useState("collapsed"); // "collapsed", "half", "full"
 
   // QR Modal State
   const [showQrModal, setShowQrModal] = useState(false);
@@ -411,13 +416,16 @@ export default function VendorDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  // Reset state when intent changes (prevents the “pin always created” bug)
   useEffect(() => {
     setError(null);
     setSuccess(null);
     setPin(null);
     setRequestedRadius("");
     setHighlightedRequest(null);
+    // Expand to half if they intent on acting, but only if they are on mobile
+    if (intent && window.innerWidth < 768) {
+        setSheetState("half");
+    }
   }, [intent, activeSection]);
 
   const handleSubmit = async e => {
@@ -425,6 +433,7 @@ export default function VendorDashboard() {
 
     if (!intent) {
       showError("Choose an intent first: use an owner-defined location or request a new location.");
+      setSheetState("half");
       return;
     }
 
@@ -503,17 +512,17 @@ export default function VendorDashboard() {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col overflow-hidden overflow-x-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 
 
       <header className="flex-none bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg shadow-[0_4px_30px_rgba(0,0,0,0.05)] border-b border-white/50 dark:border-slate-800/50 transition-colors duration-300 relative z-[5000] sticky top-0">
-        <div className="relative px-4 md:px-6 py-4 flex flex-col md:flex-row items-center justify-between">
+        <div className="relative px-4 sm:px-6 py-3 sm:py-4 flex flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-8">
             <Link to="/" className="hidden lg:block">
               <p className="text-xs text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-cyan-500 font-black tracking-[0.25em] hover:opacity-80 transition-opacity">SMART STREET</p>
             </Link>
 
-            <nav className="flex items-center gap-1 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-inner">
+            <nav className="hidden sm:flex items-center gap-1 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-inner">
               <button
                 onClick={() => setActiveSection("HOME")}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeSection === "HOME" ? "bg-white dark:bg-slate-700 text-cyan-600 dark:text-cyan-400 shadow-sm shadow-cyan-900/5 ring-1 ring-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-300 hover:bg-white/50 dark:hover:bg-slate-700/50"}`}
@@ -553,7 +562,7 @@ export default function VendorDashboard() {
       <main
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex-1 relative min-h-0 overflow-y-auto overflow-x-hidden scroll-smooth"
+        className="flex-1 relative min-h-0 overflow-y-auto overflow-x-hidden scroll-smooth pb-16 sm:pb-0 w-full"
       >
         {activeSection === "HOME" && (
           <VendorHome
@@ -572,6 +581,7 @@ export default function VendorDashboard() {
         {activeSection === "STOREFRONT" && <VendorStorefront />}
 
         {activeSection === "MAP" && (
+          <div className="relative flex flex-col h-[calc(100dvh-12rem)] sm:h-[calc(100dvh-4rem)] min-h-[400px] w-full">
           <MapContainerFullscreen
             center={selectedSpace ? [Number(selectedSpace.lat), Number(selectedSpace.lng)] : defaultCenter}
             zoom={selectedSpace ? 16 : 13}
@@ -600,10 +610,13 @@ export default function VendorDashboard() {
                   permits={permits}
                   onOpenQr={handleOpenQr}
                   onRequestClick={setSelectedRequest}
+                  sheetState={sheetState}
+                  setSheetState={setSheetState}
                 />
-                {intent && (
+                {((intent === "REQUEST_NEW") || (intent === "OWNER_DEFINED" && selectedSpaceId)) && (
                   <VendorActionBar
                     intent={intent}
+                    setIntent={setIntent}
                     form={form}
                     setForm={setForm}
                     requestedRadius={requestedRadius}
@@ -695,6 +708,7 @@ export default function VendorDashboard() {
             <MapClickCatcher
               onClick={coord => handlePinSet(coord)}
               intent={intent}
+              setSheetState={setSheetState}
             />
 
             {intent === "REQUEST_NEW" && pin && (
@@ -754,8 +768,20 @@ export default function VendorDashboard() {
 
             <MapFlyTo coords={flyToCoords} />
           </MapContainerFullscreen>
+          </div>
         )}
       </main>
+
+      {/* Mobile Bottom Navigation — hidden on sm+ */}
+      <BottomNav
+        activeKey={activeSection}
+        onTabChange={setActiveSection}
+        tabs={[
+          { key: "HOME", label: "Home", icon: HomeIcon, activeIcon: HomeIcon },
+          { key: "MAP", label: "Map", icon: MapIcon, activeIcon: MapIcon },
+          { key: "STOREFRONT", label: "Store", icon: BuildingStorefrontIcon, activeIcon: BuildingStorefrontIcon },
+        ]}
+      />
 
       {/* Notification Modal */}
       <NotificationModal

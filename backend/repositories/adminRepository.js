@@ -410,6 +410,54 @@ const getVendorDetails = async (vendorId) => {
   return vendor;
 };
 
+const listPendingSpaces = async () => {
+  const result = await db.query(
+    `
+    SELECT
+      s.space_id,
+      s.owner_id,
+      s.space_name,
+      s.address,
+      s.allowed_radius,
+      s.price_per_radius,
+      s.status,
+      s.aadhar_number,
+      s.aadhar_name,
+      s.chitta_number,
+      s.chitta_name,
+      s.image_1_url,
+      s.image_2_url,
+      s.terms_conditions,
+      s.created_at,
+      ST_Y(s.center::geometry) AS lat,
+      ST_X(s.center::geometry) AS lng,
+      o.owner_name,
+      o.contact_info,
+      u.email
+    FROM spaces s
+    JOIN owners o ON o.owner_id = s.owner_id
+    JOIN users u ON u.user_id = o.user_id
+    WHERE s.status = 'PENDING'
+    ORDER BY s.created_at ASC;
+    `
+  );
+  return result.rows;
+};
+
+const updateSpaceStatus = async (spaceId, status, termsConditions) => {
+  const result = await db.query(
+    `
+    UPDATE spaces
+    SET status = $2::space_status,
+        terms_conditions = $3
+    WHERE space_id = $1
+    RETURNING *;
+    `,
+    [spaceId, status, termsConditions || null]
+  );
+  return result.rows[0];
+};
+
 module.exports = {
   listPendingRequests,
   listAllRequests,
@@ -425,5 +473,7 @@ module.exports = {
   listVendors,
   listOwners,
   getOwnerDetails,
-  getVendorDetails
+  getVendorDetails,
+  listPendingSpaces,
+  updateSpaceStatus
 };

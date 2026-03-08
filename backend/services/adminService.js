@@ -230,6 +230,75 @@ const getVendorDetails = async (vendorId) => {
   return { vendor };
 };
 
+const listPendingSpaces = async () => {
+  const spaces = await adminRepository.listPendingSpaces();
+  return { spaces };
+};
+
+const approveSpace = async ({ adminUserId, spaceId, termsConditions, ipAddress }) => {
+  const updated = await adminRepository.updateSpaceStatus(spaceId, 'APPROVED', termsConditions);
+  
+  if (!updated) {
+    const err = new Error("Space not found");
+    err.status = 404;
+    throw err;
+  }
+
+  await auditLogRepository.createLog({
+    adminId: adminUserId,
+    action: "APPROVE_SPACE",
+    entityType: "spaces",
+    targetId: spaceId,
+    ipAddress
+  });
+
+  try {
+    const spaceWithOwner = await db.query(`SELECT owner_id, space_name FROM spaces WHERE space_id = $1`, [spaceId]);
+    if (spaceWithOwner.rows.length > 0) {
+        const ownerRec = spaceWithOwner.rows[0];
+        const userRec = await db.query(`SELECT user_id FROM owners WHERE owner_id = $1`, [ownerRec.owner_id]);
+        if (userRec.rows.length > 0) {
+             const ownerUserId = userRec.rows[0].user_id;
+             await notificationService.createSpaceApprovedNotification(ownerUserId, ownerRec.space_name);
+        }
+    }
+  } catch(e) { console.error("Could not notify owner:", e); }
+
+  return { space: updated };
+};
+
+const rejectSpace = async ({ adminUserId, spaceId, ipAddress }) => {
+  const updated = await adminRepository.updateSpaceStatus(spaceId, 'REJECTED', null);
+  
+  if (!updated) {
+    const err = new Error("Space not found");
+    err.status = 404;
+    throw err;
+  }
+
+  await auditLogRepository.createLog({
+    adminId: adminUserId,
+    action: "REJECT_SPACE",
+    entityType: "spaces",
+    targetId: spaceId,
+    ipAddress
+  });
+  
+  try {
+    const spaceWithOwner = await db.query(`SELECT owner_id, space_name FROM spaces WHERE space_id = $1`, [spaceId]);
+    if (spaceWithOwner.rows.length > 0) {
+        const ownerRec = spaceWithOwner.rows[0];
+        const userRec = await db.query(`SELECT user_id FROM owners WHERE owner_id = $1`, [ownerRec.owner_id]);
+        if (userRec.rows.length > 0) {
+             const ownerUserId = userRec.rows[0].user_id;
+             await notificationService.createSpaceRejectedNotification(ownerUserId, ownerRec.space_name);
+        }
+    }
+  } catch(e) { console.error("Could not notify owner:", e); }
+
+  return { space: updated };
+};
+
 module.exports = {
   listPendingRequests,
   listHistoryRequests,
@@ -241,7 +310,11 @@ module.exports = {
   getDashboardStats,
   listVendors,
   listOwners,
+  listOwners,
   getOwnerDetails,
-  getVendorDetails
+  getVendorDetails,
+  listPendingSpaces,
+  approveSpace,
+  rejectSpace
 };
 

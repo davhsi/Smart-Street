@@ -24,11 +24,21 @@ router.post(
   "/login",
   [
     body("email").isEmail().withMessage("valid email required"),
-    body("password").isLength({ min: 8 }).withMessage("password must be at least 8 characters")
+    body("password").isLength({ min: 8 }).withMessage("password must be at least 8 characters"),
+    body("rememberMe").optional().isBoolean()
   ],
   validateRequest,
   authController.login
 );
+
+// Auto-login: validates the remember_me cookie, returns a fresh JWT
+router.post("/auto-login", authController.autoLogin);
+
+// Logout: revokes the current remember-me token and clears the cookie
+router.post("/logout", authController.logout);
+
+// Logout all sessions: requires valid JWT + revokes all remember-me tokens
+router.post("/logout-all", authenticate, authController.logoutAll);
 
 router.post(
   "/forgot-password",
@@ -50,7 +60,6 @@ router.post(
 );
 
 router.get("/me", authenticate, authController.me);
-
 
 router.put(
   "/me",

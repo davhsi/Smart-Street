@@ -4,6 +4,15 @@ const crypto = require("crypto");
 const axios = require("axios");
 const userRepository = require("../repositories/userRepository");
 
+// How long a Remember Me cookie stays valid
+const REMEMBER_ME_DAYS = 30;
+
+/** HMAC-SHA256 hash of raw token — what we store in DB */
+const hashToken = raw =>
+  crypto.createHmac("sha256", process.env.REMEMBER_ME_SECRET || "fallback_secret")
+        .update(raw)
+        .digest("hex");
+
 const allowedRoles = ["VENDOR", "OWNER", "ADMIN"];
 
 const toClientUser = dbUser => ({
@@ -109,7 +118,7 @@ const register = async (payload, ipAddress) => {
 };
 
 const login = async payload => {
-  const { email, password } = payload;
+  const { email, password, rememberMe } = payload;
   const user = await userRepository.findByEmail(email);
 
   if (!user) {
@@ -131,10 +140,73 @@ const login = async payload => {
     email: user.email
   });
 
+  // Generate and store a remember-me token if requested
+  let rememberToken = null;
+  if (rememberMe) {
+    const rawToken = crypto.randomBytes(40).toString("hex"); // 80-char random hex
+    const tokenHash = hashToken(rawToken);
+    const expiresAt = new Date(Date.now() + REMEMBER_ME_DAYS * 24 * 60 * 60 * 1000);
+    await userRepository.createRememberMeToken(user.user_id, tokenHash, expiresAt);
+    rememberToken = rawToken; // Send raw token to client — stored hashed in DB
+  }
+
   return {
     token,
+    rememberToken, // null if not using Remember Me
     user: toClientUser(user)
   };
+};
+
+/**
+ * Auto-login from a Remember Me cookie.
+ * Returns a fresh short-lived JWT if the token is valid; otherwise throws.
+ */
+const loginFromRememberToken = async rawToken => {
+  const tokenHash = hashToken(rawToken);
+  const row = await userRepository.findRememberMeToken(tokenHash);
+  if (!row) {
+    const err = new Error("Invalid or expired remember-me token");
+    err.status = 401;
+    throw err;
+  }
+
+  // Issue a fresh short-lived JWT
+  const freshJwt = signToken({
+    userId: row.user_id,
+    role: row.role,
+    email: row.email
+  });
+
+  return {
+    token: freshJwt,
+    user: {
+      userId: row.user_id,
+      name: row.name,
+      email: row.email,
+      role: row.role,
+      phone: row.phone
+    }
+  };
+};
+
+/**
+ * Logout — revoke the specific remember-me token stored in the cookie.
+ * Pass null/undefined rawToken if there is no cookie.
+ */
+const logout = async (rawToken) => {
+  if (rawToken) {
+    const tokenHash = hashToken(rawToken);
+    await userRepository.deleteRememberMeToken(tokenHash);
+  }
+  return { message: "Logged out successfully" };
+};
+
+/**
+ * Revoke ALL remember-me tokens for a user ("logout everywhere").
+ */
+const logoutAll = async (userId) => {
+  await userRepository.deleteAllRememberMeTokensForUser(userId);
+  return { message: "All sessions revoked" };
 };
 
 const forgotPassword = async (payload) => {
@@ -254,6 +326,9 @@ const changePassword = async (userId, { currentPassword, newPassword }) => {
 module.exports = {
   register,
   login,
+  loginFromRememberToken,
+  logout,
+  logoutAll,
   forgotPassword,
   resetPassword,
   me,

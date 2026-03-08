@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl, Circle } from "react-leaflet";
 import MapContainerFullscreen from "../../components/MapContainerFullscreen.jsx";
 import { MagnifyingGlassIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import "leaflet/dist/leaflet.css";
@@ -97,7 +97,7 @@ export default function OwnerMap({ spaces, requests, initialCenterSpace }) {
     };
 
     return (
-        <div className="h-full w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm relative">
+        <div className="relative flex flex-col h-full w-full min-h-[500px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
             {/* Search Overlay - Handled by MapContainerFullscreen */}
             <MapContainerFullscreen
                 center={mapCenter}
@@ -118,8 +118,8 @@ export default function OwnerMap({ spaces, requests, initialCenterSpace }) {
                     const isSelected = initialCenterSpace && space.space_id === initialCenterSpace.space_id;
 
                     return (
+                        <React.Fragment key={`space-${space.space_id}`}>
                         <Marker
-                            key={`space-${space.space_id}`}
                             position={[lat, lng]}
                             icon={isSelected ? SelectedIcon : DefaultIcon}
                             eventHandlers={{
@@ -151,6 +151,21 @@ export default function OwnerMap({ spaces, requests, initialCenterSpace }) {
                                 </div>
                             </Popup>
                         </Marker>
+                        {isSelected && (
+                            <Circle 
+                                center={[lat, lng]} 
+                                radius={space.allowed_radius} 
+                                pathOptions={{ color: '#f97316', fillColor: '#f97316', fillOpacity: 0.2 }} 
+                            />
+                        )}
+                        {!isSelected && (
+                             <Circle 
+                                center={[lat, lng]} 
+                                radius={space.allowed_radius} 
+                                pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.1 }} 
+                            />
+                        )}
+                        </React.Fragment>
                     );
                 })}
 

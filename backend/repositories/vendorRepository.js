@@ -26,7 +26,7 @@ const getAnalytics = async (vendorId) => {
     SELECT sr.*, s.space_name, s.address
     FROM space_requests sr
     LEFT JOIN spaces s ON sr.space_id = s.space_id
-    WHERE sr.vendor_id = $1 AND sr.status = 'APPROVED'
+    WHERE sr.vendor_id = $1
     ORDER BY sr.submitted_at DESC
     LIMIT 5
     `,
