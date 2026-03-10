@@ -62,6 +62,47 @@ const updatePassword = async (userId, passwordHash) => {
   );
 };
 
+// ─── Remember Me Token functions ────────────────────────────────────────────
+
+/** Store a new hashed remember-me token for a user */
+const createRememberMeToken = async (userId, tokenHash, expiresAt) => {
+  await db.query(
+    `INSERT INTO remember_me_tokens (user_id, token_hash, expires_at)
+     VALUES ($1, $2, $3)`,
+    [userId, tokenHash, expiresAt]
+  );
+};
+
+/** Look up a token by its hash, joining the user row */
+const findRememberMeToken = async tokenHash => {
+  const result = await db.query(
+    `SELECT rmt.*, u.user_id, u.name, u.email, u.role, u.phone
+     FROM remember_me_tokens rmt
+     JOIN users u ON u.user_id = rmt.user_id
+     WHERE rmt.token_hash = $1
+       AND rmt.expires_at > NOW()
+     LIMIT 1`,
+    [tokenHash]
+  );
+  return result.rows[0];
+};
+
+/** Delete a single token (used on explicit logout) */
+const deleteRememberMeToken = async tokenHash => {
+  await db.query(
+    `DELETE FROM remember_me_tokens WHERE token_hash = $1`,
+    [tokenHash]
+  );
+};
+
+/** Delete ALL tokens for a user (used on "logout everywhere") */
+const deleteAllRememberMeTokensForUser = async userId => {
+  await db.query(
+    `DELETE FROM remember_me_tokens WHERE user_id = $1`,
+    [userId]
+  );
+};
+
 module.exports = {
   createUser,
   findByEmail,
@@ -69,5 +110,10 @@ module.exports = {
   createVendorProfile,
   createOwnerProfile,
   updateUser,
-  updatePassword
+  updatePassword,
+  createRememberMeToken,
+  findRememberMeToken,
+  deleteRememberMeToken,
+  deleteAllRememberMeTokensForUser
 };
+

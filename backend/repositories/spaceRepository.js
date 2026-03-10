@@ -8,7 +8,13 @@ const createSpace = async ({
   lat,
   lng,
   allowedRadius,
-  pricePerRadius
+  pricePerRadius,
+  aadharNumber,
+  aadharName,
+  chittaNumber,
+  chittaName,
+  image1Url,
+  image2Url
 }) => {
   const result = await db.query(
     `
@@ -18,7 +24,14 @@ const createSpace = async ({
       address,
       center,
       allowed_radius,
-      price_per_radius
+      price_per_radius,
+      aadhar_number,
+      aadhar_name,
+      chitta_number,
+      chitta_name,
+      image_1_url,
+      image_2_url,
+      status
     )
     VALUES (
       $1,
@@ -26,7 +39,14 @@ const createSpace = async ({
       $3,
       ${pointFromLatLng(lat, lng)},
       $4,
-      $5
+      $5,
+      $6,
+      $7,
+      $8,
+      $9,
+      $10,
+      $11,
+      'PENDING'
     )
     RETURNING
       space_id,
@@ -35,11 +55,17 @@ const createSpace = async ({
       address,
       allowed_radius,
       price_per_radius,
-      ST_Y(center::geometry) AS lat,
       ST_X(center::geometry) AS lng,
+      aadhar_number,
+      aadhar_name,
+      chitta_number,
+      chitta_name,
+      image_1_url,
+      image_2_url,
+      status,
       created_at;
     `,
-    [ownerId, spaceName, address, allowedRadius, pricePerRadius]
+    [ownerId, spaceName, address, allowedRadius, pricePerRadius, aadharNumber, aadharName, chittaNumber, chittaName, image1Url, image2Url]
   );
 
   return result.rows[0];

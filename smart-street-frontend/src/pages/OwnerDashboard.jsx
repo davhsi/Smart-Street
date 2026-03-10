@@ -106,7 +106,7 @@ export default function OwnerDashboard() {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+    <div className="flex flex-col h-screen overflow-hidden overflow-x-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
 
 
       <header className="bg-white dark:bg-slate-900 shadow-sm border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 relative z-[5000]">

@@ -23,7 +23,13 @@ const createSpace = async (userId, payload) => {
     lat,
     lng,
     allowedRadius,
-    pricePerRadius
+    pricePerRadius,
+    aadharNumber,
+    aadharName,
+    chittaNumber,
+    chittaName,
+    image1Url,
+    image2Url
   } = payload;
 
   if (!lat || !lng) {
@@ -45,7 +51,13 @@ const createSpace = async (userId, payload) => {
     lat: Number(lat),
     lng: Number(lng),
     allowedRadius: Number(allowedRadius),
-    pricePerRadius: Number(pricePerRadius || 0)
+    pricePerRadius: Number(pricePerRadius || 0),
+    aadharNumber,
+    aadharName,
+    chittaNumber,
+    chittaName,
+    image1Url,
+    image2Url
   });
 
   // Notify all admin users about the new space

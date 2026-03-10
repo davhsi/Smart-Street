@@ -113,6 +113,42 @@ const getVendor = async (req, res, next) => {
   }
 };
 
+const listPendingSpaces = async (req, res, next) => {
+  try {
+    const result = await adminService.listPendingSpaces();
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const approveSpace = async (req, res, next) => {
+  try {
+    const result = await adminService.approveSpace({
+      adminUserId: req.user.userId,
+      spaceId: req.params.id,
+      termsConditions: req.body.termsConditions,
+      ipAddress: req.ip
+    });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const rejectSpace = async (req, res, next) => {
+  try {
+    const result = await adminService.rejectSpace({
+      adminUserId: req.user.userId,
+      spaceId: req.params.id,
+      ipAddress: req.ip
+    });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   listRequests,
   approve,
@@ -124,6 +160,9 @@ module.exports = {
   listVendors,
   listOwners,
   getOwner,
-  getVendor
+  getVendor,
+  listPendingSpaces,
+  approveSpace,
+  rejectSpace
 };
 

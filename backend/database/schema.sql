@@ -7,6 +7,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE TYPE user_role AS ENUM ('VENDOR', 'OWNER', 'ADMIN');
 CREATE TYPE request_status AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 CREATE TYPE permit_status AS ENUM ('VALID', 'EXPIRED', 'REVOKED');
+CREATE TYPE space_status AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 
 -- Core tables
 CREATE TABLE IF NOT EXISTS users (
@@ -47,6 +48,14 @@ CREATE TABLE IF NOT EXISTS spaces (
   price_per_radius FLOAT8 NOT NULL DEFAULT 0,
   space_name TEXT NOT NULL,
   address TEXT NOT NULL,
+  chitta_number TEXT,
+  chitta_name TEXT,
+  aadhar_number TEXT,
+  aadhar_name TEXT,
+  image_1_url TEXT,
+  image_2_url TEXT,
+  status space_status NOT NULL DEFAULT 'PENDING',
+  terms_conditions TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

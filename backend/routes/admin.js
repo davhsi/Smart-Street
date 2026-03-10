@@ -47,5 +47,27 @@ router.get("/owners/:id", [
   adminController.getOwner
 );
 
+// Space Verification Endpoints (Phase 2)
+router.get("/spaces/pending", adminController.listPendingSpaces);
+
+router.post(
+  "/spaces/:id/approve",
+  [
+    param("id").isUUID().withMessage("valid space id is required"),
+    body("termsConditions").optional().isString().isLength({ max: 5000 })
+  ],
+  validateRequest,
+  adminController.approveSpace
+);
+
+router.post(
+  "/spaces/:id/reject",
+  [
+    param("id").isUUID().withMessage("valid space id is required")
+  ],
+  validateRequest,
+  adminController.rejectSpace
+);
+
 module.exports = router;
 

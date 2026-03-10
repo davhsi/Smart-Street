@@ -20,7 +20,8 @@ import AdminRequestDetail from "../components/AdminRequestDetail.jsx";
 import AdminStatsCards from "../components/AdminStatsCards.jsx";
 import AdminVendorList from "../components/AdminVendorList.jsx";
 import AdminOwnerList from "../components/AdminOwnerList.jsx";
-import { ChartBarSquareIcon, MapIcon, UserGroupIcon } from "@heroicons/react/24/outline";
+import AdminSpaceApproval from "../components/AdminSpaceApproval.jsx";
+import { ChartBarSquareIcon, MapIcon, UserGroupIcon, DocumentCheckIcon } from "@heroicons/react/24/outline";
 
 import ThemeToggle from "../components/ThemeToggle.jsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.jsx";
@@ -51,11 +52,25 @@ export default function AdminDashboard() {
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   const [viewMode, setViewMode] = useState("pending");
-  const [activeTab, setActiveTab] = useState("overview"); // overview, map, vendors
+  const [activeTab, setActiveTab] = useState("overview"); // overview, spaces, map, vendors, owners
   const [stats, setStats] = useState(null);
   const [vendors, setVendors] = useState([]);
   const [owners, setOwners] = useState([]);
+  const [pendingSpaces, setPendingSpaces] = useState([]);
   const [statsLoading, setStatsLoading] = useState(false);
+  const [spacesLoading, setSpacesLoading] = useState(false);
+
+  const fetchSpaces = async () => {
+    setSpacesLoading(true);
+    try {
+      const { data } = await api.get("/admin/spaces/pending");
+      setPendingSpaces(data.spaces || []);
+    } catch (err) {
+      console.error("Failed to load pending spaces", err);
+    } finally {
+      setSpacesLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -122,6 +137,7 @@ export default function AdminDashboard() {
     fetchRequests();
     fetchPermits();
     fetchAuditLogs();
+    fetchSpaces();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewMode]);
 
@@ -210,6 +226,14 @@ export default function AdminDashboard() {
               {t("overview")}
             </button>
             <button
+              onClick={() => setActiveTab("spaces")}
+              className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-xl transition-all duration-300 whitespace-nowrap ${activeTab === "spaces" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm shadow-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <DocumentCheckIcon className="w-5 h-5" />
+              Space Verification
+            </button>
+            <button
               onClick={() => setActiveTab("map")}
               className={`flex items-center justify-center gap-2 px-4 py-2 text-base font-bold rounded-xl transition-all duration-300 whitespace-nowrap ${activeTab === "map" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm shadow-cyan-500/10" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
@@ -265,41 +289,50 @@ export default function AdminDashboard() {
 
         {/* Navigation Tabs - Mobile/Tablet Only (below XL) */}
         <div className="w-full xl:hidden border-t border-slate-100 dark:border-slate-800/50">
-          <div className="flex gap-2 justify-center px-4 py-2 overflow-x-auto scbar-hidden">
+          <div className="flex gap-1 justify-start px-4 py-2 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab("overview")}
-              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "overview" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "overview" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
-              <ChartBarSquareIcon className="w-5 h-5" />
-              {t("overview")}
+              <ChartBarSquareIcon className="w-5 h-5 flex-shrink-0" />
+              <span className="hidden sm:inline">{t("overview")}</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("spaces")}
+              className={`flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "spaces" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                }`}
+            >
+              <DocumentCheckIcon className="w-5 h-5 flex-shrink-0" />
+              <span className="hidden sm:inline">Space Verification</span>
             </button>
             <button
               onClick={() => setActiveTab("map")}
-              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "map" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "map" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
-              <MapIcon className="w-5 h-5" />
-              {t("map_and_requests")}
+              <MapIcon className="w-5 h-5 flex-shrink-0" />
+              <span className="hidden sm:inline">{t("map_and_requests")}</span>
             </button>
             <button
               onClick={() => setActiveTab("vendors")}
-              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "vendors" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "vendors" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
-              <UserGroupIcon className="w-5 h-5" />
-              {t("vendors")}
+              <UserGroupIcon className="w-5 h-5 flex-shrink-0" />
+              <span className="hidden sm:inline">{t("vendors")}</span>
             </button>
             <button
               onClick={() => setActiveTab("owners")}
-              className={`flex-none flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "owners" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+              className={`flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 ${activeTab === "owners" ? "bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-cyan-700 dark:text-cyan-400 ring-1 ring-cyan-200 dark:ring-cyan-800/50 shadow-sm" : "text-slate-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                 }`}
             >
-              <UserGroupIcon className="w-5 h-5" />
-              {t("owners")}
+              <UserGroupIcon className="w-5 h-5 flex-shrink-0" />
+              <span className="hidden sm:inline">{t("owners")}</span>
             </button>
           </div>
         </div>
+
       </header>
 
       <main className="flex-1 relative h-[calc(100vh-140px)] overflow-hidden">
@@ -346,6 +379,12 @@ export default function AdminDashboard() {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === "spaces" && (
+          <div className="h-full overflow-hidden p-4 md:p-6 max-w-[1920px] mx-auto w-full animate-fade-in-up">
+            <AdminSpaceApproval spaces={pendingSpaces} fetchSpaces={fetchSpaces} loading={spacesLoading} />
           </div>
         )}
 

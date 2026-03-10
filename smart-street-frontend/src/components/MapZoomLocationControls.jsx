@@ -46,18 +46,15 @@ export default function MapZoomLocationControls({
           <button
             type="button"
             onClick={onToggleFullscreen}
-            className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-md border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center w-14 h-14 transform active:scale-95"
+            className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-2 rounded-full shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center w-11 h-11 transform active:scale-95"
             title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           >
             {isFullscreen ? (
-              <XMarkIcon className="h-8 w-8 text-slate-700 dark:text-slate-200" />
+              <XMarkIcon className="h-6 w-6 text-slate-700 dark:text-slate-200" />
             ) : (
-              <ArrowsPointingOutIcon className="h-8 w-8 text-slate-700 dark:text-slate-200" />
+              <ArrowsPointingOutIcon className="h-6 w-6 text-slate-700 dark:text-slate-200" />
             )}
           </button>
-          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
-            {isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-          </div>
         </div>
       )}
 
@@ -65,47 +62,39 @@ export default function MapZoomLocationControls({
       <div className="relative group/tooltip">
         <button
           onClick={handleLocate}
-          className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-md border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center w-14 h-14"
+          className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-2 rounded-full shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center w-11 h-11 transform active:scale-95"
           title="Show Your Location"
           type="button"
         >
-          <MapPinIcon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <MapPinIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
         </button>
-        <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
-          My Location
-        </div>
       </div>
 
-      <div className="flex flex-col bg-white dark:bg-slate-800 rounded-lg shadow-md border border-slate-300 dark:border-slate-600 overflow-hidden">
+      {/* Zoom Controls Stack */}
+      <div className="flex flex-col gap-1">
         <div className="relative group/tooltip">
           <button
             onClick={handleZoomIn}
-            className="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center w-14 h-14 border-b border-slate-200 dark:border-slate-600"
+            className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-2 rounded-t-2xl rounded-b-sm shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center w-11 h-11 transform active:scale-95"
             title="Zoom In"
             type="button"
           >
-            <PlusIcon className="h-8 w-8 text-slate-700 dark:text-slate-200" />
+            <PlusIcon className="h-6 w-6 text-slate-700 dark:text-slate-200 stroke-2" />
           </button>
-          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
-            Zoom In
-          </div>
         </div>
         <div className="relative group/tooltip">
           <button
             onClick={handleZoomOut}
-            className="p-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center w-14 h-14"
+            className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md p-2 rounded-b-2xl rounded-t-sm shadow-lg border border-slate-200/50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center w-11 h-11 transform active:scale-95"
             title="Zoom Out"
             type="button"
           >
-            <MinusIcon className="h-8 w-8 text-slate-700 dark:text-slate-200" />
+            <MinusIcon className="h-6 w-6 text-slate-700 dark:text-slate-200 stroke-2" />
           </button>
-          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
-            Zoom Out
-          </div>
         </div>
       </div>
 
-      {/* Satellite Toggle Button - Integrated vertically */}
+      {/* Satellite Toggle Button */}
       <div className="relative group/tooltip">
         <button
           type="button"
@@ -113,18 +102,15 @@ export default function MapZoomLocationControls({
             e.stopPropagation();
             setMapStyle(prev => prev === "street" ? "satellite" : "street");
           }}
-          className={`bg-white dark:bg-slate-800 rounded-lg shadow-md border transition-all w-14 h-14 flex items-center justify-center group/btn overflow-hidden transform active:scale-95 ${mapStyle === 'satellite' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-300 dark:border-slate-600'
+          className={`bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full shadow-lg border transition-all w-11 h-11 flex items-center justify-center group/btn overflow-hidden transform active:scale-95 ${mapStyle === 'satellite' ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-slate-200/50 dark:border-slate-700/50'
             }`}
           title={mapStyle === "street" ? "Switch to Satellite" : "Switch to Street Map"}
         >
-          <div className={`w-8 h-8 rounded-md transition-all duration-300 border border-slate-200 dark:border-slate-700 ${mapStyle === 'street'
+          <div className={`w-8 h-8 rounded-full transition-all duration-300 border border-slate-200 dark:border-slate-700 ${mapStyle === 'street'
             ? 'bg-[url("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/15/15000/10000")] bg-cover'
             : 'bg-[url("https://a.tile.openstreetmap.org/15/15000/10000.png")] bg-cover'
             }`}></div>
         </button>
-        <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 px-2 py-1 bg-slate-900 text-white text-[10px] font-bold rounded opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
-          {mapStyle === "street" ? "Switch to Satellite" : "Switch to Street Map"}
-        </div>
       </div>
     </div>
   );

@@ -60,6 +60,24 @@ const createNewOwnerSpaceNotification = async (adminUserId, spaceName, ownerName
   });
 };
 
+const createSpaceApprovedNotification = async (ownerUserId, spaceName) => {
+  return await notificationRepository.createNotification({
+    userId: ownerUserId,
+    type: "SPACE_APPROVED",
+    title: "Space Approved",
+    message: `Your space "${spaceName}" has been approved by an administrator and is now live.`
+  });
+};
+
+const createSpaceRejectedNotification = async (ownerUserId, spaceName) => {
+  return await notificationRepository.createNotification({
+    userId: ownerUserId,
+    type: "SPACE_REJECTED",
+    title: "Space Rejected",
+    message: `Your space "${spaceName}" was rejected by an administrator following verification.`
+  });
+};
+
 const createOwnerSpaceRequestNotification = async (ownerUserId, requestId, vendorName, spaceName) => {
   return await notificationRepository.createNotification({
     userId: ownerUserId,
@@ -99,6 +117,8 @@ module.exports = {
   createPermitRevokedNotification,
   createNewVendorRequestNotification,
   createNewOwnerSpaceNotification,
+  createSpaceApprovedNotification,
+  createSpaceRejectedNotification,
   createOwnerSpaceRequestNotification,
   createOwnerApprovalGrantedNotification,
   createOwnerApprovalRejectedNotification,

@@ -336,24 +336,24 @@ export default function OwnerSidebar({
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-1">{t("space_name")}</label>
+                    <label className="text-sm sm:text-base font-semibold text-slate-700 dark:text-slate-300 block mb-1">{t("space_name")}</label>
                     <input
                       type="text"
                       value={form.spaceName}
                       onChange={e => setForm({ ...form, spaceName: e.target.value })}
                       required
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-shadow"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-shadow"
                       placeholder="e.g. Central Park Lot"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 block mb-1">{t("address")}</label>
+                    <label className="text-sm sm:text-base font-semibold text-slate-700 dark:text-slate-300 block mb-1">{t("address")}</label>
                     <input
                       type="text"
                       value={form.address}
                       onChange={e => setForm({ ...form, address: e.target.value })}
                       required
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-shadow"
+                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-3 text-base focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-white transition-shadow"
                       placeholder="Street address"
                     />
                   </div>

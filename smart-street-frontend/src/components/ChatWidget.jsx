@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../services/api";
 import { ChatBubbleLeftRightIcon, XMarkIcon, PaperAirplaneIcon, SparklesIcon, MapPinIcon, MicrophoneIcon, StopIcon } from "@heroicons/react/24/outline";
 
 const ChatWidget = () => {
@@ -52,6 +52,7 @@ const ChatWidget = () => {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -72,7 +73,7 @@ const ChatWidget = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/chat", { message: userMessage.content });
+      const response = await api.post("/chat", { message: userMessage.content });
       
       const botMessage = {
         role: "bot",
@@ -91,31 +92,40 @@ const ChatWidget = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end pointer-events-none">
+    <div className="fixed
+        bottom-[220px] right-4
+        sm:bottom-[220px] sm:right-6
+        z-[100] flex flex-col items-end pointer-events-none
+        w-[calc(100%-2rem)] sm:w-auto"
+    >
       
       {/* Chat Window */}
       <div 
         className={`
           pointer-events-auto
-          mb-4 w-[90vw] sm:w-[400px] h-[600px] max-h-[80vh]
-          bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-xl
+          mb-4
+          w-full sm:w-[380px]
+          ${isInputFocused ? "max-h-[45vh]" : "max-h-[50vh]"} sm:max-h-[80vh]
+          bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-sm
           border border-white/20 dark:border-slate-700
-          rounded-2xl shadow-2xl flex flex-col overflow-hidden
-          transition-all duration-300 origin-bottom-right
-          ${isOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-10 pointer-events-none"}
+          rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] sm:shadow-2xl z-[100] flex flex-col overflow-hidden
+          transition-all duration-300 ease-in-out origin-bottom will-change-transform transform-gpu
+          ${isOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-8 pointer-events-none"}
         `}
       >
         {/* Header */}
-        <div className="p-4 bg-gradient-to-r from-teal-600 to-cyan-600 flex justify-between items-center text-white shrink-0">
-          <div className="flex items-center gap-2">
-            <SparklesIcon className="w-5 h-5" />
-            <h3 className="font-bold tracking-brand">Smart Street AI</h3>
+        <div className="py-1.5 px-3 sm:p-4 bg-gradient-to-r from-teal-600 to-cyan-600 flex justify-between items-center text-white shrink-0">
+          <div className="flex items-center gap-1.5">
+            <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+            <h3 className="font-bold text-xs sm:text-base tracking-brand">Smart Street AI</h3>
           </div>
+          {/* 44×44px minimum touch target for accessibility */}
           <button 
             onClick={() => setIsOpen(false)}
-            className="p-1 hover:bg-white/20 rounded-full transition-colors"
+            className="flex items-center justify-center w-11 h-11 -mr-1 hover:bg-white/20 rounded-full transition-colors"
+            aria-label="Close chat"
           >
-            <XMarkIcon className="w-6 h-6" />
+            <XMarkIcon className="w-5 h-5" />
           </button>
         </div>
 
@@ -125,7 +135,7 @@ const ChatWidget = () => {
             <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
               <div 
                 className={`
-                  max-w-[85%] rounded-2xl p-3 text-sm shadow-sm
+                  max-w-[85%] rounded-2xl px-3 py-2 text-[13px] sm:text-sm shadow-sm
                   ${msg.role === "user" 
                     ? "bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-br-none" 
                     : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-bl-none"}
@@ -188,14 +198,16 @@ const ChatWidget = () => {
         </div>
 
         {/* Input Area */}
-        <div className="p-3 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 shrink-0">
+        <div className="p-2 sm:p-3 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 shrink-0">
           <form onSubmit={handleSubmit} className="flex gap-2 relative">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => setIsInputFocused(false)}
               placeholder={isListening ? "Listening..." : "Ask anything..."}
-              className={`flex-1 pl-4 pr-20 py-3 rounded-xl bg-slate-100 dark:bg-slate-900/50 border-none focus:ring-2 focus:ring-cyan-500 text-sm dark:text-white transition-all ${isListening ? "ring-2 ring-red-500 bg-red-50 dark:bg-red-900/20" : ""}`}
+              className={`flex-1 pl-3 pr-16 py-2 sm:pl-4 sm:pr-20 sm:py-3 rounded-xl bg-slate-100 dark:bg-slate-900/50 border-none focus:ring-2 focus:ring-cyan-500 text-[13px] sm:text-sm dark:text-white transition-all ${isListening ? "ring-2 ring-red-500 bg-red-50 dark:bg-red-900/20" : ""}`}
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
               <button

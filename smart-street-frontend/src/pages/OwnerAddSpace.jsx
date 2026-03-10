@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap, Circle, ZoomControl } from "react-leaflet";
 import MapContainerFullscreen from "../components/MapContainerFullscreen.jsx";
+import { useTranslation } from "react-i18next";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import api from "../services/api";
@@ -42,19 +43,26 @@ function MapUpdater({ center }) {
 
 export default function OwnerAddSpace() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [pin, setPin] = useState(null); // [lat, lng]
     const [mapCenter, setMapCenter] = useState([13.0827, 80.2707]);
     const [searchQuery, setSearchQuery] = useState("");
     const [isSearching, setIsSearching] = useState(false);
     const [searchResults, setSearchResults] = useState([]);
-    const [showForm, setShowForm] = useState(true); // Toggle form visibility on mobile? Always true for now.
+    const [showForm, setShowForm] = useState(true);
 
     const [form, setForm] = useState({
         spaceName: "",
         address: "",
         allowedRadius: 50,
         pricePerRadius: 0,
+        aadharNumber: "",
+        aadharName: "",
+        chittaNumber: "",
+        chittaName: "",
+        image1Url: "",
+        image2Url: "",
     });
 
     const handleSearch = async (e) => {
@@ -76,16 +84,14 @@ export default function OwnerAddSpace() {
     const selectSearchResult = (result) => {
         const lat = parseFloat(result.lat);
         const lon = parseFloat(result.lon);
-        // setPin([lat, lon]); // User requested to NOT pin automatically
         setMapCenter([lat, lon]);
-        // setForm(prev => ({ ...prev, address: result.display_name })); // Don't autofill until pin is set
         setSearchResults([]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!pin) {
-            alert("Please pin a location on the map.");
+            alert(t("please_pin_location"));
             return;
         }
 
@@ -98,16 +104,16 @@ export default function OwnerAddSpace() {
                 lng: pin[1],
                 allowedRadius: form.allowedRadius,
                 pricePerRadius: form.pricePerRadius,
+                aadharNumber: form.aadharNumber,
+                aadharName: form.aadharName,
+                chittaNumber: form.chittaNumber,
+                chittaName: form.chittaName,
+                image1Url: form.image1Url,
+                image2Url: form.image2Url
             });
-            // Redirect to spaces tab on dashboard
-            // Wait, dashboard state management needs to know which tab. 
-            // We can navigate to /owner, and owner dashboard defaults to dashboard tab.
-            // Or pass state?
-            // For now, just navigate to /owner. The default tab is dashboard. The user can click My Spaces.
-            // Ideally navigate to /owner?tab=spaces
             navigate("/owner");
         } catch (err) {
-            alert(err.response?.data?.message || "Failed to create space");
+            alert(err.response?.data?.message || t("failed_create_space"));
         } finally {
             setLoading(false);
         }
@@ -121,44 +127,44 @@ export default function OwnerAddSpace() {
                     <button
                         onClick={() => navigate("/owner")}
                         className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-                        title="Back to Dashboard"
+                        title={t("back_to_dashboard")}
                     >
                         <ArrowLeftIcon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                     </button>
-                    <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Add New Space</h1>
+                    <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t("add_new_space")}</h1>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                     <form id="add-space-form" onSubmit={handleSubmit} className="space-y-5">
                         <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-sm text-blue-800 dark:text-blue-200 border border-blue-100 dark:border-blue-900/50">
-                            <strong>Step 1:</strong> Locate your space on the map using search or zooming.<br />
-                            <strong>Step 2:</strong> Click to drop a pin on the exact spot.<br />
-                            <strong>Step 3:</strong> Fill in the details below.
+                            <strong>{t("step_1")}:</strong> {t("step_1_desc")}<br />
+                            <strong>{t("step_2")}:</strong> {t("step_2_desc")}<br />
+                            <strong>{t("step_3")}:</strong> {t("step_3_desc")}
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Space Name</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("space_name")}</label>
                             <input
                                 type="text"
                                 required
                                 value={form.spaceName}
                                 onChange={(e) => setForm({ ...form, spaceName: e.target.value })}
                                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
-                                placeholder="e.g. Main Street Parking"
+                                placeholder={t("space_name_placeholder")}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("address")}</label>
                             <textarea
                                 required
                                 value={form.address}
                                 onChange={(e) => setForm({ ...form, address: e.target.value })}
                                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none h-24 resize-none transition-shadow"
-                                placeholder="Full address..."
+                                placeholder={t("address_placeholder")}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Allowed Radius (meters)</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("allowed_radius_meters")}</label>
                             <input
                                 type="number"
                                 required
@@ -170,7 +176,7 @@ export default function OwnerAddSpace() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Price per Radius Unit (₹/meter)</label>
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t("price_per_radius_unit")}</label>
                             <input
                                 type="number"
                                 required
@@ -179,14 +185,76 @@ export default function OwnerAddSpace() {
                                 value={form.pricePerRadius}
                                 onChange={(e) => setForm({ ...form, pricePerRadius: parseFloat(e.target.value) })}
                                 className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
-                                placeholder="e.g. 2.50"
+                                placeholder={t("price_placeholder")}
                             />
-                            <p className="mt-1 text-xs text-slate-500 italic">Total cost = Radius × Price per meter</p>
+                            <p className="mt-1 text-xs text-slate-500 italic">{t("price_formula_hint")}</p>
+                        </div>
+
+                        {/* Phase 2: Verification Requirements */}
+                        <div className="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-4">
+                             <h3 className="font-semibold text-slate-800 dark:text-slate-200 uppercase text-xs tracking-wider">{t("govt_doc_verification")}</h3>
+                             <p className="text-xs text-slate-500 dark:text-slate-400">{t("govt_doc_hint")}</p>
+                             
+                             <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">{t("aadhar_number")}</label>
+                                    <input
+                                        type="text" required value={form.aadharNumber}
+                                        onChange={(e) => setForm({ ...form, aadharNumber: e.target.value })}
+                                        className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="XXXX-XXXX-XXXX"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">{t("aadhar_name")}</label>
+                                    <input
+                                        type="text" required value={form.aadharName}
+                                        onChange={(e) => setForm({ ...form, aadharName: e.target.value })}
+                                        className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:ring-2 focus:ring-blue-500 outline-none" placeholder={t("legal_name_placeholder")}
+                                    />
+                                </div>
+                             </div>
+
+                             <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">{t("chitta_number")}</label>
+                                    <input
+                                        type="text" required value={form.chittaNumber}
+                                        onChange={(e) => setForm({ ...form, chittaNumber: e.target.value })}
+                                        className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:ring-2 focus:ring-blue-500 outline-none" placeholder={t("connection_number_placeholder")}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">{t("chitta_name")}</label>
+                                    <input
+                                        type="text" required value={form.chittaName}
+                                        onChange={(e) => setForm({ ...form, chittaName: e.target.value })}
+                                        className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:ring-2 focus:ring-blue-500 outline-none" placeholder={t("registered_details_placeholder")}
+                                    />
+                                </div>
+                             </div>
+
+                             <div>
+                                 <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">{t("image_1")}</label>
+                                 <input
+                                      type="url" required value={form.image1Url}
+                                      onChange={(e) => setForm({ ...form, image1Url: e.target.value })}
+                                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://..."
+                                  />
+                             </div>
+                             <div>
+                                 <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">{t("image_2")}</label>
+                                 <input
+                                      type="url" required value={form.image2Url}
+                                      onChange={(e) => setForm({ ...form, image2Url: e.target.value })}
+                                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://..."
+                                  />
+                             </div>
+
                         </div>
 
                         {/* Selected Location Display */}
                         <div className="pt-2">
-                            <p className="text-xs uppercase font-bold text-slate-500 mb-2">Pin Location</p>
+                            <p className="text-xs uppercase font-bold text-slate-500 mb-2">{t("pin_location")}</p>
                             {pin ? (
                                 <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 p-3 rounded-lg text-sm flex items-center gap-2 border border-green-100 dark:border-green-900">
                                     <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0"></span>
@@ -194,7 +262,7 @@ export default function OwnerAddSpace() {
                                 </div>
                             ) : (
                                 <div className="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 p-3 rounded-lg text-sm border border-slate-200 dark:border-slate-700 text-center italic">
-                                    Map pin not set
+                                    {t("map_pin_not_set")}
                                 </div>
                             )}
                         </div>
@@ -208,18 +276,17 @@ export default function OwnerAddSpace() {
                         disabled={loading || !pin}
                         className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]"
                     >
-                        {loading ? "Creating Space..." : "Create Space"}
+                        {loading ? t("creating_space") : t("create_space")}
                     </button>
                     <button
                         onClick={() => navigate("/owner")}
                         className="w-full mt-3 px-4 py-2 text-slate-500 hover:text-slate-700 text-sm font-medium transition-colors"
                     >
-                        Cancel
+                        {t("cancel")}
                     </button>
                 </div>
             </div>
 
-            {/* RIGHT SIDE: Full Map */}
             {/* RIGHT SIDE: Full Map */}
             <div className="flex-1 relative h-full">
                 <MapContainerFullscreen
@@ -228,7 +295,7 @@ export default function OwnerAddSpace() {
                     height="100%"
                     searchQuery={searchQuery}
                     onSearchSelect={(lat, lng) => {
-                        selectSearchResult({ lat, lon: lng, display_name: "Selected Location" }); // Adapter
+                        selectSearchResult({ lat, lon: lng, display_name: "Selected Location" });
                     }}
                     showFullscreenButton={false}
                 >
@@ -241,10 +308,11 @@ export default function OwnerAddSpace() {
                 {/* Floating Hint */}
                 {!pin && (
                     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur px-5 py-2.5 rounded-full shadow-lg z-[400] text-sm font-semibold text-slate-700 border border-slate-200 pointer-events-none animate-bounce">
-                        Tap map to drop pin 📍
+                        {t("tap_map_drop_pin")} 📍
                     </div>
                 )}
             </div>
         </div>
     );
 }
+

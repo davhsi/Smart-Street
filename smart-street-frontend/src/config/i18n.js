@@ -15,13 +15,18 @@ i18n
     },
     fallbackLng: 'en',
     supportedLngs: ['en', 'ta'],
+    load: 'languageOnly',   // Strip region codes: 'en-US' -> 'en'
     interpolation: {
-      escapeValue: false // React already escapes by default
+      escapeValue: false
     },
     detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage']
+      // Check localStorage first, then URL query, then browser
+      order: ['localStorage', 'querystring', 'navigator'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',  // The exact key we write in LanguageSwitcher
+      lookupQuerystring: 'lng'
     }
   });
 
 export default i18n;
+

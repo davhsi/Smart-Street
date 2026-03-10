@@ -114,8 +114,8 @@ export default function VoiceAssistant({ onCommand, isListening, setIsListening,
       {/* Floating Action Button (FAB) */}
       <button
         onClick={() => setIsListening(true)}
-        className={`fixed z-[3000] w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition-all hover:scale-110 active:scale-95
-          bottom-24 right-6
+        className={`fixed z-[30] w-14 h-14 flex items-center justify-center rounded-full shadow-xl transition-all hover:scale-110 active:scale-95
+          bottom-[160px] right-4 md:bottom-[100px]
         ${isListening
             ? "bg-red-500 text-white animate-pulse"
             : "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900 hover:bg-slate-50 dark:hover:bg-slate-700"
@@ -127,7 +127,7 @@ export default function VoiceAssistant({ onCommand, isListening, setIsListening,
 
       {/* Overlay / Transcript Display */}
       {(isListening || status) && (
-        <div className="fixed bottom-24 right-24 z-[3000] w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-indigo-100 dark:border-indigo-900 p-4 transition-all animate-in slide-in-from-bottom-5 flex flex-col max-h-[60vh]">
+        <div className="fixed bottom-[220px] right-4 md:bottom-[160px] z-[30] w-[calc(100vw-2rem)] md:w-80 pointer-events-auto bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-indigo-100 dark:border-indigo-900 p-4 transition-all animate-in slide-in-from-bottom-5 flex flex-col max-h-[60vh]">
           <div className="flex justify-between items-start mb-2">
             <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1">
               {isListening ? (
