@@ -10,8 +10,10 @@ import {
 import api from "../../services/api";
 import LoadingSpinner from "../LoadingSpinner";
 import { useToast } from "../../context/ToastContext";
+import { useTranslation } from "react-i18next";
 
 export default function VendorStorefront() {
+    const { t } = useTranslation();
     const { success, error } = useToast();
     const [vendor, setVendor] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -70,10 +72,10 @@ export default function VendorStorefront() {
                 menuItems
             });
             setSaved(true);
-            success("Storefront updated successfully!");
+            success(t("storefront_updated"));
             setTimeout(() => setSaved(false), 3000);
         } catch (err) {
-            error("Failed to save changes");
+            error(t("failed_save"));
         } finally {
             setSaving(false);
         }
@@ -82,7 +84,7 @@ export default function VendorStorefront() {
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-[400px] p-8 space-y-4">
             <LoadingSpinner size="xl" className="text-blue-600" />
-            <p className="text-slate-500 font-medium animate-pulse">Loading storefront...</p>
+            <p className="text-slate-500 font-medium animate-pulse">{t("loading_storefront")}</p>
         </div>
     );
 
@@ -90,8 +92,8 @@ export default function VendorStorefront() {
         <div className="p-6 md:p-10 max-w-4xl mx-auto space-y-10 pb-20">
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 dark:border-slate-800 pb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 dark:text-white">Digital Storefront</h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-2">Manage how your stall appears to citizens on the public map.</p>
+                    <h1 className="text-3xl font-black text-slate-900 dark:text-white">{t("digital_storefront")}</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-2">{t("manage_stall_appearance")}</p>
                 </div>
             </header>
 
@@ -100,36 +102,36 @@ export default function VendorStorefront() {
                 <section className="space-y-6">
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <ShoppingBagIcon className="w-5 h-5 text-blue-500" />
-                        Stall Identity
+                        {t("stall_identity")}
                     </h2>
 
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-bold text-slate-500 uppercase mb-2">Business Name</label>
+                            <label className="block text-sm font-bold text-slate-500 uppercase mb-2">{t("business_name_label")}</label>
                             <input
                                 value={businessName}
                                 onChange={e => setBusinessName(e.target.value)}
                                 className="w-full text-[16px] md:text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-shadow"
-                                placeholder="Name of your stall"
+                                placeholder={t("name_of_stall_placeholder")}
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-slate-500 uppercase mb-2">Category</label>
+                            <label className="block text-sm font-bold text-slate-500 uppercase mb-2">{t("category_uppercase")}</label>
                             <select
                                 value={category}
                                 onChange={e => setCategory(e.target.value)}
                                 className="w-full text-base md:text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none appearance-none"
                             >
-                                <option value="Food">Street Food</option>
-                                <option value="Beverage">Beverages</option>
-                                <option value="Apparel">Apparel & Textiles</option>
-                                <option value="Accessory">Accessories</option>
-                                <option value="Produce">Fresh Produce</option>
-                                <option value="Other">Other</option>
+                                <option value="Food">{t("street_food")}</option>
+                                <option value="Beverage">{t("beverages")}</option>
+                                <option value="Apparel">{t("apparel_textiles")}</option>
+                                <option value="Accessory">{t("accessories")}</option>
+                                <option value="Produce">{t("fresh_produce")}</option>
+                                <option value="Other">{t("other")}</option>
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-slate-500 uppercase mb-2">Stall Photo URL</label>
+                            <label className="block text-sm font-bold text-slate-500 uppercase mb-2">{t("stall_photo_url")}</label>
                             <div className="flex gap-4">
                                 <input
                                     value={stallPhoto}
@@ -147,7 +149,7 @@ export default function VendorStorefront() {
                         ) : (
                             <>
                                 <PhotoIcon className="w-12 h-12 text-slate-300 mb-2" />
-                                <p className="text-xs text-slate-400">Photo Preview</p>
+                                <p className="text-xs text-slate-400">{t("photo_preview")}</p>
                             </>
                         )}
                     </div>
@@ -157,7 +159,7 @@ export default function VendorStorefront() {
                 <section className="space-y-6">
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <ListBulletIcon className="w-5 h-5 text-blue-500" />
-                        Menu / Items List
+                        {t("menu_items_list")}
                     </h2>
 
                     <form onSubmit={handleAddItem} className="flex gap-2">
@@ -165,13 +167,13 @@ export default function VendorStorefront() {
                             value={newItemName}
                             onChange={e => setNewItemName(e.target.value)}
                             className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-2 text-[16px] md:text-sm outline-none focus:ring-1 focus:ring-blue-500"
-                            placeholder="Item name"
+                            placeholder={t("item_name")}
                         />
                         <input
                             value={newItemPrice}
                             onChange={e => setNewItemPrice(e.target.value)}
                             className="w-24 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-[16px] md:text-sm outline-none focus:ring-1 focus:ring-blue-500"
-                            placeholder="Price (₹)"
+                            placeholder={t("price_rupee")}
                         />
                         <button
                             type="submit"
@@ -203,7 +205,7 @@ export default function VendorStorefront() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="p-12 text-center text-slate-400 italic">No items listed. Tell your customers what you have!</div>
+                            <div className="p-12 text-center text-slate-400 italic">{t("no_items_listed")}</div>
                         )}
                     </div>
                 </section>
@@ -217,7 +219,7 @@ export default function VendorStorefront() {
                         disabled={saving}
                         className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 md:py-3 rounded-2xl font-black shadow-2xl shadow-blue-500/30 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
                     >
-                        {saving ? <span className="flex items-center gap-2"><LoadingSpinner size="sm" className="text-white" /> Saving...</span> : saved ? <span className="flex items-center gap-2"><CheckCircleIcon className="w-5 h-5" /> Saved</span> : "Save Changes"}
+                        {saving ? <span className="flex items-center gap-2"><LoadingSpinner size="sm" className="text-white" /> {t("saving_changes")}</span> : saved ? <span className="flex items-center gap-2"><CheckCircleIcon className="w-5 h-5" /> {t("saved_changes")}</span> : t("save_changes_btn")}
                     </button>
                 </div>
             </div>
